@@ -41,6 +41,21 @@ SESSION_DURATION = timedelta(days=7)
 LOGIN_ATTEMPT_LIMIT = 5
 LOGIN_WINDOW_MINUTES = 15
 EMAIL_PATTERN = re.compile(r"^[^\s@]+@[^\s@]+\.[^\s@]+$")
+
+# --- Pagos de prueba -------------------------------------------------------
+# Tasa de referencia fija para mostrar precios en pesos colombianos.
+# Si la cambias, actualiza también data-cop en los planes de Untitled-1.html
+# (la prueba test_html_prices_match_server_plans te avisa si no coinciden).
+COP_PER_USD = 4000
+PLANS = {
+    "basico": {"name": "Básico", "usd": 29},
+    "pro": {"name": "Pro", "usd": 59},
+    "multilocal": {"name": "Multi-local", "usd": 129},
+}
+CURRENCIES = ("USD", "COP")
+DOCUMENT_TYPES = ("CC", "CE", "NIT")
+CARD_BRANDS = ("Visa", "Mastercard", "American Express", "Tarjeta")
+COLOMBIA_TIME = timezone(timedelta(hours=-5), "COT")  # Colombia no usa horario de verano
 load_dotenv(ROOT / ".env")
 
 app = Flask(__name__)
@@ -89,8 +104,8 @@ def _database_connection() -> Generator[MySQLConnection, None, None]:
         connection.close()
 
 
-def _json_error(message: str, status: int) -> Response:
-    response = jsonify(error=message)
+def _json_error(message: str, status: int, field: str | None = None) -> Response:
+    response = jsonify(error=message) if field is None else jsonify(error=message, field=field)
     response.status_code = status
     response.headers["Cache-Control"] = "no-store"
     response.headers["X-Content-Type-Options"] = "nosniff"
@@ -120,6 +135,11 @@ def _normalize_email(value: object) -> str:
 
 def _is_valid_email(email: str) -> bool:
     return len(email) <= 254 and EMAIL_PATTERN.fullmatch(email) is not None
+
+
+def _name_has_digits(name: str) -> bool:
+    # isnumeric() cubre dígitos de cualquier alfabeto (1, ٣, ², etc.).
+    return any(char.isnumeric() for char in name)
 
 
 def _is_valid_password(password: object) -> TypeGuard[str]:
@@ -241,9 +261,117 @@ def _record_login_failure(connection: MySQLConnection, key_hash: str) -> None:
         cursor.close()
 
 
+def _only_ascii_digits(value: object, minimum: int, maximum: int) -> bool:
+    return (
+        isinstance(value, str)
+        and value.isascii()
+        and value.isdigit()
+        and minimum <= len(value) <= maximum
+    )
+
+
+def _person_name_error(value: object) -> str | None:
+    """Devuelve el motivo por el que un nombre no es válido, o None si lo es."""
+    if not isinstance(value, str) or not 2 <= len(value.strip()) <= 120:
+        return "Escribe un nombre válido."
+    if _name_has_digits(value):
+        return "El nombre no puede contener números."
+    return None
+
+
 @app.get("/")
 def home():
     return send_file(ROOT / "Untitled-1.html")
+
+
+@app.post("/api/payments/simulate")
+def simulate_payment():
+    """Pago ficticio: valida los datos y devuelve un comprobante de prueba.
+
+    No cobra nada y no guarda nada. Nunca recibe el número completo de la
+    tarjeta, el vencimiento ni el CVV; esos datos se validan en el navegador y
+    aquí solo llegan los últimos cuatro dígitos para mostrarlos en el comprobante.
+    """
+    payload, error_response = _request_data()
+    if error_response is not None:
+        return error_response
+
+    plan_id = payload.get("plan")
+    plan = PLANS.get(plan_id) if isinstance(plan_id, str) else None
+    if plan is None:
+        return _json_error("Elige un plan válido.", 400, "plan")
+
+    currency = payload.get("currency")
+    if currency not in CURRENCIES:
+        return _json_error("Elige dólares (USD) o pesos colombianos (COP).", 400, "currency")
+
+    payer_name = payload.get("payer_name")
+    message = _person_name_error(payer_name)
+    if message:
+        return _json_error(message, 400, "payer_name")
+
+    email = _normalize_email(payload.get("email"))
+    if not _is_valid_email(email):
+        return _json_error("Escribe un correo válido.", 400, "email")
+
+    document_type = payload.get("document_type")
+    if document_type not in DOCUMENT_TYPES:
+        return _json_error("Elige un tipo de documento válido.", 400, "document_type")
+
+    document_number = payload.get("document_number")
+    if not _only_ascii_digits(document_number, 6, 12):
+        return _json_error(
+            "El documento debe tener entre 6 y 12 números, sin letras ni símbolos.",
+            400,
+            "document_number",
+        )
+
+    phone = payload.get("phone")
+    if not _only_ascii_digits(phone, 7, 15):
+        return _json_error(
+            "El teléfono debe tener entre 7 y 15 números, sin letras ni símbolos.",
+            400,
+            "phone",
+        )
+
+    card_holder = payload.get("card_holder")
+    message = _person_name_error(card_holder)
+    if message:
+        return _json_error(message, 400, "card_holder")
+
+    card_last4 = payload.get("card_last4")
+    if not _only_ascii_digits(card_last4, 4, 4):
+        return _json_error("Los últimos cuatro números de la tarjeta no son válidos.", 400, "card_last4")
+
+    card_brand = payload.get("card_brand")
+    if card_brand not in CARD_BRANDS:
+        card_brand = "Tarjeta"
+
+    now = datetime.now(COLOMBIA_TIME)
+    amounts = {"USD": plan["usd"], "COP": plan["usd"] * COP_PER_USD}
+    receipt = {
+        "number": f"SIM-{now:%Y%m%d}-{secrets.token_hex(3).upper()}",
+        "issued_at": now.isoformat(timespec="seconds"),
+        "simulated": True,
+        "plan": {"id": plan_id, "name": plan["name"]},
+        "period": "1 mes",
+        "currency": currency,
+        "amount": amounts[currency],
+        "amounts": amounts,
+        "payer": {
+            "name": payer_name.strip(),
+            "email": email,
+            "document_type": document_type,
+            "document_number": document_number,
+            "phone": phone,
+        },
+        "card": {
+            "holder": card_holder.strip(),
+            "brand": card_brand,
+            "last4": card_last4,
+        },
+    }
+    return _json_success({"receipt": receipt}, 201)
 
 
 @app.get("/api/auth/session")
@@ -268,6 +396,8 @@ def register():
     name = payload.get("name", "").strip() if isinstance(payload.get("name"), str) else ""
     email = _normalize_email(payload.get("email"))
     password = payload.get("password")
+    if _name_has_digits(name):
+        return _json_error("El nombre no puede contener números.", 400)
     if not name or len(name) > 120 or not _is_valid_email(email) or not _is_valid_password(password):
         return _json_error(
             "Revisa tu nombre, correo y contraseña. La contraseña debe tener "

@@ -6,632 +6,789 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>Barrica · Software de gestión para bares</title>
     <meta name="description" content="Controla mesas, pedidos, inventario de licores, cuentas, turnos y reportes desde una sola pantalla.">
+    <meta name="theme-color" content="#0E1B17">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@400;500;600&display=swap">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&family=Instrument+Sans:wght@400..600&display=swap">
     <style>
-        /* ===== VARIABLES DE BRANDING (personaliza aquí) ===== */
-        
+        /* ===== IDENTIDAD VISUAL (personaliza aquí) =====
+           Vidrio de botella, hueso y ámbar de whisky.
+           Un solo acento (ámbar); el resto es neutro. */
         :root {
-            --bg: #0D0D0D;
-            --bg-2: #2B1B12;
-            --surface: rgba(255, 255, 255, .05);
-            --border: rgba(224, 164, 88, .22);
-            --text: #F3EBE0;
-            --muted: #BFB2A3;
-            --gold: #E0A458;
-            --gold-2: #F2C27E;
-            --neon: #7CFF9B;
-            --font-display: "Playfair Display", Georgia, serif;
-            --font-body: "Poppins", system-ui, sans-serif;
+            --vidrio: #0E1B17;
+            --vidrio-2: #15271F;
+            --linea: rgba(239, 230, 210, .16);
+            --linea-fuerte: rgba(239, 230, 210, .38);
+            --hueso: #EFE6D2;
+            --niebla: #A3AB9D;
+            --ambar: #D9A441;
+            --ambar-claro: #E8BE6A;
+            --tinta: #1C1812;
+            --font-display: "Bodoni Moda", "Didot", "Bodoni 72", Georgia, serif;
+            --font-body: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
             --sp-1: .5rem;
             --sp-2: 1rem;
             --sp-3: 1.5rem;
-            --sp-4: 2.5rem;
-            --sp-5: 5rem;
-            --radius: 16px;
-            --glow: 0 0 28px rgba(224, 164, 88, .35);
+            --sp-4: 3rem;
+            --sp-5: 6rem;
+            --radius: 3px;
             color-scheme: dark;
             box-sizing: border-box;
-            padding-top: env(safe-area-inset-top, 0px);
-            padding-bottom: env(safe-area-inset-bottom, 0px);
         }
-        
+
         html {
             scroll-behavior: smooth;
             scroll-padding-top: 5rem
         }
-        
+
         *,
         *::before,
         *::after {
             box-sizing: inherit
         }
-        
+
         body {
             margin: 0;
-            background: linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 100%) fixed;
-            color: var(--text);
+            background: var(--vidrio);
+            color: var(--hueso);
             font: 400 1rem/1.65 var(--font-body);
-            overflow-x: hidden
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased
         }
-        
+
         h1,
         h2,
         h3 {
             font-family: var(--font-display);
-            line-height: 1.15;
+            font-weight: 500;
+            line-height: 1.12;
+            letter-spacing: -.01em;
             margin: 0 0 var(--sp-2)
         }
-        
+
         h1 {
-            font-size: clamp(2.3rem, 6vw, 4.2rem)
+            font-size: clamp(2.7rem, 6.4vw, 5.2rem);
+            letter-spacing: -.02em;
+            line-height: 1.04
         }
-        
+
         h2 {
-            font-size: clamp(1.7rem, 4vw, 2.6rem)
+            font-size: clamp(1.9rem, 4vw, 3rem)
         }
-        
+
         h3 {
-            font-size: 1.25rem
+            font-size: 1.3rem
         }
-        
+
         p {
             margin: 0 0 var(--sp-2);
-            color: var(--muted);
-            max-width: 62ch
+            color: var(--niebla);
+            max-width: 56ch
         }
-        
+
         a {
             color: inherit
         }
-        
+
         :focus-visible {
-            outline: 3px solid var(--neon);
+            outline: 2px solid var(--ambar);
             outline-offset: 3px;
-            border-radius: 6px
+            border-radius: 2px
         }
-        
+
         .wrap {
-            width: min(1120px, 92%);
+            width: min(1120px, calc(100% - 2rem));
             margin-inline: auto
         }
-        
+
         section {
             padding: var(--sp-5) 0;
             position: relative
         }
-        
+
         .sec-head {
-            text-align: center;
             margin-bottom: var(--sp-4)
         }
-        
+
         .sec-head p {
-            margin-inline: auto
+            margin-bottom: 0
         }
-        
+
         .skip {
             position: absolute;
             left: -999px
         }
-        
+
         .skip:focus {
             left: 1rem;
             top: 1rem;
-            background: var(--gold);
-            color: #000;
+            background: var(--ambar);
+            color: var(--tinta);
             padding: .5rem 1rem;
             z-index: 200
         }
+
         /* Botones */
-        
         .btn {
             display: inline-block;
-            padding: .85rem 1.6rem;
-            border-radius: 999px;
-            font-weight: 600;
+            padding: .8rem 1.5rem;
+            border-radius: var(--radius);
+            font-weight: 500;
+            font-size: 1rem;
             text-decoration: none;
-            border: 1px solid var(--gold);
-            transition: .25s;
+            border: 1px solid var(--ambar);
+            transition: background-color .2s, color .2s, border-color .2s;
             cursor: pointer;
             font-family: inherit;
-            font-size: 1rem
+            line-height: 1.3
         }
-        
+
         .btn-primary {
-            background: linear-gradient(135deg, var(--gold-2), var(--gold));
-            color: #1a0f08
+            background: var(--ambar);
+            color: var(--tinta)
         }
-        
+
         .btn-primary:hover {
-            box-shadow: var(--glow);
-            transform: translateY(-2px)
+            background: var(--ambar-claro);
+            border-color: var(--ambar-claro)
         }
-        
+
         .btn-ghost {
             background: transparent;
-            color: var(--gold-2)
+            color: var(--hueso);
+            border-color: var(--linea-fuerte)
         }
-        
+
         .btn-ghost:hover {
-            background: rgba(224, 164, 88, .12);
-            box-shadow: var(--glow)
+            border-color: var(--ambar);
+            color: var(--ambar-claro)
         }
-        /* Tarjetas glass */
-        
-        .card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: var(--sp-3);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            transition: .3s
-        }
-        
-        .card:hover {
-            box-shadow: var(--glow);
-            border-color: var(--gold)
-        }
-        
-        .grid {
-            display: grid;
-            gap: var(--sp-3)
-        }
-        
-        .g3 {
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr))
-        }
+
         /* 1. NAVBAR */
-        
         header {
             position: fixed;
             inset: 0 0 auto 0;
             z-index: 100;
             padding-top: env(safe-area-inset-top, 0px);
-            transition: .3s
+            transition: background-color .3s, border-color .3s;
+            border-bottom: 1px solid transparent
         }
-        
+
         header.solid {
-            background: rgba(13, 13, 13, .92);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--border)
+            background: rgba(14, 27, 23, .94);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom-color: var(--linea)
         }
-        
+
         .nav {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            height: 4.2rem
+            height: 4.4rem
         }
-        
+
         .logo {
             font-family: var(--font-display);
-            font-weight: 700;
-            font-size: 1.5rem;
+            font-weight: 600;
+            font-size: 1.55rem;
+            letter-spacing: -.01em;
             text-decoration: none;
-            color: var(--gold-2);
+            color: var(--hueso);
             display: flex;
             align-items: center;
-            gap: .5rem
+            gap: .6rem
         }
-        
+
+        /* Aro de barrica */
         .logo i {
-            width: 10px;
-            height: 10px;
+            width: 14px;
+            height: 14px;
             border-radius: 50%;
-            background: var(--neon);
-            box-shadow: 0 0 12px var(--neon)
+            border: 2px solid var(--ambar);
+            box-shadow: inset 0 0 0 2px var(--vidrio), inset 0 0 0 3px var(--ambar)
         }
-        
+
         .menu {
             display: flex;
-            gap: var(--sp-3);
+            gap: 2rem;
             align-items: center
         }
-        
+
         .menu a {
             text-decoration: none;
-            color: var(--muted);
-            transition: .2s
+            color: var(--niebla);
+            font-size: .95rem;
+            transition: color .2s
         }
-        
+
         .menu a:hover {
-            color: var(--gold-2)
+            color: var(--hueso)
         }
-        
+
+        .menu a.btn {
+            color: var(--tinta);
+            padding: .55rem 1.1rem
+        }
+
+        .menu a.btn:hover {
+            color: var(--tinta)
+        }
+
         .burger {
             display: none;
             background: none;
-            border: 1px solid var(--border);
-            border-radius: 10px;
+            border: 1px solid var(--linea-fuerte);
+            border-radius: var(--radius);
             width: 44px;
             height: 44px;
             cursor: pointer;
-            color: var(--gold-2)
+            color: var(--hueso);
+            font-size: 1.1rem
         }
-        
+
         @media(max-width:820px) {
             .burger {
                 display: block
             }
+
             .menu {
                 position: absolute;
                 top: 100%;
                 left: 0;
                 right: 0;
                 flex-direction: column;
-                background: rgba(13, 13, 13, .97);
-                padding: var(--sp-3);
+                align-items: flex-start;
+                background: var(--vidrio);
+                padding: var(--sp-3) 1rem;
                 gap: var(--sp-2);
                 display: none;
-                border-bottom: 1px solid var(--border)
+                border-bottom: 1px solid var(--linea)
             }
+
             .menu.open {
                 display: flex
             }
         }
+
         /* 2. HERO */
-        
         .hero {
-            padding-top: 9rem;
-            overflow: hidden
+            padding-top: 9.5rem;
+            padding-bottom: var(--sp-5)
         }
-        
-        .hero::before,
-        .hero::after {
-            content: "";
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(90px);
-            z-index: -1
-        }
-        
-        .hero::before {
-            width: 380px;
-            height: 380px;
-            background: rgba(224, 164, 88, .28);
-            top: 3rem;
-            left: -100px;
-            animation: float 9s ease-in-out infinite
-        }
-        
-        .hero::after {
-            width: 300px;
-            height: 300px;
-            background: rgba(124, 255, 155, .14);
-            right: -60px;
-            top: 16rem;
-            animation: float 11s ease-in-out infinite reverse
-        }
-        
-        @keyframes float {
-            50% {
-                transform: translateY(30px)
-            }
-        }
-        
+
         .hero-grid {
             display: grid;
             gap: var(--sp-4);
             align-items: center
         }
-        
+
         @media(min-width:900px) {
             .hero-grid {
-                grid-template-columns: 1.05fr 1fr
+                grid-template-columns: 1.15fr .85fr;
+                gap: 5rem
             }
         }
-        
+
+        .hero p {
+            font-size: 1.15rem;
+            max-width: 46ch
+        }
+
         .hero .cta-row {
             display: flex;
             gap: var(--sp-2);
             flex-wrap: wrap;
             margin-top: var(--sp-3)
         }
-        /* Mockup dashboard (CSS) */
-        
-        .mock {
-            background: rgba(20, 13, 9, .85);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: var(--sp-2);
-            box-shadow: var(--glow)
-        }
-        
-        .mock-bar {
-            display: flex;
-            gap: 6px;
-            margin-bottom: var(--sp-2)
-        }
-        
-        .mock-bar span {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: #5a4636
-        }
-        
-        .kpis {
+
+        /* La cuenta de la mesa: el único gesto llamativo de la página */
+        .ticket-wrap {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: .6rem
+            gap: var(--sp-2);
+            justify-items: center
         }
-        
-        .kpi {
-            background: rgba(255, 255, 255, .05);
-            border-radius: 12px;
-            padding: .7rem
+
+        .ticket {
+            --papel: #EFE6D2;
+            position: relative;
+            width: min(100%, 22rem);
+            margin: 0;
+            padding: 1.6rem 1.5rem 1.8rem;
+            background: var(--papel);
+            color: var(--tinta);
+            font-size: .95rem;
+            line-height: 1.5;
+            box-shadow: 0 30px 60px -30px rgba(0, 0, 0, .7);
+            animation: imprimir 1.5s cubic-bezier(.3, .7, .2, 1) .2s both
         }
-        
-        .kpi small {
-            color: var(--muted);
-            font-size: .72rem;
-            display: block
+
+        .ticket::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 100%;
+            height: 9px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath d='M0 0h14L7 9z' fill='%23EFE6D2'/%3E%3C/svg%3E") repeat-x left top / 14px 9px
         }
-        
-        .kpi b {
-            font-size: 1.2rem;
-            color: var(--gold-2)
+
+        @keyframes imprimir {
+            from {
+                clip-path: inset(0 0 100% 0)
+            }
+
+            to {
+                clip-path: inset(0 0 -12px 0)
+            }
         }
-        
-        .chart {
-            display: flex;
-            align-items: flex-end;
-            gap: 6px;
-            height: 110px;
-            margin: var(--sp-2) 0
-        }
-        
-        .chart i {
-            flex: 1;
-            background: linear-gradient(180deg, var(--gold-2), rgba(224, 164, 88, .15));
-            border-radius: 6px 6px 0 0;
-            height: var(--h)
-        }
-        
-        .tables {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 6px
-        }
-        
-        .tables span {
-            aspect-ratio: 1;
-            border-radius: 8px;
-            background: rgba(255, 255, 255, .07);
-            border: 1px solid var(--border)
-        }
-        
-        .tables .busy {
-            background: rgba(224, 164, 88, .35)
-        }
-        
-        .tables .live {
-            border-color: var(--neon);
-            box-shadow: 0 0 10px var(--neon)
-        }
-        /* 3. PRUEBA SOCIAL */
-        
-        .proof {
-            padding: var(--sp-4) 0;
-            border-block: 1px solid var(--border);
+
+        .ticket header {
+            position: static;
+            padding: 0 0 .9rem;
+            display: block;
+            border-bottom: 1px dashed rgba(28, 24, 18, .45);
             text-align: center
         }
-        
+
+        .ticket-brand {
+            display: block;
+            font-family: var(--font-display);
+            font-weight: 600;
+            font-size: 1.5rem;
+            line-height: 1.2
+        }
+
+        .ticket-meta {
+            display: block;
+            color: rgba(28, 24, 18, .7);
+            font-size: .85rem
+        }
+
+        .ticket ul {
+            list-style: none;
+            margin: .9rem 0;
+            padding: 0;
+            display: grid;
+            gap: .35rem;
+            font-variant-numeric: tabular-nums
+        }
+
+        .ticket li {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem
+        }
+
+        .ticket-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            padding-top: .9rem;
+            border-top: 1px dashed rgba(28, 24, 18, .45);
+            font-variant-numeric: tabular-nums
+        }
+
+        .ticket-total b {
+            font-family: var(--font-display);
+            font-size: 1.9rem;
+            font-weight: 600
+        }
+
+        .stock-note {
+            width: min(100%, 22rem);
+            margin: var(--sp-3) 0 0;
+            padding: .7rem 1rem;
+            border: 1px solid var(--linea-fuerte);
+            border-left: 3px solid var(--ambar);
+            border-radius: var(--radius);
+            font-size: .9rem;
+            color: var(--hueso)
+        }
+
+        /* 3. PRUEBA SOCIAL */
+        .proof {
+            padding: var(--sp-3) 0;
+            border-block: 1px solid var(--linea)
+        }
+
+        .proof .wrap {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: var(--sp-2) var(--sp-4)
+        }
+
+        .proof p {
+            margin: 0;
+            color: var(--hueso)
+        }
+
         .logos {
             display: flex;
             flex-wrap: wrap;
-            justify-content: center;
-            gap: var(--sp-4);
-            margin-top: var(--sp-2);
+            gap: .5rem 2.5rem;
             font-family: var(--font-display);
-            font-size: 1.3rem;
-            color: var(--muted)
+            font-style: italic;
+            font-size: 1.25rem;
+            color: var(--niebla)
         }
-        /* 4-5. PROBLEMA / FUNCIONES */
-        
-        .ico {
-            width: 48px;
-            height: 48px;
-            stroke: var(--gold);
-            fill: none;
-            stroke-width: 1.6;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-            margin-bottom: var(--sp-2)
+
+        /* 4. PROBLEMA */
+        .pain-list {
+            display: grid;
+            gap: var(--sp-4) var(--sp-4)
         }
-        
-        .pain .ico {
-            stroke: var(--neon)
+
+        @media(min-width:800px) {
+            .pain-list {
+                grid-template-columns: repeat(3, 1fr)
+            }
         }
-        /* 6. PASOS */
-        
+
+        .pain-list article {
+            padding-top: var(--sp-2);
+            border-top: 1px solid var(--linea-fuerte)
+        }
+
+        .pain-list p {
+            margin: 0
+        }
+
+        /* 5. FUNCIONES: se leen como la carta de un bar */
+        .split {
+            display: grid;
+            gap: var(--sp-4)
+        }
+
+        @media(min-width:900px) {
+            .split {
+                grid-template-columns: 1fr 1.5fr;
+                gap: 5rem;
+                align-items: start
+            }
+
+            .split .sec-head {
+                position: sticky;
+                top: 7rem;
+                margin-bottom: 0
+            }
+        }
+
+        .menu-list {
+            border-top: 1px solid var(--linea)
+        }
+
+        .menu-list article {
+            padding: 1.5rem 0;
+            border-bottom: 1px solid var(--linea)
+        }
+
+        .menu-list h3 {
+            margin-bottom: .35rem
+        }
+
+        .menu-list p {
+            margin: 0
+        }
+
+        /* 6. PASOS (sí son una secuencia) */
+        .steps {
+            display: grid;
+            gap: var(--sp-4)
+        }
+
+        @media(min-width:800px) {
+            .steps {
+                grid-template-columns: repeat(3, 1fr)
+            }
+        }
+
+        .step {
+            counter-increment: s;
+            padding-top: var(--sp-2);
+            border-top: 1px solid var(--linea-fuerte)
+        }
+
         .steps {
             counter-reset: s
         }
-        
-        .step {
-            position: relative;
-            padding-top: var(--sp-4)
-        }
-        
+
         .step::before {
-            counter-increment: s;
             content: counter(s);
-            position: absolute;
-            top: 0;
-            left: var(--sp-3);
-            width: 2.4rem;
-            height: 2.4rem;
-            border-radius: 50%;
-            background: var(--gold);
-            color: #1a0f08;
-            display: grid;
-            place-items: center;
-            font-weight: 600;
-            box-shadow: var(--glow)
+            display: block;
+            font-family: var(--font-display);
+            font-size: 3.4rem;
+            line-height: 1;
+            color: var(--ambar);
+            margin-bottom: var(--sp-2)
         }
-        /* 7. CAPTURA */
-        
+
+        .step p {
+            margin: 0
+        }
+
+        /* 7. PANEL */
         .showcase {
             display: grid;
             gap: var(--sp-4);
             align-items: center
         }
-        
+
         @media(min-width:900px) {
             .showcase {
-                grid-template-columns: 1fr 1.2fr
+                grid-template-columns: 1fr 1.3fr;
+                gap: 5rem
             }
         }
+
+        .panel {
+            background: var(--vidrio-2);
+            border: 1px solid var(--linea);
+            border-radius: var(--radius);
+            padding: var(--sp-3)
+        }
+
+        .kpis {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--sp-2);
+            padding-bottom: var(--sp-3);
+            border-bottom: 1px solid var(--linea)
+        }
+
+        .kpi small {
+            display: block;
+            color: var(--niebla);
+            font-size: .85rem;
+            line-height: 1.3
+        }
+
+        .kpi b {
+            font-family: var(--font-display);
+            font-weight: 500;
+            font-size: clamp(1.5rem, 3.2vw, 2.1rem);
+            line-height: 1.3
+        }
+
+        .chart {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            align-items: end;
+            gap: .6rem;
+            height: 11rem;
+            margin-top: var(--sp-3)
+        }
+
+        .chart i {
+            display: block;
+            height: var(--h);
+            background: var(--linea-fuerte);
+            border-radius: 2px 2px 0 0
+        }
+
+        .chart i.peak {
+            background: var(--ambar)
+        }
+
+        .hours {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: .6rem;
+            margin-top: .5rem;
+            color: var(--niebla);
+            font-size: .8rem;
+            text-align: center
+        }
+
         /* 8. TESTIMONIOS */
-        
+        .quotes {
+            display: grid;
+            gap: var(--sp-4)
+        }
+
+        @media(min-width:800px) {
+            .quotes {
+                grid-template-columns: repeat(3, 1fr)
+            }
+        }
+
+        figure {
+            margin: 0
+        }
+
         blockquote {
             margin: 0 0 var(--sp-2);
             font-family: var(--font-display);
-            font-size: 1.1rem;
-            line-height: 1.5
+            font-size: 1.3rem;
+            line-height: 1.45;
+            font-weight: 400
         }
-        
+
         cite {
             font-style: normal;
-            color: var(--muted);
+            color: var(--niebla);
             font-size: .9rem
         }
+
         /* 9. PRECIOS */
-        
-        .price {
-            text-align: center;
-            display: flex;
-            flex-direction: column
+        .plans {
+            display: grid;
+            border: 1px solid var(--linea)
         }
-        
-        .price ul {
-            list-style: none;
-            padding: 0;
-            margin: var(--sp-2) 0;
-            text-align: left;
-            flex: 1
-        }
-        
-        .price li {
-            padding: .4rem 0 .4rem 1.6rem;
-            position: relative;
-            color: var(--muted)
-        }
-        
-        .price li::before {
-            content: "✓";
-            position: absolute;
-            left: 0;
-            color: var(--neon)
-        }
-        
-        .amount {
-            font-family: var(--font-display);
-            font-size: 2.6rem;
-            color: var(--gold-2)
-        }
-        
-        .amount small {
-            font-size: 1rem;
-            color: var(--muted);
-            font-family: var(--font-body)
-        }
-        
-        .price.pro {
-            border-color: var(--gold);
-            box-shadow: var(--glow);
-            position: relative
-        }
-        
+
         @media(min-width:900px) {
-            .price.pro {
-                transform: scale(1.05)
+            .plans {
+                grid-template-columns: repeat(3, 1fr)
             }
         }
-        
-        .badge {
-            position: absolute;
-            top: -14px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--neon);
-            color: #06210f;
-            font-size: .8rem;
-            font-weight: 600;
-            padding: .2rem .9rem;
-            border-radius: 999px
+
+        .plan {
+            padding: var(--sp-4) var(--sp-3);
+            display: flex;
+            flex-direction: column;
+            border-top: 1px solid var(--linea)
         }
+
+        .plan:first-child {
+            border-top: 0
+        }
+
+        @media(min-width:900px) {
+            .plan {
+                border-top: 0;
+                border-left: 1px solid var(--linea)
+            }
+
+            .plan:first-child {
+                border-left: 0
+            }
+        }
+
+        .plan.pro {
+            background: var(--vidrio-2);
+            box-shadow: inset 0 3px 0 var(--ambar)
+        }
+
+        .plan .tag {
+            color: var(--ambar-claro);
+            font-size: .9rem;
+            margin-bottom: .25rem
+        }
+
+        .plan ul {
+            list-style: none;
+            padding: 0;
+            margin: var(--sp-3) 0;
+            flex: 1
+        }
+
+        .plan li {
+            padding: .45rem 0 .45rem 1.4rem;
+            position: relative;
+            color: var(--niebla)
+        }
+
+        .plan li::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 1.1em;
+            width: .7rem;
+            height: 1px;
+            background: var(--ambar)
+        }
+
+        .amount {
+            font-family: var(--font-display);
+            font-size: 3.4rem;
+            line-height: 1.1;
+            margin-top: .5rem
+        }
+
+        .amount small {
+            font-size: 1rem;
+            color: var(--niebla);
+            font-family: var(--font-body)
+        }
+
+        .plan .btn {
+            text-align: center
+        }
+
         /* 10. FAQ */
-        
         .faq {
             max-width: 760px;
-            margin-inline: auto
+            border-top: 1px solid var(--linea)
         }
-        
+
         .faq-item {
-            border-bottom: 1px solid var(--border)
+            border-bottom: 1px solid var(--linea)
         }
-        
+
         .faq-q {
             width: 100%;
             background: none;
             border: 0;
-            color: var(--text);
-            font: 600 1.05rem var(--font-body);
+            color: var(--hueso);
+            font: 500 1.05rem/1.4 var(--font-body);
             text-align: left;
-            padding: var(--sp-2) 0;
+            padding: 1.2rem 0;
             display: flex;
             justify-content: space-between;
+            align-items: baseline;
             gap: var(--sp-2);
             cursor: pointer
         }
-        
+
         .faq-q::after {
             content: "+";
-            color: var(--gold);
-            font-size: 1.4rem;
-            transition: .3s
+            color: var(--ambar);
+            font-size: 1.5rem;
+            line-height: 1;
+            transition: transform .3s
         }
-        
+
         .faq-q[aria-expanded="true"]::after {
             transform: rotate(45deg)
         }
-        
+
         .faq-a {
             display: grid;
             grid-template-rows: 0fr;
             transition: grid-template-rows .35s
         }
-        
+
         .faq-a>div {
             overflow: hidden
         }
-        
+
         .faq-q[aria-expanded="true"]+.faq-a {
             grid-template-rows: 1fr
         }
-        /* 11. CTA / 12. FOOTER */
-        
+
+        /* 11. CTA FINAL / 12. FOOTER */
         .final {
-            text-align: center;
-            background: radial-gradient(ellipse at center, rgba(224, 164, 88, .2), transparent 70%);
-            border-block: 1px solid var(--border)
+            border-top: 1px solid var(--linea)
         }
-        
-        .final p {
-            margin-inline: auto
+
+        .final h2 {
+            font-size: clamp(2.2rem, 5.2vw, 4rem);
+            max-width: 16ch
         }
-        
+
+        .final .btn {
+            margin-top: var(--sp-2)
+        }
+
         footer {
             padding: var(--sp-4) 0;
-            color: var(--muted);
-            font-size: .9rem
+            color: var(--niebla);
+            font-size: .9rem;
+            border-top: 1px solid var(--linea)
         }
-        
+
         .foot {
             display: flex;
             flex-wrap: wrap;
@@ -639,108 +796,333 @@
             justify-content: space-between;
             align-items: center
         }
-        
+
         .foot nav {
             display: flex;
-            gap: var(--sp-2);
+            gap: var(--sp-3);
             flex-wrap: wrap
         }
-        
+
         .foot a {
             text-decoration: none
         }
-        
+
         .foot a:hover {
-            color: var(--gold-2)
+            color: var(--hueso)
         }
 
+        .foot .logo {
+            color: var(--hueso)
+        }
+
+        /* Cuenta: iniciar sesión / crear cuenta */
         .auth-dialog {
             width: min(440px, calc(100% - 2rem));
-            max-height: min(90vh, 720px);
+            max-height: min(90vh, 740px);
             margin: auto;
-            padding: var(--sp-4);
-            border: 1px solid var(--border);
+            padding: var(--sp-4) 2rem 2rem;
+            border: 1px solid var(--linea-fuerte);
             border-radius: var(--radius);
-            background: #17120f;
-            color: var(--text)
+            background: var(--vidrio-2);
+            color: var(--hueso)
         }
 
         .auth-dialog::backdrop {
-            background: rgba(0, 0, 0, .78);
-            backdrop-filter: blur(5px)
+            background: rgba(5, 11, 9, .82);
+            backdrop-filter: blur(4px)
+        }
+
+        .auth-dialog h2 {
+            font-size: 2rem
         }
 
         .auth-dialog form {
             display: grid;
-            gap: var(--sp-2)
+            gap: var(--sp-2);
+            margin-top: var(--sp-3)
         }
 
         .auth-dialog label {
             display: grid;
             gap: .35rem;
-            color: var(--muted)
+            color: var(--niebla);
+            font-size: .95rem
         }
 
-        .auth-dialog input {
+        .auth-dialog input,
+        .auth-dialog select {
             width: 100%;
             padding: .8rem 1rem;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            background: rgba(255, 255, 255, .06);
-            color: var(--text);
-            font: inherit
+            border: 1px solid var(--linea-fuerte);
+            border-radius: var(--radius);
+            background: var(--vidrio);
+            color: var(--hueso);
+            font: inherit;
+            font-size: 1rem
+        }
+
+        .auth-dialog input:focus-visible,
+        .auth-dialog select:focus-visible {
+            outline: 0;
+            border-color: var(--ambar);
+            box-shadow: 0 0 0 1px var(--ambar)
+        }
+
+        .auth-dialog input[aria-invalid="true"],
+        .auth-dialog select[aria-invalid="true"] {
+            border-color: #E58C7B
+        }
+
+        .auth-dialog .field-hint {
+            min-height: 1.3em;
+            font-size: .85rem;
+            color: #F0A596
         }
 
         .auth-dialog .auth-close {
-            float: right;
+            position: absolute;
+            top: .75rem;
+            right: .9rem;
+            width: 2.5rem;
+            height: 2.5rem;
             border: 0;
             background: none;
-            color: var(--muted);
+            color: var(--niebla);
             font: inherit;
-            font-size: 1.5rem;
+            font-size: 1.7rem;
+            line-height: 1;
             cursor: pointer
+        }
+
+        .auth-dialog .auth-close:hover {
+            color: var(--hueso)
         }
 
         .auth-dialog .auth-status {
             min-height: 1.65em;
             margin: var(--sp-2) 0 0;
-            color: var(--gold-2)
+            color: var(--ambar-claro)
         }
 
         .auth-dialog .auth-switch {
             border: 0;
             padding: .75rem 0 0;
             background: none;
-            color: var(--gold-2);
+            color: var(--ambar-claro);
             font: inherit;
-            cursor: pointer
+            cursor: pointer;
+            text-align: left
+        }
+
+        .auth-dialog .auth-switch:hover {
+            color: var(--hueso)
         }
 
         .auth-dialog [hidden] {
-            display: none!important
+            display: none !important
         }
-        /* Animación al hacer scroll */
-        
-        .reveal {
-            opacity: 0;
-            transform: translateY(28px);
-            transition: opacity .7s, transform .7s
+
+        @media(max-width:480px) {
+            .auth-dialog {
+                padding: 3rem 1.25rem 1.5rem
+            }
         }
-        
-        .reveal.in {
-            opacity: 1;
-            transform: none
+
+        /* Precio en pesos bajo el precio en dólares */
+        .amount-cop {
+            color: var(--ambar-claro);
+            font-variant-numeric: tabular-nums;
+            margin-top: .15rem
         }
-        
+
+        .plan-fine {
+            margin-top: var(--sp-2);
+            font-size: .9rem
+        }
+
+        /* Pago de prueba */
+        .pay-dialog {
+            width: min(580px, calc(100% - 2rem));
+            max-height: min(94vh, 960px)
+        }
+
+        .pay-dialog fieldset {
+            border: 0;
+            margin: 0;
+            padding: 0;
+            min-width: 0;
+            display: grid;
+            gap: var(--sp-2)
+        }
+
+        /* La línea es un fondo, no un borde: así no se cruza con el título (legend) */
+        .pay-dialog fieldset+fieldset {
+            margin-top: var(--sp-3);
+            padding-top: var(--sp-3);
+            background: linear-gradient(var(--linea), var(--linea)) top / 100% 1px no-repeat
+        }
+
+        .pay-dialog label {
+            align-content: start
+        }
+
+        .pay-dialog .field-hint {
+            min-height: 0
+        }
+
+        .pay-dialog .pay-legend {
+            font-size: 1.3rem;
+            margin: 0 0 .5rem
+        }
+
+        .pay-dialog .row-2,
+        .pay-dialog .row-doc {
+            display: grid;
+            gap: var(--sp-2);
+            grid-template-columns: repeat(2, minmax(0, 1fr))
+        }
+
+        .pay-dialog .row-doc {
+            grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.2fr)
+        }
+
+        @media(max-width:480px) {
+
+            .pay-dialog .row-doc,
+            .pay-dialog .row-plan {
+                grid-template-columns: minmax(0, 1fr)
+            }
+        }
+
+        .pay-dialog .pay-note {
+            margin: 0;
+            padding: .7rem 1rem;
+            border: 1px solid var(--linea-fuerte);
+            border-left: 3px solid var(--ambar);
+            border-radius: var(--radius);
+            font-size: .9rem;
+            color: var(--hueso);
+            max-width: none
+        }
+
+        .pay-summary {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: var(--sp-2);
+            padding: .9rem 0;
+            border-block: 1px solid var(--linea)
+        }
+
+        .pay-summary b {
+            font-family: var(--font-display);
+            font-weight: 500;
+            font-size: 1.9rem;
+            line-height: 1.2;
+            font-variant-numeric: tabular-nums
+        }
+
+        .pay-alt {
+            margin: 0;
+            font-size: .85rem
+        }
+
+        .pay-dialog #pay-submit {
+            margin-top: var(--sp-3);
+            width: 100%
+        }
+
+        /* Comprobante: reutiliza el ticket de la portada */
+        .receipt {
+            width: min(100%, 26rem);
+            margin: var(--sp-3) auto 0
+        }
+
+        .receipt .stamp {
+            margin: -1.6rem -1.5rem 1.1rem;
+            padding: .6rem 1rem;
+            background: var(--tinta);
+            color: var(--papel);
+            text-align: center;
+            font-weight: 600;
+            font-size: .9rem
+        }
+
+        .receipt li span:last-child {
+            text-align: right;
+            overflow-wrap: anywhere
+        }
+
+        .receipt li span:first-child {
+            flex: none
+        }
+
+        .ticket .receipt-fine {
+            margin: 1rem 0 0;
+            max-width: none;
+            text-align: center;
+            font-size: .8rem;
+            line-height: 1.45;
+            color: rgba(28, 24, 18, .75)
+        }
+
+        .receipt-actions {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: .75rem;
+            margin-top: calc(var(--sp-3) + 12px)
+        }
+
+        .pay-dialog #receipt-title:focus {
+            outline: 0
+        }
+
+        @media print {
+            body>*:not(#pay-dialog) {
+                display: none !important
+            }
+
+            #pay-dialog {
+                position: static;
+                inset: auto;
+                display: block;
+                width: auto;
+                max-height: none;
+                margin: 0;
+                padding: 0;
+                border: 0;
+                background: #fff;
+                color: #000
+            }
+
+            #pay-dialog::backdrop {
+                display: none
+            }
+
+            #pay-form-pane,
+            #pay-close,
+            .receipt-actions,
+            #receipt-title,
+            #receipt-intro {
+                display: none !important
+            }
+
+            .receipt {
+                box-shadow: none;
+                animation: none;
+                clip-path: none;
+                border: 1px solid #000;
+                margin: 0 auto
+            }
+        }
+
         @media(prefers-reduced-motion:reduce) {
             * {
-                animation: none!important;
-                transition: none!important
+                animation: none !important;
+                transition: none !important
             }
-            .reveal {
-                opacity: 1;
-                transform: none
-            }
+
             html {
                 scroll-behavior: auto
             }
@@ -776,16 +1158,22 @@
                         <a class="btn btn-ghost" href="#funciones">Ver funciones</a>
                     </div>
                 </div>
-                <!-- MOCKUP: sustituir este bloque por una captura real (ver nota al final) -->
-                <div class="mock reveal" role="img" aria-label="Boceto del panel de Barrica con ventas del día, ticket medio y mesas ocupadas">
-                    <div class="mock-bar"><span></span><span></span><span></span></div>
-                    <div class="kpis">
-                        <div class="kpi"><small>Ventas hoy</small><b>$<span class="count" data-to="4820">0</span></b></div>
-                        <div class="kpi"><small>Ticket medio</small><b>$<span class="count" data-to="37">0</span></b></div>
-                        <div class="kpi"><small>Mesas ocupadas</small><b><span class="count" data-to="14">0</span>/20</b></div>
-                    </div>
-                    <div class="chart" aria-hidden="true"><i style="--h:35%"></i><i style="--h:50%"></i><i style="--h:42%"></i><i style="--h:70%"></i><i style="--h:88%"></i><i style="--h:100%"></i><i style="--h:76%"></i></div>
-                    <div class="tables" aria-hidden="true"><span class="busy"></span><span></span><span class="busy live"></span><span class="busy"></span><span></span><span class="busy"></span><span></span><span class="busy"></span><span class="busy live"></span><span></span><span class="busy"></span><span></span></div>
+                <!-- EJEMPLO: sustituir por una captura real del producto cuando la tengas -->
+                <div class="ticket-wrap">
+                    <figure class="ticket" aria-label="Ejemplo de cuenta de la mesa 7 en Barrica">
+                        <header>
+                            <span class="ticket-brand">Barrica</span>
+                            <span class="ticket-meta">Mesa 7, barra principal</span>
+                        </header>
+                        <ul>
+                            <li><span>2 Negroni</span><span>$18,00</span></li>
+                            <li><span>1 Old Fashioned</span><span>$10,00</span></li>
+                            <li><span>3 Cerveza artesanal</span><span>$15,00</span></li>
+                            <li><span>1 Tabla de quesos</span><span>$14,00</span></li>
+                        </ul>
+                        <div class="ticket-total"><span>Total</span><b>$57,00</b></div>
+                    </figure>
+                    <p class="stock-note">Ginebra: quedan 2 botellas. Barrica te avisa antes de que se acabe.</p>
                 </div>
             </div>
         </section>
@@ -793,7 +1181,7 @@
         <!-- ===== 3. PRUEBA SOCIAL ===== -->
         <div class="proof">
             <div class="wrap">
-                <p style="margin-inline:auto"><strong style="color:var(--gold-2)">Más de 500 bares ya lo usan</strong></p>
+                <p><strong>Más de 500 bares ya lo usan</strong></p>
                 <div class="logos" aria-label="Algunos de nuestros clientes"><span>La Cava</span><span>Nocturno</span><span>El Barril</span><span>Sótano 9</span><span>Malta &amp; Co.</span></div>
             </div>
         </div>
@@ -801,20 +1189,20 @@
         <!-- ===== 4. PROBLEMA ===== -->
         <section>
             <div class="wrap">
-                <div class="sec-head reveal">
+                <div class="sec-head">
                     <h2>Lo que le cuesta dinero a tu bar cada noche</h2>
                     <p>Si te suena familiar, no estás solo. Son los tres problemas que más oímos.</p>
                 </div>
-                <div class="grid g3 pain">
-                    <article class="card reveal"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 2h8l-1 6a3 3 0 0 1-6 0zM12 11v9M8 22h8"/></svg>
+                <div class="pain-list">
+                    <article>
                         <h3>Pérdidas de inventario</h3>
                         <p>Botellas que no cuadran, cortesías sin registro y mermas que nadie ve hasta fin de mes.</p>
                     </article>
-                    <article class="card reveal"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3h16v18l-3-2-3 2-2-2-2 2-3-2-3 2zM8 8h8M8 12h8"/></svg>
+                    <article>
                         <h3>Cuentas descuadradas</h3>
                         <p>Pedidos anotados a mano, cuentas mal divididas y diferencias en caja al cerrar.</p>
                     </article>
-                    <article class="card reveal"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/></svg>
+                    <article>
                         <h3>Lentitud para facturar</h3>
                         <p>Clientes esperando la cuenta mientras el equipo busca comandas en papel.</p>
                     </article>
@@ -824,33 +1212,33 @@
 
         <!-- ===== 5. FUNCIONES ===== -->
         <section id="funciones">
-            <div class="wrap">
-                <div class="sec-head reveal">
+            <div class="wrap split">
+                <div class="sec-head">
                     <h2>Todo lo que tu barra necesita</h2>
                     <p>Seis módulos que trabajan juntos y se actualizan al instante.</p>
                 </div>
-                <div class="grid g3">
-                    <article class="card reveal"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                <div class="menu-list">
+                    <article>
                         <h3>Control de mesas en tiempo real</h3>
                         <p>Mira qué mesas están libres, ocupadas o por cobrar, desde cualquier dispositivo.</p>
                     </article>
-                    <article class="card reveal"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h14v18H5zM9 8h6M9 12h6M9 16h3"/></svg>
+                    <article>
                         <h3>Toma de pedidos</h3>
                         <p>El mesero envía la comanda y llega directo a barra y cocina, sin papeles.</p>
                     </article>
-                    <article class="card reveal"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 21h20zM12 10v5M12 18v.5"/></svg>
+                    <article>
                         <h3>Inventario y alertas de stock</h3>
                         <p>Descuenta cada trago por receta y avisa cuando una botella está por agotarse.</p>
                     </article>
-                    <article class="card reveal"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 11h20M7 15h3"/></svg>
+                    <article>
                         <h3>Cuentas y división de la cuenta</h3>
                         <p>Divide por persona, por producto o en partes iguales, y cobra en segundos.</p>
                     </article>
-                    <article class="card reveal"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2 21c0-4 3-6 7-6s7 2 7 6M17 5a3.5 3.5 0 0 1 0 7M22 21c0-3-1.5-5-4-5.7"/></svg>
+                    <article>
                         <h3>Personal y turnos</h3>
                         <p>Arma horarios, registra entradas y salidas y asigna permisos por rol.</p>
                     </article>
-                    <article class="card reveal"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3v18h18M7 15l4-5 3 3 5-7"/></svg>
+                    <article>
                         <h3>Reportes y analítica</h3>
                         <p>Ventas por hora, productos estrella y margen por trago, listos para exportar.</p>
                     </article>
@@ -861,19 +1249,19 @@
         <!-- ===== 6. CÓMO FUNCIONA ===== -->
         <section>
             <div class="wrap">
-                <div class="sec-head reveal">
+                <div class="sec-head">
                     <h2>Listo para vender en una tarde</h2>
                 </div>
-                <div class="grid g3 steps">
-                    <article class="card step reveal">
+                <div class="steps">
+                    <article class="step">
                         <h3>Registra tu bar</h3>
                         <p>Crea tu cuenta con el correo del negocio. Toma menos de dos minutos.</p>
                     </article>
-                    <article class="card step reveal">
+                    <article class="step">
                         <h3>Configura carta y mesas</h3>
                         <p>Importa tu carta desde Excel y dibuja el plano de tu salón.</p>
                     </article>
-                    <article class="card step reveal">
+                    <article class="step">
                         <h3>Empieza a vender</h3>
                         <p>Tu equipo toma pedidos desde el celular desde el primer turno.</p>
                     </article>
@@ -881,20 +1269,23 @@
             </div>
         </section>
 
-        <!-- ===== 7. CAPTURA DE PRODUCTO ===== -->
+        <!-- ===== 7. PANEL ===== -->
         <section>
             <div class="wrap showcase">
-                <div class="reveal">
+                <div>
                     <h2>Tu noche, en números claros</h2>
-                    <p>Ventas del día, ticket medio y ocupación se actualizan solas. Decide en la barra, no al día siguiente.</p><a class="btn btn-ghost" href="#inicio" data-auth-mode="login">Ver el panel en vivo</a></div>
-                <!-- MOCKUP 2: sustituir por captura real del panel -->
-                <div class="mock reveal" role="img" aria-label="Panel de métricas con gráfico de ventas por hora">
-                    <div class="kpis">
+                    <p>Ventas del día, ticket medio y ocupación se actualizan solas. Decide en la barra, no al día siguiente.</p>
+                    <a class="btn btn-ghost" href="#inicio" data-auth-mode="login">Ver el panel en vivo</a>
+                </div>
+                <!-- EJEMPLO: sustituir por captura real del panel -->
+                <div class="panel" role="img" aria-label="Panel de métricas: ventas del día 4.820 dólares, ticket medio 37 dólares, 14 de 20 mesas ocupadas, con gráfico de ventas por hora que alcanza su punto más alto a la 1 am">
+                    <div class="kpis" aria-hidden="true">
                         <div class="kpi"><small>Ventas del día</small><b>$4.820</b></div>
                         <div class="kpi"><small>Ticket medio</small><b>$37</b></div>
                         <div class="kpi"><small>Mesas ocupadas</small><b>14/20</b></div>
                     </div>
-                    <div class="chart" style="height:150px" aria-hidden="true"><i style="--h:20%"></i><i style="--h:30%"></i><i style="--h:45%"></i><i style="--h:62%"></i><i style="--h:80%"></i><i style="--h:100%"></i><i style="--h:90%"></i><i style="--h:55%"></i></div>
+                    <div class="chart" aria-hidden="true"><i style="--h:20%"></i><i style="--h:30%"></i><i style="--h:45%"></i><i style="--h:62%"></i><i style="--h:80%"></i><i class="peak" style="--h:100%"></i><i style="--h:90%"></i><i style="--h:55%"></i></div>
+                    <div class="hours" aria-hidden="true"><span>8 pm</span><span>9</span><span>10</span><span>11</span><span>12</span><span>1 am</span><span>2</span><span>3</span></div>
                 </div>
             </div>
         </section>
@@ -902,16 +1293,16 @@
         <!-- ===== 8. TESTIMONIOS ===== -->
         <section id="testimonios">
             <div class="wrap">
-                <div class="sec-head reveal">
+                <div class="sec-head">
                     <h2>Lo que dicen quienes ya cierran sin sorpresas</h2>
                 </div>
-                <div class="grid g3">
-                    <figure class="card reveal" style="margin:0">
-                        <blockquote>“Descubrimos que perdíamos casi un 12 % en licores. En dos meses lo bajamos a menos de 3 %.”</blockquote><cite>Camila Rojas · La Cava, Bogotá</cite></figure>
-                    <figure class="card reveal" style="margin:0">
-                        <blockquote>“Los meseros toman pedidos desde el celular y la barra los recibe al instante. Se acabaron las comandas perdidas.”</blockquote><cite>Julián Herrera · Nocturno, Medellín</cite></figure>
-                    <figure class="card reveal" style="margin:0">
-                        <blockquote>“Dividir la cuenta de una mesa de diez ya no es un drama. Cobramos en menos de un minuto.”</blockquote><cite>Valentina Mora · El Barril, Cali</cite></figure>
+                <div class="quotes">
+                    <figure>
+                        <blockquote>“Descubrimos que perdíamos casi un 12 % en licores. En dos meses lo bajamos a menos de 3 %.”</blockquote><cite>Camila Rojas, La Cava, Bogotá</cite></figure>
+                    <figure>
+                        <blockquote>“Los meseros toman pedidos desde el celular y la barra los recibe al instante. Se acabaron las comandas perdidas.”</blockquote><cite>Julián Herrera, Nocturno, Medellín</cite></figure>
+                    <figure>
+                        <blockquote>“Dividir la cuenta de una mesa de diez ya no es un drama. Cobramos en menos de un minuto.”</blockquote><cite>Valentina Mora, El Barril, Cali</cite></figure>
                 </div>
             </div>
         </section>
@@ -919,39 +1310,44 @@
         <!-- ===== 9. PRECIOS ===== -->
         <section id="precios">
             <div class="wrap">
-                <div class="sec-head reveal">
+                <div class="sec-head">
                     <h2>Planes para cada tipo de bar</h2>
                     <p>Todos incluyen 14 días gratis. Cambia de plan cuando quieras.</p>
+                    <p class="plan-fine">Precios en dólares y en pesos colombianos, a una tasa de referencia de 1 USD = 4.000 COP.</p>
                 </div>
-                <div class="grid g3">
-                    <article class="card price reveal">
+                <div class="plans">
+                    <article class="plan" data-plan="basico" data-name="Básico" data-usd="29" data-cop="116000">
                         <h3>Básico</h3>
-                        <div class="amount">$29<small> /mes</small></div>
+                        <div class="amount">$29<small> USD /mes</small></div>
+                        <div class="amount-cop">$116.000 COP /mes</div>
                         <ul>
                             <li>1 local, hasta 10 mesas</li>
                             <li>Pedidos y cuentas</li>
                             <li>Inventario básico</li>
                             <li>Soporte por correo</li>
-                        </ul><a class="btn btn-ghost" href="#contacto" data-auth-mode="register">Elegir Básico</a></article>
-                    <article class="card price pro reveal"><span class="badge">Recomendado</span>
+                        </ul><a class="btn btn-ghost" href="#precios" data-checkout-plan="basico">Elegir Básico</a></article>
+                    <article class="plan pro" data-plan="pro" data-name="Pro" data-usd="59" data-cop="236000">
                         <h3>Pro</h3>
-                        <div class="amount">$59<small> /mes</small></div>
+                        <div class="tag">Recomendado</div>
+                        <div class="amount">$59<small> USD /mes</small></div>
+                        <div class="amount-cop">$236.000 COP /mes</div>
                         <ul>
                             <li>1 local, mesas ilimitadas</li>
                             <li>Inventario con recetas y alertas</li>
                             <li>Turnos y permisos por rol</li>
                             <li>Reportes avanzados</li>
                             <li>Soporte por chat</li>
-                        </ul><a class="btn btn-primary" href="#contacto" data-auth-mode="register">Elegir Pro</a></article>
-                    <article class="card price reveal">
+                        </ul><a class="btn btn-primary" href="#precios" data-checkout-plan="pro">Elegir Pro</a></article>
+                    <article class="plan" data-plan="multilocal" data-name="Multi-local" data-usd="129" data-cop="516000">
                         <h3>Multi-local</h3>
-                        <div class="amount">$129<small> /mes</small></div>
+                        <div class="amount">$129<small> USD /mes</small></div>
+                        <div class="amount-cop">$516.000 COP /mes</div>
                         <ul>
                             <li>Hasta 5 locales</li>
                             <li>Reportes consolidados</li>
                             <li>Inventario entre sedes</li>
                             <li>Gerente de cuenta dedicado</li>
-                        </ul><a class="btn btn-ghost" href="#contacto" data-auth-mode="register">Elegir Multi-local</a></article>
+                        </ul><a class="btn btn-ghost" href="#precios" data-checkout-plan="multilocal">Elegir Multi-local</a></article>
                 </div>
             </div>
         </section>
@@ -959,10 +1355,10 @@
         <!-- ===== 10. FAQ ===== -->
         <section>
             <div class="wrap">
-                <div class="sec-head reveal">
+                <div class="sec-head">
                     <h2>Preguntas frecuentes</h2>
                 </div>
-                <div class="faq reveal">
+                <div class="faq">
                     <div class="faq-item"><button class="faq-q" aria-expanded="false" aria-controls="a1" id="q1">¿Funciona sin internet?</button>
                         <div class="faq-a" id="a1" role="region" aria-labelledby="q1">
                             <div>
@@ -1004,7 +1400,7 @@
 
         <!-- ===== 11. CTA FINAL ===== -->
         <section class="final" id="contacto">
-            <div class="wrap reveal">
+            <div class="wrap">
                 <h2>Empieza gratis 14 días, sin tarjeta</h2>
                 <p>Configura tu bar hoy y mira el control que tendrás esta misma noche.</p>
                 <a class="btn btn-primary" href="#contacto" data-auth-mode="register">Crear mi cuenta gratis</a>
@@ -1029,7 +1425,8 @@
         <form id="auth-form">
             <label id="auth-name-field" hidden>
                 Nombre
-                <input id="auth-name" name="name" type="text" autocomplete="name" maxlength="120">
+                <input id="auth-name" name="name" type="text" autocomplete="name" maxlength="120" pattern="[^0-9]+" title="El nombre no puede contener números." aria-describedby="auth-name-hint">
+                <span class="field-hint" id="auth-name-hint" role="status" aria-live="polite"></span>
             </label>
             <label>
                 Correo electrónico
@@ -1044,6 +1441,122 @@
         <p class="auth-status" id="auth-status" role="status" aria-live="polite"></p>
         <button class="auth-switch" id="auth-switch" type="button">¿No tienes cuenta? Crear una</button>
         <button class="btn btn-ghost" id="auth-logout" type="button" hidden>Cerrar sesión</button>
+    </dialog>
+
+    <!-- ===== PAGO DE PRUEBA: no cobra nada ===== -->
+    <dialog class="auth-dialog pay-dialog" id="pay-dialog" aria-labelledby="pay-title">
+        <button class="auth-close" id="pay-close" type="button" aria-label="Cerrar">×</button>
+
+        <div id="pay-form-pane">
+            <h2 id="pay-title">Pagar suscripción</h2>
+            <p class="pay-note">Pago de prueba: no se cobra nada. No escribas los datos de una tarjeta real; para probar usa 4242 4242 4242 4242.</p>
+            <form id="pay-form" novalidate>
+                <fieldset aria-labelledby="pay-group-1">
+                    <h3 class="pay-legend" id="pay-group-1">Tu plan</h3>
+                    <div class="row-2 row-plan">
+                        <label>
+                            Plan
+                            <select id="pay-plan" name="plan" autofocus>
+                                <option value="basico">Básico</option>
+                                <option value="pro">Pro</option>
+                                <option value="multilocal">Multi-local</option>
+                            </select>
+                        </label>
+                        <label>
+                            Moneda
+                            <select id="pay-currency" name="currency">
+                                <option value="USD">Dólares (USD)</option>
+                                <option value="COP">Pesos colombianos (COP)</option>
+                            </select>
+                        </label>
+                    </div>
+                    <div class="pay-summary"><span>Total a pagar hoy</span><b id="pay-total" aria-live="polite"></b></div>
+                    <p class="pay-alt" id="pay-total-alt"></p>
+                </fieldset>
+
+                <fieldset aria-labelledby="pay-group-2">
+                    <h3 class="pay-legend" id="pay-group-2">Datos del pagador</h3>
+                    <label>
+                        Nombre completo
+                        <input id="pay-name" name="payer_name" type="text" autocomplete="name" maxlength="120" aria-describedby="pay-name-hint">
+                        <span class="field-hint" id="pay-name-hint" role="status" aria-live="polite"></span>
+                    </label>
+                    <label>
+                        Correo electrónico
+                        <input id="pay-email" name="email" type="email" autocomplete="email" maxlength="254" aria-describedby="pay-email-hint">
+                        <span class="field-hint" id="pay-email-hint" role="status" aria-live="polite"></span>
+                    </label>
+                    <div class="row-doc">
+                        <label>
+                            Tipo de documento
+                            <select id="pay-doctype" name="document_type">
+                                <option value="CC">Cédula de ciudadanía</option>
+                                <option value="CE">Cédula de extranjería</option>
+                                <option value="NIT">NIT</option>
+                            </select>
+                        </label>
+                        <label>
+                            Número de documento
+                            <input id="pay-doc" name="document_number" type="text" inputmode="numeric" autocomplete="off" maxlength="12" aria-describedby="pay-doc-hint">
+                            <span class="field-hint" id="pay-doc-hint" role="status" aria-live="polite"></span>
+                        </label>
+                    </div>
+                    <label>
+                        Teléfono
+                        <input id="pay-phone" name="phone" type="text" inputmode="numeric" autocomplete="tel-national" maxlength="15" aria-describedby="pay-phone-hint">
+                        <span class="field-hint" id="pay-phone-hint" role="status" aria-live="polite"></span>
+                    </label>
+                </fieldset>
+
+                <fieldset aria-labelledby="pay-group-3">
+                    <h3 class="pay-legend" id="pay-group-3">Tarjeta</h3>
+                    <label>
+                        Nombre en la tarjeta
+                        <input id="pay-holder" name="card_holder" type="text" autocomplete="off" maxlength="120" aria-describedby="pay-holder-hint">
+                        <span class="field-hint" id="pay-holder-hint" role="status" aria-live="polite"></span>
+                    </label>
+                    <label>
+                        Número de tarjeta
+                        <input id="pay-card" name="card_number" type="text" inputmode="numeric" autocomplete="off" maxlength="19" placeholder="0000 0000 0000 0000" aria-describedby="pay-card-hint">
+                        <span class="field-hint" id="pay-card-hint" role="status" aria-live="polite"></span>
+                    </label>
+                    <div class="row-2">
+                        <label>
+                            Vencimiento
+                            <input id="pay-exp" name="card_expiry" type="text" inputmode="numeric" autocomplete="off" maxlength="5" placeholder="MM/AA" aria-describedby="pay-exp-hint">
+                            <span class="field-hint" id="pay-exp-hint" role="status" aria-live="polite"></span>
+                        </label>
+                        <label>
+                            Código de seguridad
+                            <input id="pay-cvv" name="card_cvv" type="text" inputmode="numeric" autocomplete="off" maxlength="4" placeholder="123" aria-describedby="pay-cvv-hint">
+                            <span class="field-hint" id="pay-cvv-hint" role="status" aria-live="polite"></span>
+                        </label>
+                    </div>
+                </fieldset>
+
+                <button class="btn btn-primary" id="pay-submit" type="submit">Pagar</button>
+            </form>
+            <p class="auth-status" id="pay-status" role="status" aria-live="polite"></p>
+        </div>
+
+        <div id="pay-receipt-pane" hidden>
+            <h2 id="receipt-title" tabindex="-1">Comprobante de pago</h2>
+            <p id="receipt-intro">Tu pago de prueba quedó registrado. Imprime o guarda el comprobante si lo necesitas.</p>
+            <figure class="ticket receipt" id="receipt" aria-label="Comprobante de pago de prueba">
+                <div class="stamp">Pago de prueba, sin validez</div>
+                <header>
+                    <span class="ticket-brand">Barrica</span>
+                    <span class="ticket-meta" id="rc-number"></span>
+                </header>
+                <ul id="rc-lines"></ul>
+                <div class="ticket-total"><span>Total pagado</span><b id="rc-total"></b></div>
+                <p class="receipt-fine">No se realizó ningún cobro. Este comprobante no tiene validez contable ni fiscal.</p>
+            </figure>
+            <div class="receipt-actions">
+                <button class="btn btn-primary" id="receipt-print" type="button">Imprimir o guardar en PDF</button>
+                <button class="btn btn-ghost" id="receipt-done" type="button">Cerrar</button>
+            </div>
+        </div>
     </dialog>
 
     <script>
@@ -1075,35 +1588,6 @@
 
             /* Scroll suave: lo gestiona CSS (scroll-behavior) y respeta prefers-reduced-motion */
 
-            /* Animaciones al hacer scroll */
-            const io = new IntersectionObserver(es => es.forEach(e => {
-                if (e.isIntersecting) {
-                    e.target.classList.add('in');
-                    io.unobserve(e.target)
-                }
-            }), {
-                threshold: .15
-            });
-            document.querySelectorAll('.reveal').forEach(el => io.observe(el));
-
-            /* Contadores animados */
-            const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-            document.querySelectorAll('.count').forEach(el => {
-                const to = +el.dataset.to;
-                if (reduce) {
-                    el.textContent = to.toLocaleString('es');
-                    return
-                }
-                const t0 = performance.now(),
-                    dur = 1600;
-                const tick = t => {
-                    const p = Math.min((t - t0) / dur, 1);
-                    el.textContent = Math.round(to * (1 - Math.pow(1 - p, 3))).toLocaleString('es');
-                    if (p < 1) requestAnimationFrame(tick)
-                };
-                requestAnimationFrame(tick);
-            });
-
             /* Acordeón FAQ */
             document.querySelectorAll('.faq-q').forEach(b => b.addEventListener('click', () => {
                 const open = b.getAttribute('aria-expanded') === 'true';
@@ -1116,6 +1600,7 @@
             const authForm = document.getElementById('auth-form');
             const authNameField = document.getElementById('auth-name-field');
             const authName = document.getElementById('auth-name');
+            const authNameHint = document.getElementById('auth-name-hint');
             const authEmail = document.getElementById('auth-email');
             const authPassword = document.getElementById('auth-password');
             const authTitle = document.getElementById('auth-title');
@@ -1129,6 +1614,110 @@
             let authUser = null;
             let sessionChecked = false;
 
+            /* ===== Campos protegidos =====
+               Cada regla indica qué caracteres se aceptan; los demás se borran al
+               escribir o pegar y se muestra un aviso bajo el campo.
+               `sig` marca los caracteres "reales" (no separadores) para que el
+               cursor no salte cuando se insertan espacios o la barra. */
+            const hasNumber = text => /\p{N}/u.test(text);
+            const isDigit = ch => ch >= '0' && ch <= '9';
+            const isAmex = digits => /^3[47]/.test(digits);
+            const cardBrand = digits =>
+                /^4/.test(digits) ? 'Visa' :
+                /^(5[1-5]|2[2-7])/.test(digits) ? 'Mastercard' :
+                isAmex(digits) ? 'American Express' : 'Tarjeta';
+
+            const formatCard = text => {
+                const digits = text.replace(/\D/g, '');
+                const amex = isAmex(digits);
+                const shown = digits.slice(0, amex ? 15 : 16);
+                const groups = amex ? [4, 6, 5] : [4, 4, 4, 4];
+                const parts = [];
+                let start = 0;
+                for (const size of groups) {
+                    if (start >= shown.length) break;
+                    parts.push(shown.slice(start, start + size));
+                    start += size;
+                }
+                return parts.join(' ');
+            };
+
+            const formatExpiry = text => {
+                const digits = text.replace(/\D/g, '').slice(0, 4);
+                return digits.length > 2 ? `${digits.slice(0, 2)}/${digits.slice(2)}` : digits;
+            };
+
+            const RULES = {
+                name: {
+                    allowed: ch => !hasNumber(ch),
+                    sig: () => true,
+                    message: 'El nombre no puede contener números.'
+                },
+                digits: {
+                    allowed: isDigit,
+                    sig: isDigit,
+                    message: 'Este campo solo admite números.'
+                },
+                card: {
+                    allowed: ch => isDigit(ch) || ch === ' ',
+                    sig: isDigit,
+                    format: formatCard,
+                    message: 'El número de tarjeta solo admite números.'
+                },
+                expiry: {
+                    allowed: ch => isDigit(ch) || ch === '/',
+                    sig: isDigit,
+                    format: formatExpiry,
+                    message: 'El vencimiento solo admite números.'
+                }
+            };
+
+            const bindGuard = (input, hint, rule) => {
+                const setHint = message => {
+                    hint.textContent = message;
+                    input.setAttribute('aria-invalid', message ? 'true' : 'false');
+                };
+
+                const run = () => {
+                    const raw = input.value;
+                    const caret = input.selectionStart ?? raw.length;
+                    const chars = raw.split('');
+                    const kept = chars.filter(rule.allowed);
+                    const rejected = kept.length !== chars.length;
+                    const significantBeforeCaret = chars.slice(0, caret).filter(rule.allowed).filter(rule.sig).length;
+
+                    let text = kept.join('');
+                    if (rule.format) text = rule.format(text);
+                    if (text === raw) {
+                        setHint('');
+                        return;
+                    }
+
+                    input.value = text;
+                    let seen = 0;
+                    let position = text.length;
+                    for (let i = 0; i < text.length; i++) {
+                        if (seen === significantBeforeCaret) {
+                            position = i;
+                            break;
+                        }
+                        if (rule.sig(text[i])) seen++;
+                    }
+                    try { input.setSelectionRange(position, position); } catch { /* campo sin selección */ }
+                    setHint(rejected ? rule.message : '');
+                };
+
+                input.addEventListener('input', event => {
+                    if (event.isComposing) return;
+                    run();
+                });
+                input.addEventListener('compositionend', run);
+                return { setHint, run };
+            };
+
+            const authNameGuard = bindGuard(authName, authNameHint, RULES.name);
+            const setNameHint = authNameGuard.setHint;
+
             const setAuthMode = mode => {
                 authMode = mode;
                 authTitle.textContent = mode === 'register' ? 'Crear cuenta' : 'Iniciar sesión';
@@ -1137,6 +1726,7 @@
                     'Accede a tu cuenta de Barrica.';
                 authNameField.hidden = mode !== 'register';
                 authName.required = mode === 'register';
+                setNameHint('');
                 authPassword.autocomplete = mode === 'register' ? 'new-password' : 'current-password';
                 authPassword.minLength = 12;
                 authSubmit.textContent = mode === 'register' ? 'Crear cuenta' : 'Iniciar sesión';
@@ -1241,6 +1831,21 @@
             authForm.addEventListener('submit', async event => {
                 event.preventDefault();
                 authStatus.textContent = '';
+
+                if (authMode === 'register') {
+                    /* Última barrera antes de enviar: nada de números en el nombre */
+                    if (hasNumber(authName.value)) {
+                        authNameGuard.run();
+                        authName.focus();
+                        return;
+                    }
+                    if (!authName.value.trim()) {
+                        setNameHint('Escribe tu nombre.');
+                        authName.focus();
+                        return;
+                    }
+                }
+
                 authSubmit.disabled = true;
                 const endpoint = authMode === 'register' ? 'register' : 'login';
                 const payload = {
@@ -1268,6 +1873,7 @@
                             'Iniciaste sesión correctamente.'
                     );
                     authForm.reset();
+                    setNameHint('');
                 } catch (error) {
                     authStatus.textContent = error instanceof Error ?
                         error.message :
@@ -1297,6 +1903,240 @@
                         'No se pudo cerrar sesión. Inténtalo de nuevo.';
                 } finally {
                     authLogout.disabled = false;
+                }
+            });
+
+            /* ===== Pago de prueba =====
+               Todo es ficticio: el servidor no cobra ni guarda nada. El número
+               completo de la tarjeta, el vencimiento y el CVV se validan aquí y
+               nunca se envían; al servidor solo viajan los últimos 4 dígitos. */
+            const payDialog = document.getElementById('pay-dialog');
+            const payForm = document.getElementById('pay-form');
+            const payFormPane = document.getElementById('pay-form-pane');
+            const payReceiptPane = document.getElementById('pay-receipt-pane');
+            const payPlan = document.getElementById('pay-plan');
+            const payCurrency = document.getElementById('pay-currency');
+            const payTotal = document.getElementById('pay-total');
+            const payTotalAlt = document.getElementById('pay-total-alt');
+            const paySubmit = document.getElementById('pay-submit');
+            const payStatus = document.getElementById('pay-status');
+            const payDocType = document.getElementById('pay-doctype');
+
+            const plans = {};
+            document.querySelectorAll('.plan[data-plan]').forEach(el => {
+                plans[el.dataset.plan] = {
+                    id: el.dataset.plan,
+                    name: el.dataset.name,
+                    USD: Number(el.dataset.usd),
+                    COP: Number(el.dataset.cop)
+                };
+            });
+
+            const money = (value, currency) =>
+                '$' + value.toLocaleString('es-CO', {
+                    minimumFractionDigits: currency === 'USD' ? 2 : 0,
+                    maximumFractionDigits: currency === 'USD' ? 2 : 0
+                }) + ' ' + currency;
+
+            const payFields = {
+                name: { input: document.getElementById('pay-name'), hint: document.getElementById('pay-name-hint') },
+                email: { input: document.getElementById('pay-email'), hint: document.getElementById('pay-email-hint') },
+                doc: { input: document.getElementById('pay-doc'), hint: document.getElementById('pay-doc-hint') },
+                phone: { input: document.getElementById('pay-phone'), hint: document.getElementById('pay-phone-hint') },
+                holder: { input: document.getElementById('pay-holder'), hint: document.getElementById('pay-holder-hint') },
+                card: { input: document.getElementById('pay-card'), hint: document.getElementById('pay-card-hint') },
+                exp: { input: document.getElementById('pay-exp'), hint: document.getElementById('pay-exp-hint') },
+                cvv: { input: document.getElementById('pay-cvv'), hint: document.getElementById('pay-cvv-hint') }
+            };
+
+            const payGuards = {
+                name: bindGuard(payFields.name.input, payFields.name.hint, RULES.name),
+                doc: bindGuard(payFields.doc.input, payFields.doc.hint, RULES.digits),
+                phone: bindGuard(payFields.phone.input, payFields.phone.hint, RULES.digits),
+                holder: bindGuard(payFields.holder.input, payFields.holder.hint, RULES.name),
+                card: bindGuard(payFields.card.input, payFields.card.hint, RULES.card),
+                exp: bindGuard(payFields.exp.input, payFields.exp.hint, RULES.expiry),
+                cvv: bindGuard(payFields.cvv.input, payFields.cvv.hint, RULES.digits)
+            };
+
+            const setFieldHint = (field, message) => {
+                field.hint.textContent = message;
+                field.input.setAttribute('aria-invalid', message ? 'true' : 'false');
+            };
+
+            const updatePayTotal = () => {
+                const plan = plans[payPlan.value];
+                const currency = payCurrency.value;
+                if (!plan) return;
+                const other = currency === 'USD' ? 'COP' : 'USD';
+                payTotal.textContent = money(plan[currency], currency);
+                payTotalAlt.textContent = `Equivale a ${money(plan[other], other)} a la tasa de referencia.`;
+                paySubmit.textContent = `Pagar ${money(plan[currency], currency)}`;
+            };
+            /* Al editar un campo con error, el aviso desaparece (los campos con regla ya lo hacen solos) */
+            payFields.email.input.addEventListener('input', () => setFieldHint(payFields.email, ''));
+            payForm.addEventListener('input', () => {
+                if (payStatus.textContent === 'Revisa los campos marcados.') payStatus.textContent = '';
+            });
+            payPlan.addEventListener('change', updatePayTotal);
+            payCurrency.addEventListener('change', updatePayTotal);
+
+            const openCheckout = planId => {
+                payForm.reset();
+                Object.values(payFields).forEach(field => setFieldHint(field, ''));
+                payStatus.textContent = '';
+                paySubmit.disabled = false;
+                payFormPane.hidden = false;
+                payReceiptPane.hidden = true;
+                if (plans[planId]) payPlan.value = planId;
+                payCurrency.value = (navigator.language || '').toLowerCase() === 'es-co' ? 'COP' : 'USD';
+                if (authUser) {
+                    payFields.name.input.value = authUser.name || '';
+                    payFields.email.input.value = authUser.email || '';
+                }
+                updatePayTotal();
+                if (!payDialog.open) payDialog.showModal();
+            };
+
+            document.querySelectorAll('[data-checkout-plan]').forEach(link => {
+                link.addEventListener('click', event => {
+                    event.preventDefault();
+                    setMenu(false);
+                    openCheckout(link.dataset.checkoutPlan);
+                });
+            });
+
+            document.getElementById('pay-close').addEventListener('click', () => payDialog.close());
+            document.getElementById('receipt-done').addEventListener('click', () => payDialog.close());
+            document.getElementById('receipt-print').addEventListener('click', () => window.print());
+            /* Al cerrar se borran los datos de la tarjeta del formulario */
+            payDialog.addEventListener('close', () => {
+                payForm.reset();
+                Object.values(payFields).forEach(field => setFieldHint(field, ''));
+            });
+
+            /* Revisa todo el formulario; devuelve los campos con error */
+            const validatePayment = () => {
+                const invalid = [];
+                const check = (field, ok, message) => {
+                    setFieldHint(field, ok ? '' : message);
+                    if (!ok) invalid.push(field.input);
+                };
+
+                const name = payFields.name.input.value.trim();
+                check(payFields.name, name.length >= 2 && !hasNumber(name), 'Escribe tu nombre completo, sin números.');
+
+                const email = payFields.email.input.value.trim();
+                check(payFields.email, email !== '' && payFields.email.input.validity.valid, 'Escribe un correo válido.');
+
+                check(payFields.doc, /^\d{6,12}$/.test(payFields.doc.input.value), 'El documento debe tener entre 6 y 12 números.');
+                check(payFields.phone, /^\d{7,15}$/.test(payFields.phone.input.value), 'El teléfono debe tener entre 7 y 15 números.');
+
+                const holder = payFields.holder.input.value.trim();
+                check(payFields.holder, holder.length >= 2 && !hasNumber(holder), 'Escribe el nombre como aparece en la tarjeta, sin números.');
+
+                const cardDigits = payFields.card.input.value.replace(/\s/g, '');
+                const amex = isAmex(cardDigits);
+                check(payFields.card, cardDigits.length === (amex ? 15 : 16), `Escribe los ${amex ? 15 : 16} números de la tarjeta.`);
+
+                const expMatch = /^(0[1-9]|1[0-2])\/(\d{2})$/.exec(payFields.exp.input.value);
+                if (!expMatch) {
+                    check(payFields.exp, false, 'Escribe el vencimiento como MM/AA, por ejemplo 08/29.');
+                } else {
+                    const now = new Date();
+                    const year = 2000 + Number(expMatch[2]);
+                    const month = Number(expMatch[1]);
+                    const expired = year < now.getFullYear() || (year === now.getFullYear() && month < now.getMonth() + 1);
+                    check(payFields.exp, !expired, 'La tarjeta está vencida.');
+                }
+
+                const cvvLength = amex ? 4 : 3;
+                check(payFields.cvv, new RegExp(`^\\d{${cvvLength}}$`).test(payFields.cvv.input.value), `El código tiene ${cvvLength} números.`);
+
+                return invalid;
+            };
+
+            const renderReceipt = receipt => {
+                const lines = document.getElementById('rc-lines');
+                lines.replaceChildren();
+                const addLine = (label, value) => {
+                    const item = document.createElement('li');
+                    const left = document.createElement('span');
+                    const right = document.createElement('span');
+                    left.textContent = label;
+                    right.textContent = value;
+                    item.append(left, right);
+                    lines.append(item);
+                };
+
+                const issued = new Date(receipt.issued_at).toLocaleString('es-CO', {
+                    dateStyle: 'medium',
+                    timeStyle: 'short',
+                    timeZone: 'America/Bogota'
+                });
+                document.getElementById('rc-number').textContent = `N.º ${receipt.number}`;
+                addLine('Fecha', issued);
+                addLine('Plan', `${receipt.plan.name}, ${receipt.period}`);
+                addLine('Pagador', receipt.payer.name);
+                addLine('Documento', `${receipt.payer.document_type} ${receipt.payer.document_number}`);
+                addLine('Correo', receipt.payer.email);
+                addLine('Teléfono', receipt.payer.phone);
+                addLine('Método', `${receipt.card.brand} terminada en ${receipt.card.last4}`);
+                addLine('Titular', receipt.card.holder);
+                document.getElementById('rc-total').textContent = money(receipt.amount, receipt.currency);
+
+                payFormPane.hidden = true;
+                payReceiptPane.hidden = false;
+                document.getElementById('receipt-title').focus();
+            };
+
+            payForm.addEventListener('submit', async event => {
+                event.preventDefault();
+                payStatus.textContent = '';
+
+                const invalid = validatePayment();
+                if (invalid.length) {
+                    payStatus.textContent = 'Revisa los campos marcados.';
+                    invalid[0].focus();
+                    return;
+                }
+
+                paySubmit.disabled = true;
+                const cardDigits = payFields.card.input.value.replace(/\s/g, '');
+                const tidy = text => text.trim().replace(/\s+/g, ' ');
+                const payload = {
+                    plan: payPlan.value,
+                    currency: payCurrency.value,
+                    payer_name: tidy(payFields.name.input.value),
+                    email: payFields.email.input.value.trim(),
+                    document_type: payDocType.value,
+                    document_number: payFields.doc.input.value,
+                    phone: payFields.phone.input.value,
+                    card_holder: tidy(payFields.holder.input.value),
+                    card_last4: cardDigits.slice(-4),
+                    card_brand: cardBrand(cardDigits)
+                };
+
+                try {
+                    const unavailableMessage = getApiUnavailableMessage();
+                    if (unavailableMessage) throw new Error(unavailableMessage);
+
+                    payStatus.textContent = 'Procesando pago de prueba…';
+                    const response = await fetch('/api/payments/simulate', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const data = await readApiResponse(response);
+                    if (!data.receipt) throw new Error('El servidor no devolvió el comprobante.');
+                    payStatus.textContent = '';
+                    renderReceipt(data.receipt);
+                } catch (error) {
+                    payStatus.textContent = error instanceof Error ?
+                        error.message :
+                        'No se pudo completar el pago de prueba. Inténtalo de nuevo.';
+                } finally {
+                    paySubmit.disabled = false;
                 }
             });
         })();
