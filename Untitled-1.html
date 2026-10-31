@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Barrica · Software de gestión para bares</title>
+    <meta name="description" content="Controla mesas, pedidos, inventario de licores, cuentas, turnos y reportes desde una sola pantalla.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@400;500;600&display=swap">
+    <style>
+        /* ===== VARIABLES DE BRANDING (personaliza aquí) ===== */
+        
+        :root {
+            --bg: #0D0D0D;
+            --bg-2: #2B1B12;
+            --surface: rgba(255, 255, 255, .05);
+            --border: rgba(224, 164, 88, .22);
+            --text: #F3EBE0;
+            --muted: #BFB2A3;
+            --gold: #E0A458;
+            --gold-2: #F2C27E;
+            --neon: #7CFF9B;
+            --font-display: "Playfair Display", Georgia, serif;
+            --font-body: "Poppins", system-ui, sans-serif;
+            --sp-1: .5rem;
+            --sp-2: 1rem;
+            --sp-3: 1.5rem;
+            --sp-4: 2.5rem;
+            --sp-5: 5rem;
+            --radius: 16px;
+            --glow: 0 0 28px rgba(224, 164, 88, .35);
+            color-scheme: dark;
+            box-sizing: border-box;
+            padding-top: env(safe-area-inset-top, 0px);
+            padding-bottom: env(safe-area-inset-bottom, 0px);
+        }
+        
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 5rem
+        }
+        
+        *,
+        *::before,
+        *::after {
+            box-sizing: inherit
+        }
+        
+        body {
+            margin: 0;
+            background: linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 100%) fixed;
+            color: var(--text);
+            font: 400 1rem/1.65 var(--font-body);
+            overflow-x: hidden
+        }
+        
+        h1,
+        h2,
+        h3 {
+            font-family: var(--font-display);
+            line-height: 1.15;
+            margin: 0 0 var(--sp-2)
+        }
+        
+        h1 {
+            font-size: clamp(2.3rem, 6vw, 4.2rem)
+        }
+        
+        h2 {
+            font-size: clamp(1.7rem, 4vw, 2.6rem)
+        }
+        
+        h3 {
+            font-size: 1.25rem
+        }
+        
+        p {
+            margin: 0 0 var(--sp-2);
+            color: var(--muted);
+            max-width: 62ch
+        }
+        
+        a {
+            color: inherit
+        }
+        
+        :focus-visible {
+            outline: 3px solid var(--neon);
+            outline-offset: 3px;
+            border-radius: 6px
+        }
+        
+        .wrap {
+            width: min(1120px, 92%);
+            margin-inline: auto
+        }
+        
+        section {
+            padding: var(--sp-5) 0;
+            position: relative
+        }
+        
+        .sec-head {
+            text-align: center;
+            margin-bottom: var(--sp-4)
+        }
+        
+        .sec-head p {
+            margin-inline: auto
+        }
+        
+        .skip {
+            position: absolute;
+            left: -999px
+        }
+        
+        .skip:focus {
+            left: 1rem;
+            top: 1rem;
+            background: var(--gold);
+            color: #000;
+            padding: .5rem 1rem;
+            z-index: 200
+        }
+        /* Botones */
+        
+        .btn {
+            display: inline-block;
+            padding: .85rem 1.6rem;
+            border-radius: 999px;
+            font-weight: 600;
+            text-decoration: none;
+            border: 1px solid var(--gold);
+            transition: .25s;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 1rem
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--gold-2), var(--gold));
+            color: #1a0f08
+        }
+        
+        .btn-primary:hover {
+            box-shadow: var(--glow);
+            transform: translateY(-2px)
+        }
+        
+        .btn-ghost {
+            background: transparent;
+            color: var(--gold-2)
+        }
+        
+        .btn-ghost:hover {
+            background: rgba(224, 164, 88, .12);
+            box-shadow: var(--glow)
+        }
+        /* Tarjetas glass */
+        
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: var(--sp-3);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: .3s
+        }
+        
+        .card:hover {
+            box-shadow: var(--glow);
+            border-color: var(--gold)
+        }
+        
+        .grid {
+            display: grid;
+            gap: var(--sp-3)
+        }
+        
+        .g3 {
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr))
+        }
+        /* 1. NAVBAR */
+        
+        header {
+            position: fixed;
+            inset: 0 0 auto 0;
+            z-index: 100;
+            padding-top: env(safe-area-inset-top, 0px);
+            transition: .3s
+        }
+        
+        header.solid {
+            background: rgba(13, 13, 13, .92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border)
+        }
+        
+        .nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 4.2rem
+        }
+        
+        .logo {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 1.5rem;
+            text-decoration: none;
+            color: var(--gold-2);
+            display: flex;
+            align-items: center;
+            gap: .5rem
+        }
+        
+        .logo i {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--neon);
+            box-shadow: 0 0 12px var(--neon)
+        }
+        
+        .menu {
+            display: flex;
+            gap: var(--sp-3);
+            align-items: center
+        }
+        
+        .menu a {
+            text-decoration: none;
+            color: var(--muted);
+            transition: .2s
+        }
+        
+        .menu a:hover {
+            color: var(--gold-2)
+        }
+        
+        .burger {
+            display: none;
+            background: none;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            width: 44px;
+            height: 44px;
+            cursor: pointer;
+            color: var(--gold-2)
+        }
+        
+        @media(max-width:820px) {
+            .burger {
+                display: block
+            }
+            .menu {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                flex-direction: column;
+                background: rgba(13, 13, 13, .97);
+                padding: var(--sp-3);
+                gap: var(--sp-2);
+                display: none;
+                border-bottom: 1px solid var(--border)
+            }
+            .menu.open {
+                display: flex
+            }
+        }
+        /* 2. HERO */
+        
+        .hero {
+            padding-top: 9rem;
+            overflow: hidden
+        }
+        
+        .hero::before,
+        .hero::after {
+            content: "";
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(90px);
+            z-index: -1
+        }
+        
+        .hero::before {
+            width: 380px;
+            height: 380px;
+            background: rgba(224, 164, 88, .28);
+            top: 3rem;
+            left: -100px;
+            animation: float 9s ease-in-out infinite
+        }
+        
+        .hero::after {
+            width: 300px;
+            height: 300px;
+            background: rgba(124, 255, 155, .14);
+            right: -60px;
+            top: 16rem;
+            animation: float 11s ease-in-out infinite reverse
+        }
+        
+        @keyframes float {
+            50% {
+                transform: translateY(30px)
+            }
+        }
+        
+        .hero-grid {
+            display: grid;
+            gap: var(--sp-4);
+            align-items: center
+        }
+        
+        @media(min-width:900px) {
+            .hero-grid {
+                grid-template-columns: 1.05fr 1fr
+            }
+        }
+        
+        .hero .cta-row {
+            display: flex;
+            gap: var(--sp-2);
+            flex-wrap: wrap;
+            margin-top: var(--sp-3)
+        }
+        /* Mockup dashboard (CSS) */
+        
+        .mock {
+            background: rgba(20, 13, 9, .85);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: var(--sp-2);
+            box-shadow: var(--glow)
+        }
+        
+        .mock-bar {
+            display: flex;
+            gap: 6px;
+            margin-bottom: var(--sp-2)
+        }
+        
+        .mock-bar span {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #5a4636
+        }
+        
+        .kpis {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: .6rem
+        }
+        
+        .kpi {
+            background: rgba(255, 255, 255, .05);
+            border-radius: 12px;
+            padding: .7rem
+        }
+        
+        .kpi small {
+            color: var(--muted);
+            font-size: .72rem;
+            display: block
+        }
+        
+        .kpi b {
+            font-size: 1.2rem;
+            color: var(--gold-2)
+        }
+        
+        .chart {
+            display: flex;
+            align-items: flex-end;
+            gap: 6px;
+            height: 110px;
+            margin: var(--sp-2) 0
+        }
+        
+        .chart i {
+            flex: 1;
+            background: linear-gradient(180deg, var(--gold-2), rgba(224, 164, 88, .15));
+            border-radius: 6px 6px 0 0;
+            height: var(--h)
+        }
+        
+        .tables {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 6px
+        }
+        
+        .tables span {
+            aspect-ratio: 1;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, .07);
+            border: 1px solid var(--border)
+        }
+        
+        .tables .busy {
+            background: rgba(224, 164, 88, .35)
+        }
+        
+        .tables .live {
+            border-color: var(--neon);
+            box-shadow: 0 0 10px var(--neon)
+        }
+        /* 3. PRUEBA SOCIAL */
+        
+        .proof {
+            padding: var(--sp-4) 0;
+            border-block: 1px solid var(--border);
+            text-align: center
+        }
+        
+        .logos {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: var(--sp-4);
+            margin-top: var(--sp-2);
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            color: var(--muted)
+        }
+        /* 4-5. PROBLEMA / FUNCIONES */
+        
+        .ico {
+            width: 48px;
+            height: 48px;
+            stroke: var(--gold);
+            fill: none;
+            stroke-width: 1.6;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            margin-bottom: var(--sp-2)
+        }
+        
+        .pain .ico {
+            stroke: var(--neon)
+        }
+        /* 6. PASOS */
+        
+        .steps {
+            counter-reset: s
+        }
+        
+        .step {
+            position: relative;
+            padding-top: var(--sp-4)
+        }
+        
+        .step::before {
+            counter-increment: s;
+            content: counter(s);
+            position: absolute;
+            top: 0;
+            left: var(--sp-3);
+            width: 2.4rem;
+            height: 2.4rem;
+            border-radius: 50%;
+            background: var(--gold);
+            color: #1a0f08;
+            display: grid;
+            place-items: center;
+            font-weight: 600;
+            box-shadow: var(--glow)
+        }
+        /* 7. CAPTURA */
+        
+        .showcase {
+            display: grid;
+            gap: var(--sp-4);
+            align-items: center
+        }
+        
+        @media(min-width:900px) {
+            .showcase {
+                grid-template-columns: 1fr 1.2fr
+            }
+        }
+        /* 8. TESTIMONIOS */
+        
+        blockquote {
+            margin: 0 0 var(--sp-2);
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            line-height: 1.5
+        }
+        
+        cite {
+            font-style: normal;
+            color: var(--muted);
+            font-size: .9rem
+        }
+        /* 9. PRECIOS */
+        
+        .price {
+            text-align: center;
+            display: flex;
+            flex-direction: column
+        }
+        
+        .price ul {
+            list-style: none;
+            padding: 0;
+            margin: var(--sp-2) 0;
+            text-align: left;
+            flex: 1
+        }
+        
+        .price li {
+            padding: .4rem 0 .4rem 1.6rem;
+            position: relative;
+            color: var(--muted)
+        }
+        
+        .price li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--neon)
+        }
+        
+        .amount {
+            font-family: var(--font-display);
+            font-size: 2.6rem;
+            color: var(--gold-2)
+        }
+        
+        .amount small {
+            font-size: 1rem;
+            color: var(--muted);
+            font-family: var(--font-body)
+        }
+        
+        .price.pro {
+            border-color: var(--gold);
+            box-shadow: var(--glow);
+            position: relative
+        }
+        
+        @media(min-width:900px) {
+            .price.pro {
+                transform: scale(1.05)
+            }
+        }
+        
+        .badge {
+            position: absolute;
+            top: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--neon);
+            color: #06210f;
+            font-size: .8rem;
+            font-weight: 600;
+            padding: .2rem .9rem;
+            border-radius: 999px
+        }
+        /* 10. FAQ */
+        
+        .faq {
+            max-width: 760px;
+            margin-inline: auto
+        }
+        
+        .faq-item {
+            border-bottom: 1px solid var(--border)
+        }
+        
+        .faq-q {
+            width: 100%;
+            background: none;
+            border: 0;
+            color: var(--text);
+            font: 600 1.05rem var(--font-body);
+            text-align: left;
+            padding: var(--sp-2) 0;
+            display: flex;
+            justify-content: space-between;
+            gap: var(--sp-2);
+            cursor: pointer
+        }
+        
+        .faq-q::after {
+            content: "+";
+            color: var(--gold);
+            font-size: 1.4rem;
+            transition: .3s
+        }
+        
+        .faq-q[aria-expanded="true"]::after {
+            transform: rotate(45deg)
+        }
+        
+        .faq-a {
+            display: grid;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows .35s
+        }
+        
+        .faq-a>div {
+            overflow: hidden
+        }
+        
+        .faq-q[aria-expanded="true"]+.faq-a {
+            grid-template-rows: 1fr
+        }
+        /* 11. CTA / 12. FOOTER */
+        
+        .final {
+            text-align: center;
+            background: radial-gradient(ellipse at center, rgba(224, 164, 88, .2), transparent 70%);
+            border-block: 1px solid var(--border)
+        }
+        
+        .final p {
+            margin-inline: auto
+        }
+        
+        footer {
+            padding: var(--sp-4) 0;
+            color: var(--muted);
+            font-size: .9rem
+        }
+        
+        .foot {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--sp-3);
+            justify-content: space-between;
+            align-items: center
+        }
+        
+        .foot nav {
+            display: flex;
+            gap: var(--sp-2);
+            flex-wrap: wrap
+        }
+        
+        .foot a {
+            text-decoration: none
+        }
+        
+        .foot a:hover {
+            color: var(--gold-2)
+        }
+
+        .auth-dialog {
+            width: min(440px, calc(100% - 2rem));
+            max-height: min(90vh, 720px);
+            margin: auto;
+            padding: var(--sp-4);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: #17120f;
+            color: var(--text)
+        }
+
+        .auth-dialog::backdrop {
+            background: rgba(0, 0, 0, .78);
+            backdrop-filter: blur(5px)
+        }
+
+        .auth-dialog form {
+            display: grid;
+            gap: var(--sp-2)
+        }
+
+        .auth-dialog label {
+            display: grid;
+            gap: .35rem;
+            color: var(--muted)
+        }
+
+        .auth-dialog input {
+            width: 100%;
+            padding: .8rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, .06);
+            color: var(--text);
+            font: inherit
+        }
+
+        .auth-dialog .auth-close {
+            float: right;
+            border: 0;
+            background: none;
+            color: var(--muted);
+            font: inherit;
+            font-size: 1.5rem;
+            cursor: pointer
+        }
+
+        .auth-dialog .auth-status {
+            min-height: 1.65em;
+            margin: var(--sp-2) 0 0;
+            color: var(--gold-2)
+        }
+
+        .auth-dialog .auth-switch {
+            border: 0;
+            padding: .75rem 0 0;
+            background: none;
+            color: var(--gold-2);
+            font: inherit;
+            cursor: pointer
+        }
+
+        .auth-dialog [hidden] {
+            display: none!important
+        }
+        /* Animación al hacer scroll */
+        
+        .reveal {
+            opacity: 0;
+            transform: translateY(28px);
+            transition: opacity .7s, transform .7s
+        }
+        
+        .reveal.in {
+            opacity: 1;
+            transform: none
+        }
+        
+        @media(prefers-reduced-motion:reduce) {
+            * {
+                animation: none!important;
+                transition: none!important
+            }
+            .reveal {
+                opacity: 1;
+                transform: none
+            }
+            html {
+                scroll-behavior: auto
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <a class="skip" href="#funciones">Saltar al contenido</a>
+
+    <!-- ===== 1. NAVBAR FIJA ===== -->
+    <header id="top">
+        <div class="wrap nav">
+            <a class="logo" href="#inicio" aria-label="Barrica, inicio"><i aria-hidden="true"></i>Barrica</a>
+            <button class="burger" aria-label="Abrir menú" aria-expanded="false" aria-controls="menu">☰</button>
+            <nav class="menu" id="menu" aria-label="Principal">
+                <a href="#funciones">Funciones</a><a href="#precios">Precios</a><a href="#testimonios">Testimonios</a><a href="#contacto">Contacto</a>
+                <a href="#inicio" id="account-button" data-auth-mode="login">Iniciar sesión</a>
+                <a class="btn btn-primary" href="#contacto" data-auth-mode="register">Prueba gratis</a>
+            </nav>
+        </div>
+    </header>
+
+    <main id="inicio">
+        <!-- ===== 2. HERO ===== -->
+        <section class="hero">
+            <div class="wrap hero-grid">
+                <div>
+                    <h1>Todo tu bar bajo control, en una sola pantalla</h1>
+                    <p>Mesas, pedidos, licores, cuentas y turnos conectados en tiempo real. Menos pérdidas, más ventas, cierres sin sorpresas.</p>
+                    <div class="cta-row">
+                        <a class="btn btn-primary" href="#contacto" data-auth-mode="register">Solicita una demo</a>
+                        <a class="btn btn-ghost" href="#funciones">Ver funciones</a>
+                    </div>
+                </div>
+                <!-- MOCKUP: sustituir este bloque por una captura real (ver nota al final) -->
+                <div class="mock reveal" role="img" aria-label="Boceto del panel de Barrica con ventas del día, ticket medio y mesas ocupadas">
+                    <div class="mock-bar"><span></span><span></span><span></span></div>
+                    <div class="kpis">
+                        <div class="kpi"><small>Ventas hoy</small><b>$<span class="count" data-to="4820">0</span></b></div>
+                        <div class="kpi"><small>Ticket medio</small><b>$<span class="count" data-to="37">0</span></b></div>
+                        <div class="kpi"><small>Mesas ocupadas</small><b><span class="count" data-to="14">0</span>/20</b></div>
+                    </div>
+                    <div class="chart" aria-hidden="true"><i style="--h:35%"></i><i style="--h:50%"></i><i style="--h:42%"></i><i style="--h:70%"></i><i style="--h:88%"></i><i style="--h:100%"></i><i style="--h:76%"></i></div>
+                    <div class="tables" aria-hidden="true"><span class="busy"></span><span></span><span class="busy live"></span><span class="busy"></span><span></span><span class="busy"></span><span></span><span class="busy"></span><span class="busy live"></span><span></span><span class="busy"></span><span></span></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== 3. PRUEBA SOCIAL ===== -->
+        <div class="proof">
+            <div class="wrap">
+                <p style="margin-inline:auto"><strong style="color:var(--gold-2)">Más de 500 bares ya lo usan</strong></p>
+                <div class="logos" aria-label="Algunos de nuestros clientes"><span>La Cava</span><span>Nocturno</span><span>El Barril</span><span>Sótano 9</span><span>Malta &amp; Co.</span></div>
+            </div>
+        </div>
+
+        <!-- ===== 4. PROBLEMA ===== -->
+        <section>
+            <div class="wrap">
+                <div class="sec-head reveal">
+                    <h2>Lo que le cuesta dinero a tu bar cada noche</h2>
+                    <p>Si te suena familiar, no estás solo. Son los tres problemas que más oímos.</p>
+                </div>
+                <div class="grid g3 pain">
+                    <article class="card reveal"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 2h8l-1 6a3 3 0 0 1-6 0zM12 11v9M8 22h8"/></svg>
+                        <h3>Pérdidas de inventario</h3>
+                        <p>Botellas que no cuadran, cortesías sin registro y mermas que nadie ve hasta fin de mes.</p>
+                    </article>
+                    <article class="card reveal"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3h16v18l-3-2-3 2-2-2-2 2-3-2-3 2zM8 8h8M8 12h8"/></svg>
+                        <h3>Cuentas descuadradas</h3>
+                        <p>Pedidos anotados a mano, cuentas mal divididas y diferencias en caja al cerrar.</p>
+                    </article>
+                    <article class="card reveal"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/></svg>
+                        <h3>Lentitud para facturar</h3>
+                        <p>Clientes esperando la cuenta mientras el equipo busca comandas en papel.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== 5. FUNCIONES ===== -->
+        <section id="funciones">
+            <div class="wrap">
+                <div class="sec-head reveal">
+                    <h2>Todo lo que tu barra necesita</h2>
+                    <p>Seis módulos que trabajan juntos y se actualizan al instante.</p>
+                </div>
+                <div class="grid g3">
+                    <article class="card reveal"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                        <h3>Control de mesas en tiempo real</h3>
+                        <p>Mira qué mesas están libres, ocupadas o por cobrar, desde cualquier dispositivo.</p>
+                    </article>
+                    <article class="card reveal"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h14v18H5zM9 8h6M9 12h6M9 16h3"/></svg>
+                        <h3>Toma de pedidos</h3>
+                        <p>El mesero envía la comanda y llega directo a barra y cocina, sin papeles.</p>
+                    </article>
+                    <article class="card reveal"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 21h20zM12 10v5M12 18v.5"/></svg>
+                        <h3>Inventario y alertas de stock</h3>
+                        <p>Descuenta cada trago por receta y avisa cuando una botella está por agotarse.</p>
+                    </article>
+                    <article class="card reveal"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 11h20M7 15h3"/></svg>
+                        <h3>Cuentas y división de la cuenta</h3>
+                        <p>Divide por persona, por producto o en partes iguales, y cobra en segundos.</p>
+                    </article>
+                    <article class="card reveal"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2 21c0-4 3-6 7-6s7 2 7 6M17 5a3.5 3.5 0 0 1 0 7M22 21c0-3-1.5-5-4-5.7"/></svg>
+                        <h3>Personal y turnos</h3>
+                        <p>Arma horarios, registra entradas y salidas y asigna permisos por rol.</p>
+                    </article>
+                    <article class="card reveal"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3v18h18M7 15l4-5 3 3 5-7"/></svg>
+                        <h3>Reportes y analítica</h3>
+                        <p>Ventas por hora, productos estrella y margen por trago, listos para exportar.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== 6. CÓMO FUNCIONA ===== -->
+        <section>
+            <div class="wrap">
+                <div class="sec-head reveal">
+                    <h2>Listo para vender en una tarde</h2>
+                </div>
+                <div class="grid g3 steps">
+                    <article class="card step reveal">
+                        <h3>Registra tu bar</h3>
+                        <p>Crea tu cuenta con el correo del negocio. Toma menos de dos minutos.</p>
+                    </article>
+                    <article class="card step reveal">
+                        <h3>Configura carta y mesas</h3>
+                        <p>Importa tu carta desde Excel y dibuja el plano de tu salón.</p>
+                    </article>
+                    <article class="card step reveal">
+                        <h3>Empieza a vender</h3>
+                        <p>Tu equipo toma pedidos desde el celular desde el primer turno.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== 7. CAPTURA DE PRODUCTO ===== -->
+        <section>
+            <div class="wrap showcase">
+                <div class="reveal">
+                    <h2>Tu noche, en números claros</h2>
+                    <p>Ventas del día, ticket medio y ocupación se actualizan solas. Decide en la barra, no al día siguiente.</p><a class="btn btn-ghost" href="#inicio" data-auth-mode="login">Ver el panel en vivo</a></div>
+                <!-- MOCKUP 2: sustituir por captura real del panel -->
+                <div class="mock reveal" role="img" aria-label="Panel de métricas con gráfico de ventas por hora">
+                    <div class="kpis">
+                        <div class="kpi"><small>Ventas del día</small><b>$4.820</b></div>
+                        <div class="kpi"><small>Ticket medio</small><b>$37</b></div>
+                        <div class="kpi"><small>Mesas ocupadas</small><b>14/20</b></div>
+                    </div>
+                    <div class="chart" style="height:150px" aria-hidden="true"><i style="--h:20%"></i><i style="--h:30%"></i><i style="--h:45%"></i><i style="--h:62%"></i><i style="--h:80%"></i><i style="--h:100%"></i><i style="--h:90%"></i><i style="--h:55%"></i></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== 8. TESTIMONIOS ===== -->
+        <section id="testimonios">
+            <div class="wrap">
+                <div class="sec-head reveal">
+                    <h2>Lo que dicen quienes ya cierran sin sorpresas</h2>
+                </div>
+                <div class="grid g3">
+                    <figure class="card reveal" style="margin:0">
+                        <blockquote>“Descubrimos que perdíamos casi un 12 % en licores. En dos meses lo bajamos a menos de 3 %.”</blockquote><cite>Camila Rojas · La Cava, Bogotá</cite></figure>
+                    <figure class="card reveal" style="margin:0">
+                        <blockquote>“Los meseros toman pedidos desde el celular y la barra los recibe al instante. Se acabaron las comandas perdidas.”</blockquote><cite>Julián Herrera · Nocturno, Medellín</cite></figure>
+                    <figure class="card reveal" style="margin:0">
+                        <blockquote>“Dividir la cuenta de una mesa de diez ya no es un drama. Cobramos en menos de un minuto.”</blockquote><cite>Valentina Mora · El Barril, Cali</cite></figure>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== 9. PRECIOS ===== -->
+        <section id="precios">
+            <div class="wrap">
+                <div class="sec-head reveal">
+                    <h2>Planes para cada tipo de bar</h2>
+                    <p>Todos incluyen 14 días gratis. Cambia de plan cuando quieras.</p>
+                </div>
+                <div class="grid g3">
+                    <article class="card price reveal">
+                        <h3>Básico</h3>
+                        <div class="amount">$29<small> /mes</small></div>
+                        <ul>
+                            <li>1 local, hasta 10 mesas</li>
+                            <li>Pedidos y cuentas</li>
+                            <li>Inventario básico</li>
+                            <li>Soporte por correo</li>
+                        </ul><a class="btn btn-ghost" href="#contacto" data-auth-mode="register">Elegir Básico</a></article>
+                    <article class="card price pro reveal"><span class="badge">Recomendado</span>
+                        <h3>Pro</h3>
+                        <div class="amount">$59<small> /mes</small></div>
+                        <ul>
+                            <li>1 local, mesas ilimitadas</li>
+                            <li>Inventario con recetas y alertas</li>
+                            <li>Turnos y permisos por rol</li>
+                            <li>Reportes avanzados</li>
+                            <li>Soporte por chat</li>
+                        </ul><a class="btn btn-primary" href="#contacto" data-auth-mode="register">Elegir Pro</a></article>
+                    <article class="card price reveal">
+                        <h3>Multi-local</h3>
+                        <div class="amount">$129<small> /mes</small></div>
+                        <ul>
+                            <li>Hasta 5 locales</li>
+                            <li>Reportes consolidados</li>
+                            <li>Inventario entre sedes</li>
+                            <li>Gerente de cuenta dedicado</li>
+                        </ul><a class="btn btn-ghost" href="#contacto" data-auth-mode="register">Elegir Multi-local</a></article>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== 10. FAQ ===== -->
+        <section>
+            <div class="wrap">
+                <div class="sec-head reveal">
+                    <h2>Preguntas frecuentes</h2>
+                </div>
+                <div class="faq reveal">
+                    <div class="faq-item"><button class="faq-q" aria-expanded="false" aria-controls="a1" id="q1">¿Funciona sin internet?</button>
+                        <div class="faq-a" id="a1" role="region" aria-labelledby="q1">
+                            <div>
+                                <p>Sí. Puedes seguir tomando pedidos y cobrando sin conexión; todo se sincroniza cuando vuelve el internet.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="faq-item"><button class="faq-q" aria-expanded="false" aria-controls="a2" id="q2">¿Qué soporte incluye?</button>
+                        <div class="faq-a" id="a2" role="region" aria-labelledby="q2">
+                            <div>
+                                <p>Soporte por correo en Básico y por chat en Pro y Multi-local, incluso en fines de semana.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="faq-item"><button class="faq-q" aria-expanded="false" aria-controls="a3" id="q3">¿Cómo funciona la facturación?</button>
+                        <div class="faq-a" id="a3" role="region" aria-labelledby="q3">
+                            <div>
+                                <p>Pagas mes a mes con tarjeta o transferencia, sin permanencia. Recibes tu factura por correo.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="faq-item"><button class="faq-q" aria-expanded="false" aria-controls="a4" id="q4">¿Puedo migrar mis datos actuales?</button>
+                        <div class="faq-a" id="a4" role="region" aria-labelledby="q4">
+                            <div>
+                                <p>Sí. Importamos tu carta, productos e inventario desde Excel o CSV, y te acompañamos en el proceso.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="faq-item"><button class="faq-q" aria-expanded="false" aria-controls="a5" id="q5">¿Necesito equipos especiales?</button>
+                        <div class="faq-a" id="a5" role="region" aria-labelledby="q5">
+                            <div>
+                                <p>No. Funciona en celulares, tablets y computadores. Si ya tienes impresora de comandas, la conectamos.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== 11. CTA FINAL ===== -->
+        <section class="final" id="contacto">
+            <div class="wrap reveal">
+                <h2>Empieza gratis 14 días, sin tarjeta</h2>
+                <p>Configura tu bar hoy y mira el control que tendrás esta misma noche.</p>
+                <a class="btn btn-primary" href="#contacto" data-auth-mode="register">Crear mi cuenta gratis</a>
+            </div>
+        </section>
+    </main>
+
+    <!-- ===== 12. FOOTER ===== -->
+    <footer>
+        <div class="wrap foot">
+            <a class="logo" href="#inicio"><i aria-hidden="true"></i>Barrica</a>
+            <nav aria-label="Pie de página"><a href="#funciones">Funciones</a><a href="#precios">Precios</a><a href="#testimonios">Testimonios</a><a href="#contacto">Contacto</a><span>Aviso legal</span></nav>
+            <span>Redes sociales: Instagram · LinkedIn · X (enlaces por configurar)</span>
+            <span>© 2026 Barrica. Todos los derechos reservados.</span>
+        </div>
+    </footer>
+
+    <dialog class="auth-dialog" id="auth-dialog" aria-labelledby="auth-title">
+        <button class="auth-close" id="auth-close" type="button" aria-label="Cerrar">×</button>
+        <h2 id="auth-title">Iniciar sesión</h2>
+        <p id="auth-description">Accede a tu cuenta de Barrica.</p>
+        <form id="auth-form">
+            <label id="auth-name-field" hidden>
+                Nombre
+                <input id="auth-name" name="name" type="text" autocomplete="name" maxlength="120">
+            </label>
+            <label>
+                Correo electrónico
+                <input id="auth-email" name="email" type="email" autocomplete="email" maxlength="254" required>
+            </label>
+            <label>
+                Contraseña
+                <input id="auth-password" name="password" type="password" autocomplete="current-password" required>
+            </label>
+            <button class="btn btn-primary" id="auth-submit" type="submit">Iniciar sesión</button>
+        </form>
+        <p class="auth-status" id="auth-status" role="status" aria-live="polite"></p>
+        <button class="auth-switch" id="auth-switch" type="button">¿No tienes cuenta? Crear una</button>
+        <button class="btn btn-ghost" id="auth-logout" type="button" hidden>Cerrar sesión</button>
+    </dialog>
+
+    <script>
+        /* ===== JS ===== */
+        (() => {
+            const header = document.getElementById('top'),
+                burger = document.querySelector('.burger'),
+                menu = document.getElementById('menu');
+
+            /* Navbar transparente → sólida */
+            const onScroll = () => header.classList.toggle('solid', scrollY > 40);
+            addEventListener('scroll', onScroll, {
+                passive: true
+            });
+            onScroll();
+
+            /* Menú móvil */
+            const setMenu = o => {
+                menu.classList.toggle('open', o);
+                burger.setAttribute('aria-expanded', o);
+                burger.textContent = o ? '✕' : '☰';
+                burger.setAttribute('aria-label', o ? 'Cerrar menú' : 'Abrir menú')
+            };
+            burger.addEventListener('click', () => setMenu(!menu.classList.contains('open')));
+            menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setMenu(false)));
+            addEventListener('keydown', e => {
+                if (e.key === 'Escape') setMenu(false)
+            });
+
+            /* Scroll suave: lo gestiona CSS (scroll-behavior) y respeta prefers-reduced-motion */
+
+            /* Animaciones al hacer scroll */
+            const io = new IntersectionObserver(es => es.forEach(e => {
+                if (e.isIntersecting) {
+                    e.target.classList.add('in');
+                    io.unobserve(e.target)
+                }
+            }), {
+                threshold: .15
+            });
+            document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+            /* Contadores animados */
+            const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+            document.querySelectorAll('.count').forEach(el => {
+                const to = +el.dataset.to;
+                if (reduce) {
+                    el.textContent = to.toLocaleString('es');
+                    return
+                }
+                const t0 = performance.now(),
+                    dur = 1600;
+                const tick = t => {
+                    const p = Math.min((t - t0) / dur, 1);
+                    el.textContent = Math.round(to * (1 - Math.pow(1 - p, 3))).toLocaleString('es');
+                    if (p < 1) requestAnimationFrame(tick)
+                };
+                requestAnimationFrame(tick);
+            });
+
+            /* Acordeón FAQ */
+            document.querySelectorAll('.faq-q').forEach(b => b.addEventListener('click', () => {
+                const open = b.getAttribute('aria-expanded') === 'true';
+                document.querySelectorAll('.faq-q').forEach(x => x.setAttribute('aria-expanded', 'false'));
+                b.setAttribute('aria-expanded', String(!open));
+            }));
+
+            /* Inicio de sesión y registro */
+            const authDialog = document.getElementById('auth-dialog');
+            const authForm = document.getElementById('auth-form');
+            const authNameField = document.getElementById('auth-name-field');
+            const authName = document.getElementById('auth-name');
+            const authEmail = document.getElementById('auth-email');
+            const authPassword = document.getElementById('auth-password');
+            const authTitle = document.getElementById('auth-title');
+            const authDescription = document.getElementById('auth-description');
+            const authStatus = document.getElementById('auth-status');
+            const authSubmit = document.getElementById('auth-submit');
+            const authSwitch = document.getElementById('auth-switch');
+            const authLogout = document.getElementById('auth-logout');
+            const accountButton = document.getElementById('account-button');
+            let authMode = 'login';
+            let authUser = null;
+            let sessionChecked = false;
+
+            const setAuthMode = mode => {
+                authMode = mode;
+                authTitle.textContent = mode === 'register' ? 'Crear cuenta' : 'Iniciar sesión';
+                authDescription.textContent = mode === 'register' ?
+                    'Crea tu cuenta para empezar con Barrica.' :
+                    'Accede a tu cuenta de Barrica.';
+                authNameField.hidden = mode !== 'register';
+                authName.required = mode === 'register';
+                authPassword.autocomplete = mode === 'register' ? 'new-password' : 'current-password';
+                authPassword.minLength = 12;
+                authSubmit.textContent = mode === 'register' ? 'Crear cuenta' : 'Iniciar sesión';
+                authSwitch.textContent = mode === 'register' ?
+                    '¿Ya tienes cuenta? Iniciar sesión' :
+                    '¿No tienes cuenta? Crear una';
+                authForm.hidden = false;
+                authSwitch.hidden = false;
+                authLogout.hidden = true;
+                authStatus.textContent = '';
+            };
+
+            const showAuthenticatedUser = (user, message) => {
+                authUser = user;
+                accountButton.textContent = 'Mi cuenta';
+                authTitle.textContent = `Hola, ${user.name}`;
+                authDescription.textContent = `Sesión iniciada como ${user.email}.`;
+                authForm.hidden = true;
+                authSwitch.hidden = true;
+                authLogout.hidden = false;
+                authStatus.textContent = message || 'Tu sesión está activa.';
+            };
+
+            const readApiResponse = async response => {
+                const contentType = response.headers.get('content-type') || '';
+                if (!contentType.toLowerCase().includes('application/json')) {
+                    if (response.status === 404) {
+                        throw new Error('La API de acceso todavía no está publicada. Despliega en Vercel la versión que incluye la carpeta api/.');
+                    }
+                    throw new Error(`La API respondió con HTTP ${response.status} y no devolvió JSON.`);
+                }
+
+                let data;
+                try {
+                    data = await response.json();
+                } catch {
+                    throw new Error('La API devolvió JSON malformado.');
+                }
+                if (!response.ok) {
+                    throw new Error(data.error || 'No se pudo completar la solicitud.');
+                }
+                return data;
+            };
+
+            const getApiUnavailableMessage = () => {
+                if (location.protocol === 'file:') {
+                    return 'Abriste el HTML directamente desde tu equipo. Para iniciar sesión, publica el proyecto en Vercel con la carpeta api/ y configura la conexión a MySQL.';
+                }
+                return '';
+            };
+
+            const openAuth = async mode => {
+                if (authUser) {
+                    showAuthenticatedUser(authUser);
+                } else {
+                    setAuthMode(mode);
+                }
+                if (!authDialog.open) authDialog.showModal();
+
+                if (!sessionChecked) {
+                    const unavailableMessage = getApiUnavailableMessage();
+                    if (unavailableMessage) {
+                        authStatus.textContent = unavailableMessage;
+                        return;
+                    }
+                    authStatus.textContent = 'Comprobando sesión…';
+                    authSubmit.disabled = true;
+                    try {
+                        const response = await fetch('/api/auth/session', {
+                            headers: { Accept: 'application/json' }
+                        });
+                        const data = await readApiResponse(response);
+                        sessionChecked = true;
+                        if (data.user) {
+                            showAuthenticatedUser(data.user);
+                        } else if (authDialog.open) {
+                            authStatus.textContent = '';
+                        }
+                    } catch (error) {
+                        authStatus.textContent = error instanceof Error ?
+                            error.message :
+                            'No se pudo comprobar la sesión. Inténtalo de nuevo.';
+                    } finally {
+                        authSubmit.disabled = false;
+                    }
+                }
+            };
+
+            document.querySelectorAll('[data-auth-mode]').forEach(link => {
+                link.addEventListener('click', event => {
+                    event.preventDefault();
+                    setMenu(false);
+                    void openAuth(link.dataset.authMode);
+                });
+            });
+
+            document.getElementById('auth-close').addEventListener('click', () => authDialog.close());
+            authSwitch.addEventListener('click', () => {
+                setAuthMode(authMode === 'register' ? 'login' : 'register');
+            });
+
+            authForm.addEventListener('submit', async event => {
+                event.preventDefault();
+                authStatus.textContent = '';
+                authSubmit.disabled = true;
+                const endpoint = authMode === 'register' ? 'register' : 'login';
+                const payload = {
+                    email: authEmail.value,
+                    password: authPassword.value
+                };
+                if (endpoint === 'register') payload.name = authName.value;
+
+                try {
+                    const unavailableMessage = getApiUnavailableMessage();
+                    if (unavailableMessage) throw new Error(unavailableMessage);
+
+                    const response = await fetch(`/api/auth/${endpoint}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const data = await readApiResponse(response);
+                    if (!data.user) throw new Error('El servidor no devolvió los datos de la cuenta.');
+                    sessionChecked = true;
+                    showAuthenticatedUser(
+                        data.user,
+                        endpoint === 'register' ?
+                            'Cuenta creada. Tu sesión está iniciada.' :
+                            'Iniciaste sesión correctamente.'
+                    );
+                    authForm.reset();
+                } catch (error) {
+                    authStatus.textContent = error instanceof Error ?
+                        error.message :
+                        'No se pudo completar la solicitud. Inténtalo de nuevo.';
+                } finally {
+                    authSubmit.disabled = false;
+                }
+            });
+
+            authLogout.addEventListener('click', async () => {
+                authLogout.disabled = true;
+                authStatus.textContent = '';
+                try {
+                    const unavailableMessage = getApiUnavailableMessage();
+                    if (unavailableMessage) throw new Error(unavailableMessage);
+
+                    const response = await fetch('/api/auth/logout', { method: 'POST' });
+                    await readApiResponse(response);
+                    authUser = null;
+                    sessionChecked = true;
+                    accountButton.textContent = 'Iniciar sesión';
+                    setAuthMode('login');
+                    authStatus.textContent = 'Cerraste sesión.';
+                } catch (error) {
+                    authStatus.textContent = error instanceof Error ?
+                        error.message :
+                        'No se pudo cerrar sesión. Inténtalo de nuevo.';
+                } finally {
+                    authLogout.disabled = false;
+                }
+            });
+        })();
+    </script>
+</body>
+
+</html>
