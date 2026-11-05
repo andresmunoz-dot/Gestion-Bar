@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>Barrica · Software de gestión para bares</title>
     <meta name="description" content="Controla mesas, pedidos, inventario de licores, cuentas, turnos y reportes desde una sola pantalla.">
-    <meta name="theme-color" content="#0E1B17">
+    <link rel="icon" type="image/svg+xml" href="/icon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&family=Instrument+Sans:wght@400..600&display=swap">
@@ -176,8 +176,8 @@
 
         header.solid {
             background: rgba(14, 27, 23, .94);
-            backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
             border-bottom-color: var(--linea)
         }
 
@@ -592,6 +592,15 @@
             background: var(--ambar)
         }
 
+        .chart i:nth-child(1) { --h: 20% }
+        .chart i:nth-child(2) { --h: 30% }
+        .chart i:nth-child(3) { --h: 45% }
+        .chart i:nth-child(4) { --h: 62% }
+        .chart i:nth-child(5) { --h: 80% }
+        .chart i:nth-child(6) { --h: 100% }
+        .chart i:nth-child(7) { --h: 90% }
+        .chart i:nth-child(8) { --h: 55% }
+
         .hours {
             display: grid;
             grid-template-columns: repeat(8, 1fr);
@@ -829,6 +838,7 @@
 
         .auth-dialog::backdrop {
             background: rgba(5, 11, 9, .82);
+            -webkit-backdrop-filter: blur(4px);
             backdrop-filter: blur(4px)
         }
 
@@ -916,6 +926,59 @@
 
         .auth-dialog .auth-switch:hover {
             color: var(--hueso)
+        }
+
+        .auth-roles {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: .6rem;
+            margin-top: var(--sp-2)
+        }
+
+        .auth-role-btn {
+            text-align: left;
+            padding: .75rem .8rem;
+            border: 1px solid var(--linea-fuerte);
+            border-radius: var(--radius);
+            background: var(--vidrio);
+            color: var(--hueso);
+            font: inherit;
+            cursor: pointer;
+            display: grid;
+            gap: .2rem;
+            transition: border-color .2s, background-color .2s
+        }
+
+        .auth-role-btn strong {
+            font-size: .92rem;
+            color: var(--hueso)
+        }
+
+        .auth-role-btn small {
+            font-size: .76rem;
+            line-height: 1.3;
+            color: var(--niebla)
+        }
+
+        .auth-role-btn.active {
+            border-color: var(--ambar);
+            box-shadow: 0 0 0 1px var(--ambar);
+            background: rgba(217, 164, 65, .1)
+        }
+
+        .auth-role-btn.active strong {
+            color: var(--ambar-claro)
+        }
+
+        .auth-logged-actions {
+            display: grid;
+            gap: .65rem;
+            margin-top: var(--sp-2)
+        }
+
+        .auth-logged-actions .btn {
+            width: 100%;
+            text-align: center
         }
 
         .auth-dialog [hidden] {
@@ -1173,6 +1236,26 @@
         .support-fab:hover { transform: translateY(-3px); }
         @keyframes notice-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 
+        /* ===== DESCARGAR APP (PC, ANDROID, iOS) ===== */
+        .app-section { border-top: 1px solid var(--linea); }
+        .app-grid { display: grid; gap: var(--sp-3); }
+        @media(min-width:900px) { .app-grid { grid-template-columns: repeat(3, 1fr); } }
+        .app-card { display: flex; flex-direction: column; justify-content: space-between; gap: var(--sp-3); padding: var(--sp-4) var(--sp-3); border: 1px solid var(--linea); border-radius: var(--radius); background: var(--vidrio-2); transition: border-color .2s, transform .2s; }
+        .app-card:hover { border-color: var(--ambar); transform: translateY(-3px); }
+        .app-card.featured { box-shadow: inset 0 3px 0 var(--ambar); }
+        .app-badge { display: inline-block; font-size: .82rem; letter-spacing: .04em; text-transform: uppercase; color: var(--ambar-claro); margin-bottom: .6rem; }
+        .app-card h3 { font-size: 1.55rem; margin-bottom: .5rem; }
+        .app-card p { margin-bottom: var(--sp-2); }
+        .app-features { list-style: none; padding: 0; margin: 0; display: grid; gap: .4rem; }
+        .app-features li { padding-left: 1.3rem; position: relative; color: var(--niebla); font-size: .92rem; }
+        .app-features li::before { content: ""; position: absolute; left: 0; top: .8em; width: .65rem; height: 1px; background: var(--ambar); }
+        .app-card .btn { width: 100%; text-align: center; }
+        .app-dialog { width: min(500px, calc(100% - 2rem)); }
+        .app-steps { margin: var(--sp-3) 0; padding-left: 1.25rem; color: var(--hueso); display: grid; gap: .65rem; }
+        .app-steps li { padding-left: .25rem; }
+        .app-dialog-actions { display: grid; gap: .75rem; margin-top: var(--sp-3); }
+        .app-dialog-actions .btn { width: 100%; text-align: center; }
+
     </style>
 </head>
 
@@ -1183,9 +1266,9 @@
     <header id="top">
         <div class="wrap nav">
             <a class="logo" href="#inicio" aria-label="Barrica, inicio"><i aria-hidden="true"></i>Barrica</a>
-            <button class="burger" aria-label="Abrir menú" aria-expanded="false" aria-controls="menu">☰</button>
+            <button class="burger" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="menu">☰</button>
             <nav class="menu" id="menu" aria-label="Principal">
-                <a href="#funciones">Funciones</a><a href="#ubicacion">Ubicación</a><a href="#precios">Precios</a><a href="#comunidad">Comunidad</a><a href="#contacto">Contacto</a>
+                <a href="#funciones">Funciones</a><a href="#descargar">Descargar app</a><a href="#ubicacion">Ubicación</a><a href="#precios">Precios</a><a href="#comunidad">Comunidad</a><a href="#contacto">Contacto</a>
                 <a href="#inicio" id="account-button" data-auth-mode="login">Iniciar sesión</a>
                 <a class="btn btn-primary" href="#contacto" data-auth-mode="register">Prueba gratis</a>
             </nav>
@@ -1330,7 +1413,7 @@
                         <div class="kpi"><small>Ticket medio</small><b>$37</b></div>
                         <div class="kpi"><small>Mesas ocupadas</small><b>14/20</b></div>
                     </div>
-                    <div class="chart" aria-hidden="true"><i style="--h:20%"></i><i style="--h:30%"></i><i style="--h:45%"></i><i style="--h:62%"></i><i style="--h:80%"></i><i class="peak" style="--h:100%"></i><i style="--h:90%"></i><i style="--h:55%"></i></div>
+                    <div class="chart" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i class="peak"></i><i></i><i></i></div>
                     <div class="hours" aria-hidden="true"><span>8 pm</span><span>9</span><span>10</span><span>11</span><span>12</span><span>1 am</span><span>2</span><span>3</span></div>
                 </div>
             </div>
@@ -1405,35 +1488,35 @@
                     <h2>Preguntas frecuentes</h2>
                 </div>
                 <div class="faq">
-                    <div class="faq-item"><button class="faq-q" aria-expanded="false" aria-controls="a1" id="q1">¿Funciona sin internet?</button>
+                    <div class="faq-item"><button class="faq-q" type="button" aria-expanded="false" aria-controls="a1" id="q1">¿Funciona sin internet?</button>
                         <div class="faq-a" id="a1" role="region" aria-labelledby="q1">
                             <div>
                                 <p>Sí. Puedes seguir tomando pedidos y cobrando sin conexión; todo se sincroniza cuando vuelve el internet.</p>
                             </div>
                         </div>
                     </div>
-                    <div class="faq-item"><button class="faq-q" aria-expanded="false" aria-controls="a2" id="q2">¿Qué soporte incluye?</button>
+                    <div class="faq-item"><button class="faq-q" type="button" aria-expanded="false" aria-controls="a2" id="q2">¿Qué soporte incluye?</button>
                         <div class="faq-a" id="a2" role="region" aria-labelledby="q2">
                             <div>
                                 <p>Soporte por correo en Básico y por chat en Pro y Multi-local, incluso en fines de semana.</p>
                             </div>
                         </div>
                     </div>
-                    <div class="faq-item"><button class="faq-q" aria-expanded="false" aria-controls="a3" id="q3">¿Cómo funciona la facturación?</button>
+                    <div class="faq-item"><button class="faq-q" type="button" aria-expanded="false" aria-controls="a3" id="q3">¿Cómo funciona la facturación?</button>
                         <div class="faq-a" id="a3" role="region" aria-labelledby="q3">
                             <div>
                                 <p>Pagas mes a mes con tarjeta o transferencia, sin permanencia. Recibes tu factura por correo.</p>
                             </div>
                         </div>
                     </div>
-                    <div class="faq-item"><button class="faq-q" aria-expanded="false" aria-controls="a4" id="q4">¿Puedo migrar mis datos actuales?</button>
+                    <div class="faq-item"><button class="faq-q" type="button" aria-expanded="false" aria-controls="a4" id="q4">¿Puedo migrar mis datos actuales?</button>
                         <div class="faq-a" id="a4" role="region" aria-labelledby="q4">
                             <div>
                                 <p>Sí. Importamos tu carta, productos e inventario desde Excel o CSV, y te acompañamos en el proceso.</p>
                             </div>
                         </div>
                     </div>
-                    <div class="faq-item"><button class="faq-q" aria-expanded="false" aria-controls="a5" id="q5">¿Necesito equipos especiales?</button>
+                    <div class="faq-item"><button class="faq-q" type="button" aria-expanded="false" aria-controls="a5" id="q5">¿Necesito equipos especiales?</button>
                         <div class="faq-a" id="a5" role="region" aria-labelledby="q5">
                             <div>
                                 <p>No. Funciona en celulares, tablets y computadores. Si ya tienes impresora de comandas, la conectamos.</p>
@@ -1445,6 +1528,59 @@
         </section>
 
 
+
+        <!-- ===== 10B. DESCARGAR APP (PC, ANDROID, iOS) ===== -->
+        <section class="app-section" id="descargar">
+            <div class="wrap">
+                <div class="sec-head">
+                    <h2>Descarga la aplicación independiente de Barrica</h2>
+                    <p>Opera tu bar en un programa aparte de esta página web: control de mesas, pedidos, inventario en MySQL y panel de administración.</p>
+                </div>
+                <div class="app-grid">
+                    <article class="app-card featured">
+                        <div>
+                            <span class="app-badge">Escritorio · Programa nativo (.exe)</span>
+                            <h3>Barrica Desktop para PC</h3>
+                            <p>Ejecutable real para Windows con ventana propia (sin navegador ni página promocional) conectado a tu MySQL.</p>
+                            <ul class="app-features">
+                                <li>Control de mesas, cuentas y cobros</li>
+                                <li>Inventario de licores en vivo en MySQL</li>
+                                <li>Panel de usuarios, sesiones y ventas</li>
+                            </ul>
+                        </div>
+                        <button class="btn btn-primary" type="button" data-app-platform="pc">Descargar para PC (.exe)</button>
+                    </article>
+
+                    <article class="app-card">
+                        <div>
+                            <span class="app-badge">Móvil · Celulares y Tablets</span>
+                            <h3>Barrica POS para Android</h3>
+                            <p>Aplicación móvil independiente que abre directo el sistema operativo del bar (mesas, inventario y admin), sin mostrar esta web.</p>
+                            <ul class="app-features">
+                                <li>Interfaz táctil exclusiva de operación</li>
+                                <li>Toma de comandas y división de cuentas</li>
+                                <li>Sincronizada con la misma base MySQL</li>
+                            </ul>
+                        </div>
+                        <button class="btn btn-ghost" type="button" data-app-platform="android">Descargar App Android</button>
+                    </article>
+
+                    <article class="app-card">
+                        <div>
+                            <span class="app-badge">Apple · iPhone y iPad</span>
+                            <h3>Barrica POS para iOS</h3>
+                            <p>Instala la app operativa independiente en la pantalla de inicio de tu iPhone o iPad sin pasar por esta página promocional.</p>
+                            <ul class="app-features">
+                                <li>Abre directo en Mesas, Inventario y Admin</li>
+                                <li>Modo pantalla completa en iOS y iPadOS</li>
+                                <li>Conectada en tiempo real con MySQL</li>
+                            </ul>
+                        </div>
+                        <button class="btn btn-ghost" type="button" data-app-platform="ios">Instalar App en iOS</button>
+                    </article>
+                </div>
+            </div>
+        </section>
 
         <!-- ===== 11. UBICACIÓN DEL BAR ===== -->
         <section class="location-section" id="ubicacion">
@@ -1475,8 +1611,8 @@
                             <div><h3 id="map-title">Corredor Ecológico, Villavicencio</h3><p class="location-note">Mapa de referencia para la zona.</p></div>
                             <span class="map-pin" aria-hidden="true">⌖</span>
                         </div>
-                        <iframe id="bar-map" title="Mapa del Corredor Ecológico de Villavicencio" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=Corredor+Ecológico+Villavicencio+Meta&output=embed"></iframe>
-                        <a class="btn btn-ghost map-open" id="map-open" href="https://www.google.com/maps/search/?api=1&query=Corredor+Ecológico+Villavicencio+Meta" target="_blank" rel="noopener noreferrer">Abrir en Google Maps ↗</a>
+                        <iframe id="bar-map" title="Mapa del Corredor Ecológico de Villavicencio" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=Corredor+Ecol%C3%B3gico+Villavicencio+Meta&output=embed"></iframe>
+                        <a class="btn btn-ghost map-open" id="map-open" href="https://www.google.com/maps/search/?api=1&query=Corredor+Ecol%C3%B3gico+Villavicencio+Meta" target="_blank" rel="noopener noreferrer">Abrir en Google Maps ↗</a>
                     </div>
                 </div>
             </div>
@@ -1520,7 +1656,7 @@
     <footer>
         <div class="wrap foot">
             <a class="logo" href="#inicio"><i aria-hidden="true"></i>Barrica</a>
-            <nav aria-label="Pie de página"><a href="#funciones">Funciones</a><a href="#ubicacion">Ubicación</a><a href="#precios">Precios</a><a href="#comunidad">Comunidad</a><a href="#contacto">Contacto</a><span>Aviso legal</span></nav>
+            <nav aria-label="Pie de página"><a href="#funciones">Funciones</a><a href="#descargar">Descargar app</a><a href="#ubicacion">Ubicación</a><a href="#precios">Precios</a><a href="#comunidad">Comunidad</a><a href="#contacto">Contacto</a><span>Aviso legal</span></nav>
             <span>Redes: Instagram · Facebook · TikTok · X</span>
             <span>© 2026 Barrica. Todos los derechos reservados.</span>
         </div>
@@ -1537,13 +1673,37 @@
     <button class="notice-reopen" id="notice-reopen" type="button" aria-label="Volver a ver avisos" hidden>Avisos</button>
     <a class="support-fab" href="#comunidad" aria-label="Ir a atención al cliente">?</a>
 
+    <dialog class="auth-dialog app-dialog" id="app-dialog" aria-labelledby="app-dialog-title">
+        <button class="auth-close" id="app-dialog-close" type="button" aria-label="Cerrar">×</button>
+        <span class="app-badge" id="app-dialog-badge">Instalación</span>
+        <h2 id="app-dialog-title">Instalar Barrica</h2>
+        <p id="app-dialog-desc"></p>
+        <ol class="app-steps" id="app-dialog-steps"></ol>
+        <div class="app-dialog-actions">
+            <a class="btn btn-primary" id="app-primary-link" href="/downloads/BarricaDesktop.exe" download="BarricaDesktop.exe">Descargar ahora</a>
+            <a class="btn btn-ghost" id="app-secondary-link" href="/downloads/Barrica-Movil.html" download="Barrica-Movil.html" hidden>Descargar archivo autónomo (.html)</a>
+            <button class="btn btn-ghost" id="app-dialog-done" type="button">Cerrar</button>
+        </div>
+        <p class="auth-status" id="app-dialog-status" role="status" aria-live="polite"></p>
+    </dialog>
+
     <dialog class="auth-dialog" id="auth-dialog" aria-labelledby="auth-title">
         <button class="auth-close" id="auth-close" type="button" aria-label="Cerrar">×</button>
         <h2 id="auth-title">Iniciar sesión</h2>
-        <p id="auth-description">Accede a tu cuenta de Barrica.</p>
+        <p id="auth-description">Selecciona tu perfil para acceder a Barrica.</p>
+        <div class="auth-roles" id="auth-roles" role="group" aria-label="Selecciona tu rol">
+            <button class="auth-role-btn active" type="button" data-select-role="vendedor">
+                <strong>▣ Vendedor</strong>
+                <small>Mesas, pedidos, cuentas y cobros</small>
+            </button>
+            <button class="auth-role-btn" type="button" data-select-role="administrador">
+                <strong>◈ Administrador</strong>
+                <small>Inventario, usuarios, sesiones y ventas</small>
+            </button>
+        </div>
         <form id="auth-form">
             <label id="auth-name-field" hidden>
-                Nombre
+                Nombre completo
                 <input id="auth-name" name="name" type="text" autocomplete="name" maxlength="120" pattern="[^0-9]+" title="El nombre no puede contener números." aria-describedby="auth-name-hint">
                 <span class="field-hint" id="auth-name-hint" role="status" aria-live="polite"></span>
             </label>
@@ -1552,14 +1712,17 @@
                 <input id="auth-email" name="email" type="email" autocomplete="email" maxlength="254" required>
             </label>
             <label>
-                Contraseña
+                Contraseña (mínimo 12 caracteres)
                 <input id="auth-password" name="password" type="password" autocomplete="current-password" required>
             </label>
-            <button class="btn btn-primary" id="auth-submit" type="submit">Iniciar sesión</button>
+            <button class="btn btn-primary" id="auth-submit" type="submit">Ingresar como Vendedor</button>
         </form>
         <p class="auth-status" id="auth-status" role="status" aria-live="polite"></p>
         <button class="auth-switch" id="auth-switch" type="button">¿No tienes cuenta? Crear una</button>
-        <button class="btn btn-ghost" id="auth-logout" type="button" hidden>Cerrar sesión</button>
+        <div class="auth-logged-actions" id="auth-logged-actions" hidden>
+            <a class="btn btn-primary" id="auth-open-pos" href="/app">Abrir Sistema Operativo Barrica ↗</a>
+            <button class="btn btn-ghost" id="auth-logout" type="button">Cerrar sesión</button>
+        </div>
     </dialog>
 
     <!-- ===== PAGO DE PRUEBA: no cobra nada ===== -->
@@ -1728,8 +1891,12 @@
             const authSubmit = document.getElementById('auth-submit');
             const authSwitch = document.getElementById('auth-switch');
             const authLogout = document.getElementById('auth-logout');
+            const authRolesBox = document.getElementById('auth-roles');
+            const authLoggedActions = document.getElementById('auth-logged-actions');
+            const authOpenPos = document.getElementById('auth-open-pos');
             const accountButton = document.getElementById('account-button');
             let authMode = 'login';
+            let selectedRole = 'vendedor';
             let authUser = null;
             let sessionChecked = false;
 
@@ -1837,36 +2004,60 @@
             const authNameGuard = bindGuard(authName, authNameHint, RULES.name);
             const setNameHint = authNameGuard.setHint;
 
+            const roleDisplay = role => role === 'administrador' ? 'Administrador' : 'Vendedor';
+
+            const updateRoleButtons = () => {
+                document.querySelectorAll('[data-select-role]').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.selectRole === selectedRole);
+                });
+                const label = roleDisplay(selectedRole);
+                authSubmit.textContent = authMode === 'register' ?
+                    `Crear cuenta de ${label}` :
+                    `Ingresar como ${label}`;
+            };
+
+            document.querySelectorAll('[data-select-role]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    selectedRole = btn.dataset.selectRole;
+                    authStatus.textContent = '';
+                    updateRoleButtons();
+                });
+            });
+
             const setAuthMode = mode => {
                 authMode = mode;
                 authTitle.textContent = mode === 'register' ? 'Crear cuenta' : 'Iniciar sesión';
                 authDescription.textContent = mode === 'register' ?
-                    'Crea tu cuenta para empezar con Barrica.' :
-                    'Accede a tu cuenta de Barrica.';
+                    'Elige el perfil y crea tu cuenta en Barrica.' :
+                    'Selecciona tu perfil (Administrador o Vendedor) para acceder.';
                 authNameField.hidden = mode !== 'register';
                 authName.required = mode === 'register';
                 setNameHint('');
                 authPassword.autocomplete = mode === 'register' ? 'new-password' : 'current-password';
                 authPassword.minLength = 12;
-                authSubmit.textContent = mode === 'register' ? 'Crear cuenta' : 'Iniciar sesión';
                 authSwitch.textContent = mode === 'register' ?
                     '¿Ya tienes cuenta? Iniciar sesión' :
                     '¿No tienes cuenta? Crear una';
+                if (authRolesBox) authRolesBox.hidden = false;
                 authForm.hidden = false;
                 authSwitch.hidden = false;
-                authLogout.hidden = true;
+                if (authLoggedActions) authLoggedActions.hidden = true;
                 authStatus.textContent = '';
+                updateRoleButtons();
             };
 
             const showAuthenticatedUser = (user, message) => {
                 authUser = user;
-                accountButton.textContent = 'Mi cuenta';
+                const rLabel = roleDisplay(user.role);
+                accountButton.textContent = `${user.name} · ${rLabel}`;
                 authTitle.textContent = `Hola, ${user.name}`;
-                authDescription.textContent = `Sesión iniciada como ${user.email}.`;
+                authDescription.textContent = `Sesión iniciada como ${user.email} (${rLabel}).`;
+                if (authRolesBox) authRolesBox.hidden = true;
                 authForm.hidden = true;
                 authSwitch.hidden = true;
-                authLogout.hidden = false;
-                authStatus.textContent = message || 'Tu sesión está activa.';
+                if (authLoggedActions) authLoggedActions.hidden = false;
+                if (authOpenPos) authOpenPos.href = `${API_BASE || ''}/app`;
+                authStatus.textContent = message || `Tu sesión de ${rLabel} está activa.`;
             };
 
             const readApiResponse = async response => {
@@ -1890,9 +2081,23 @@
                 return data;
             };
 
+            const isLocalPreview = (location.hostname === '127.0.0.1' || location.hostname === 'localhost') &&
+                location.port !== '' && location.port !== '5000';
+            const API_BASE = isLocalPreview ? `${location.protocol}//${location.hostname}:5000` : '';
+            const apiFetch = (path, options = {}) => fetch(
+                `${API_BASE}${path}`,
+                isLocalPreview ? { ...options, credentials: 'include' } : options
+            );
+            const formatApiError = (error, fallback) => {
+                if (error instanceof TypeError || (error instanceof Error && /failed to fetch|networkerror|load failed/i.test(error.message))) {
+                    return 'No se pudo conectar con el servidor de Barrica. Ejecuta .\\.venv\\Scripts\\python.exe app.py y abre http://127.0.0.1:5000.';
+                }
+                return error instanceof Error ? error.message : fallback;
+            };
+
             const getApiUnavailableMessage = () => {
                 if (location.protocol === 'file:') {
-                    return 'Abriste el HTML directamente desde tu equipo. Para iniciar sesión, publica el proyecto en Vercel con la carpeta api/ y configura la conexión a MySQL.';
+                    return 'Abriste el HTML directamente desde tu equipo. Inicia el servidor con .\\.venv\\Scripts\\python.exe app.py y abre http://127.0.0.1:5000 (o despliega en Vercel).';
                 }
                 return '';
             };
@@ -1914,7 +2119,7 @@
                     authStatus.textContent = 'Comprobando sesión…';
                     authSubmit.disabled = true;
                     try {
-                        const response = await fetch('/api/auth/session', {
+                        const response = await apiFetch('/api/auth/session', {
                             headers: { Accept: 'application/json' }
                         });
                         const data = await readApiResponse(response);
@@ -1925,9 +2130,10 @@
                             authStatus.textContent = '';
                         }
                     } catch (error) {
-                        authStatus.textContent = error instanceof Error ?
-                            error.message :
-                            'No se pudo comprobar la sesión. Inténtalo de nuevo.';
+                        authStatus.textContent = formatApiError(
+                            error,
+                            'No se pudo comprobar la sesión. Inténtalo de nuevo.'
+                        );
                     } finally {
                         authSubmit.disabled = false;
                     }
@@ -1969,7 +2175,8 @@
                 const endpoint = authMode === 'register' ? 'register' : 'login';
                 const payload = {
                     email: authEmail.value,
-                    password: authPassword.value
+                    password: authPassword.value,
+                    role: selectedRole
                 };
                 if (endpoint === 'register') payload.name = authName.value;
 
@@ -1977,26 +2184,33 @@
                     const unavailableMessage = getApiUnavailableMessage();
                     if (unavailableMessage) throw new Error(unavailableMessage);
 
-                    const response = await fetch(`/api/auth/${endpoint}`, {
+                    const response = await apiFetch(`/api/auth/${endpoint}`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
                         body: JSON.stringify(payload)
                     });
                     const data = await readApiResponse(response);
                     if (!data.user) throw new Error('El servidor no devolvió los datos de la cuenta.');
+                    if (data.token) {
+                        try {
+                            sessionStorage.setItem('barrica-pos-auth-token', data.token);
+                            localStorage.setItem('barrica-pos-auth-token', data.token);
+                        } catch { /* almacenamiento restringido */ }
+                    }
                     sessionChecked = true;
                     showAuthenticatedUser(
                         data.user,
                         endpoint === 'register' ?
-                            'Cuenta creada. Tu sesión está iniciada.' :
-                            'Iniciaste sesión correctamente.'
+                            `Cuenta de ${roleDisplay(data.user.role)} creada. Tu sesión está activa.` :
+                            `Iniciaste sesión como ${roleDisplay(data.user.role)}.`
                     );
                     authForm.reset();
                     setNameHint('');
                 } catch (error) {
-                    authStatus.textContent = error instanceof Error ?
-                        error.message :
-                        'No se pudo completar la solicitud. Inténtalo de nuevo.';
+                    authStatus.textContent = formatApiError(
+                        error,
+                        'No se pudo completar la solicitud. Inténtalo de nuevo.'
+                    );
                 } finally {
                     authSubmit.disabled = false;
                 }
@@ -2009,21 +2223,58 @@
                     const unavailableMessage = getApiUnavailableMessage();
                     if (unavailableMessage) throw new Error(unavailableMessage);
 
-                    const response = await fetch('/api/auth/logout', { method: 'POST' });
+                    const response = await apiFetch('/api/auth/logout', { method: 'POST' });
                     await readApiResponse(response);
+                    try {
+                        sessionStorage.removeItem('barrica-pos-auth-token');
+                        localStorage.removeItem('barrica-pos-auth-token');
+                    } catch { /* almacenamiento restringido */ }
                     authUser = null;
                     sessionChecked = true;
                     accountButton.textContent = 'Iniciar sesión';
                     setAuthMode('login');
                     authStatus.textContent = 'Cerraste sesión.';
                 } catch (error) {
-                    authStatus.textContent = error instanceof Error ?
-                        error.message :
-                        'No se pudo cerrar sesión. Inténtalo de nuevo.';
+                    authStatus.textContent = formatApiError(
+                        error,
+                        'No se pudo cerrar sesión. Inténtalo de nuevo.'
+                    );
                 } finally {
                     authLogout.disabled = false;
                 }
             });
+
+            /* Al iniciar la página: comprueba sesión o solicita inicio de sesión (Administrador / Vendedor) */
+            const checkSessionOnPageLoad = async () => {
+                const unavailableMessage = getApiUnavailableMessage();
+                if (unavailableMessage) {
+                    setAuthMode('login');
+                    if (!authDialog.open) authDialog.showModal();
+                    authStatus.textContent = unavailableMessage;
+                    return;
+                }
+                try {
+                    const savedToken = sessionStorage.getItem('barrica-pos-auth-token') || localStorage.getItem('barrica-pos-auth-token') || '';
+                    const response = await apiFetch('/api/auth/session', {
+                        headers: {
+                            Accept: 'application/json',
+                            ...(savedToken ? { Authorization: `Bearer ${savedToken}` } : {})
+                        }
+                    });
+                    const data = await readApiResponse(response);
+                    sessionChecked = true;
+                    if (data.user) {
+                        showAuthenticatedUser(data.user);
+                    } else {
+                        setAuthMode('login');
+                        if (!authDialog.open) authDialog.showModal();
+                    }
+                } catch {
+                    setAuthMode('login');
+                    if (!authDialog.open) authDialog.showModal();
+                }
+            };
+            void checkSessionOnPageLoad();
 
             /* ===== Pago de prueba =====
                Todo es ficticio: el servidor no cobra ni guarda nada. El número
@@ -2241,7 +2492,7 @@
                     if (unavailableMessage) throw new Error(unavailableMessage);
 
                     payStatus.textContent = 'Procesando pago de prueba…';
-                    const response = await fetch('/api/payments/simulate', {
+                    const response = await apiFetch('/api/payments/simulate', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
                         body: JSON.stringify(payload)
@@ -2251,9 +2502,10 @@
                     payStatus.textContent = '';
                     renderReceipt(data.receipt);
                 } catch (error) {
-                    payStatus.textContent = error instanceof Error ?
-                        error.message :
-                        'No se pudo completar el pago de prueba. Inténtalo de nuevo.';
+                    payStatus.textContent = formatApiError(
+                        error,
+                        'No se pudo completar el pago de prueba. Inténtalo de nuevo.'
+                    );
                 } finally {
                     paySubmit.disabled = false;
                 }
@@ -2321,11 +2573,106 @@
             document.getElementById('bar-profile-clear')?.addEventListener('click', () => {
                 try { localStorage.removeItem(PROFILE_KEY); } catch {}
                 barForm?.reset();
-                if (mapFrame) mapFrame.src = 'https://www.google.com/maps?q=Corredor+Ecológico+Villavicencio+Meta&output=embed';
-                if (mapOpen) mapOpen.href = 'https://www.google.com/maps/search/?api=1&query=Corredor+Ecológico+Villavicencio+Meta';
+                if (mapFrame) mapFrame.src = 'https://www.google.com/maps?q=Corredor+Ecol%C3%B3gico+Villavicencio+Meta&output=embed';
+                if (mapOpen) mapOpen.href = 'https://www.google.com/maps/search/?api=1&query=Corredor+Ecol%C3%B3gico+Villavicencio+Meta';
                 if (mapTitle) mapTitle.textContent = 'Corredor Ecológico, Villavicencio';
                 if (barStatus) barStatus.textContent = 'Datos borrados de este navegador.';
             });
+
+            /* ===== Descarga de Aplicación Independiente (PC .exe / Android / iOS) ===== */
+            const appDialog = document.getElementById('app-dialog');
+            const appDialogBadge = document.getElementById('app-dialog-badge');
+            const appDialogTitle = document.getElementById('app-dialog-title');
+            const appDialogDesc = document.getElementById('app-dialog-desc');
+            const appDialogSteps = document.getElementById('app-dialog-steps');
+            const appPrimaryLink = document.getElementById('app-primary-link');
+            const appSecondaryLink = document.getElementById('app-secondary-link');
+            const appDialogStatus = document.getElementById('app-dialog-status');
+
+            const getBackendOrigin = () => API_BASE || location.origin;
+
+            const APP_PLATFORMS = {
+                pc: {
+                    badge: 'Escritorio · Windows (.exe)',
+                    title: 'Descargar BarricaDesktop.exe',
+                    desc: 'Programa nativo independiente para Windows (no abre el navegador ni redirige a esta página web):',
+                    steps: [
+                        'Haz clic en «Descargar BarricaDesktop.exe» para guardar el ejecutable en tu PC.',
+                        'Ábrelo con doble clic (si Windows SmartScreen pregunta, elige «Más información → Ejecutar de todas formas»).',
+                        'Tendrás en una ventana propia: Mesas y Pedidos, Inventario MySQL y Panel de Usuarios/Sesiones/Ventas.'
+                    ],
+                    primaryText: 'Descargar BarricaDesktop.exe',
+                    primaryHref: () => `${getBackendOrigin()}/downloads/BarricaDesktop.exe`,
+                    primaryDownload: 'BarricaDesktop.exe',
+                    showSecondary: false
+                },
+                android: {
+                    badge: 'Móvil · Android',
+                    title: 'Aplicación Móvil Barrica POS',
+                    desc: 'Aplicación operativa separada de la web promocional (abre directo en Mesas, Inventario y Administración):',
+                    steps: [
+                        'Toca «Abrir e instalar Barrica POS» para lanzar la app operativa independiente (/app).',
+                        'En Chrome para Android, toca «Instalar en celular» arriba a la derecha para dejarla fija en tu pantalla de inicio.',
+                        'O descarga el archivo autónomo Barrica-Movil.html para abrirlo directamente cuando quieras.'
+                    ],
+                    primaryText: 'Abrir e instalar Barrica POS',
+                    primaryHref: () => `${getBackendOrigin()}/app`,
+                    primaryDownload: null,
+                    showSecondary: true
+                },
+                ios: {
+                    badge: 'Apple · iPhone y iPad',
+                    title: 'Barrica POS para iOS',
+                    desc: 'Aplicación operativa independiente para iPhone y iPad (nunca muestra la página promocional):',
+                    steps: [
+                        'Toca «Abrir Barrica POS en Safari» desde tu iPhone o iPad.',
+                        'En la barra de Safari toca Compartir (↑) y elige «Agregar a pantalla de inicio».',
+                        'El ícono de Barrica POS abrirá directamente tus mesas, inventario y sesiones en pantalla completa.'
+                    ],
+                    primaryText: 'Abrir Barrica POS',
+                    primaryHref: () => `${getBackendOrigin()}/app`,
+                    primaryDownload: null,
+                    showSecondary: true
+                }
+            };
+
+            const openAppDialog = platformKey => {
+                const info = APP_PLATFORMS[platformKey] || APP_PLATFORMS.pc;
+                if (!appDialog) return;
+                appDialogBadge.textContent = info.badge;
+                appDialogTitle.textContent = info.title;
+                appDialogDesc.textContent = info.desc;
+                appDialogSteps.replaceChildren();
+                info.steps.forEach(stepText => {
+                    const li = document.createElement('li');
+                    li.textContent = stepText;
+                    appDialogSteps.append(li);
+                });
+                appPrimaryLink.textContent = info.primaryText;
+                appPrimaryLink.href = info.primaryHref();
+                if (info.primaryDownload) {
+                    appPrimaryLink.setAttribute('download', info.primaryDownload);
+                    appPrimaryLink.removeAttribute('target');
+                } else {
+                    appPrimaryLink.removeAttribute('download');
+                    appPrimaryLink.setAttribute('target', '_blank');
+                    appPrimaryLink.setAttribute('rel', 'noopener noreferrer');
+                }
+                appSecondaryLink.hidden = !info.showSecondary;
+                appSecondaryLink.href = `${getBackendOrigin()}/downloads/Barrica-Movil.html`;
+                appDialogStatus.textContent = '';
+                if (!appDialog.open) appDialog.showModal();
+            };
+
+            document.querySelectorAll('[data-app-platform]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    setMenu(false);
+                    openAppDialog(btn.dataset.appPlatform);
+                });
+            });
+
+            document.getElementById('app-dialog-close')?.addEventListener('click', () => appDialog?.close());
+            document.getElementById('app-dialog-done')?.addEventListener('click', () => appDialog?.close());
 
         })();
     </script>

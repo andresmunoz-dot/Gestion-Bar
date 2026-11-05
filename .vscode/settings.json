@@ -1,3 +1,6 @@
 {
-    "python.terminal.useEnvFile": true
+    "python.defaultInterpreterPath": "${workspaceFolder}/.venv/Scripts/python.exe",
+    "python.terminal.useEnvFile": true,
+    "mssql.intelliSense.enableErrorChecking": false,
+    "sqltools.languageServer.dialect": "MySQL"
 }
