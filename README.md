@@ -53,6 +53,27 @@ mostrar la interfaz y comunicarse con el backend.
 - `POST /api/auth/login` recibe `{ "email": "...", "password": "..." }`.
 - `GET /api/auth/session` comprueba la cookie de sesión.
 - `POST /api/auth/logout` cierra la sesión.
+- `POST /api/payments/simulate` valida un pago **ficticio** y devuelve un
+  comprobante de prueba (`simulated: true`). Recibe `plan` (`basico`, `pro` o
+  `multilocal`), `currency` (`USD` o `COP`), `payer_name`, `email`,
+  `document_type` (`CC`, `CE` o `NIT`), `document_number`, `phone`,
+  `card_holder`, `card_last4` y `card_brand`.
+
+## Precios y pago de prueba
+
+- Los planes se muestran en dólares y en pesos colombianos con una tasa de
+  referencia fija: `COP_PER_USD = 4000` en `app.py`. Si la cambias, actualiza
+  también `data-cop` de cada plan en `Untitled-1.html`; la prueba
+  `test_html_prices_match_server_plans` falla si los dos no coinciden.
+- El servidor calcula el monto con su propia tabla de precios (`PLANS`); nunca
+  confía en un monto enviado por el navegador.
+- El pago no cobra nada ni guarda nada. El número completo de la tarjeta, el
+  vencimiento y el CVV se validan en el navegador y **no se envían**: al servidor
+  solo llegan los últimos 4 dígitos para mostrarlos en el comprobante.
+- El comprobante está marcado como "Pago de prueba, sin validez".
+- Campos solo numéricos (documento, teléfono, tarjeta, vencimiento y código de
+  seguridad) y nombres sin números: se filtran al escribir o pegar y el servidor
+  vuelve a validarlos.
 
 Las contraseñas se almacenan con bcrypt; la sesión usa una cookie `HttpOnly`,
 `SameSite=Strict`, y el token se guarda en MySQL como hash. Las contraseñas
