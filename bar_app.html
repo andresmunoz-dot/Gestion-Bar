@@ -16,7 +16,8 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Barrica POS">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='96' fill='%230E1B17'/%3E%3Ccircle cx='256' cy='256' r='148' fill='none' stroke='%23D9A441' stroke-width='36'/%3E%3Ccircle cx='256' cy='256' r='92' fill='none' stroke='%23EFE6D2' stroke-width='14'/%3E%3C/svg%3E">
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='96' fill='%230E1B17'/%3E%3Ccircle cx='256' cy='256' r='148' fill='none' stroke='%23D9A441' stroke-width='36'/%3E%3Ccircle cx='256' cy='256' r='92' fill='none' stroke='%23EFE6D2' stroke-width='14'/%3E%3C/svg%3E">
     <script>if (location.protocol !== 'file:') { const m = document.createElement('link'); m.rel = 'manifest'; m.href = '/app/manifest.webmanifest'; document.head.appendChild(m); }</script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -735,13 +736,41 @@
             backdrop-filter: blur(4px);
         }
 
-        .crm-note { margin-bottom: 1rem; padding: .75rem 1rem; border-left: 3px solid #D9A441; background: rgba(217,164,65,.12); color: var(--muted, #8f9c92); }
-        .crm-grid { display: grid; grid-template-columns: minmax(16rem,.8fr) minmax(0,1.2fr); gap: 1rem; }
-        @media(max-width:850px){ .crm-grid { grid-template-columns: 1fr; } }
-        .crm-actions { display:flex; gap:.5rem; flex-wrap:wrap; align-items:center; }
-        .crm-empty { color: var(--muted, #8f9c92); padding: 1rem 0; }
-        .crm-table button { margin: .15rem; }
+        .crm-note {
+            margin-bottom: 1rem;
+            padding: .75rem 1rem;
+            border-left: 3px solid #D9A441;
+            background: rgba(217, 164, 65, .12);
+            color: var(--muted, #8f9c92);
+        }
 
+        .crm-grid {
+            display: grid;
+            grid-template-columns: minmax(16rem, .8fr) minmax(0, 1.2fr);
+            gap: 1rem;
+        }
+
+        @media(max-width:850px) {
+            .crm-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .crm-actions {
+            display: flex;
+            gap: .5rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .crm-empty {
+            color: var(--muted, #8f9c92);
+            padding: 1rem 0;
+        }
+
+        .crm-table button {
+            margin: .15rem;
+        }
     </style>
 </head>
 
@@ -786,7 +815,8 @@
             <form class="auth-fields" id="gate-form">
                 <label class="field-label" id="gate-name-wrap" hidden for="gate-name">
                     Nombre completo (sin números)
-                    <input id="gate-name" type="text" maxlength="120" autocomplete="name" placeholder="Ej. Camila Rojas">
+                    <input id="gate-name" type="text" maxlength="120" autocomplete="name"
+                        placeholder="Ej. Camila Rojas">
                 </label>
 
                 <label class="field-label" for="gate-email">
@@ -867,7 +897,8 @@
                             <h3 id="sel-table-title">Selecciona una mesa</h3>
                             <p class="step-hint">Agrega bebidas o platos y cobra en segundos.</p>
                         </div>
-                        <button class="btn btn-sm btn-danger" id="btn-delete-table" type="button" hidden>Eliminar mesa</button>
+                        <button class="btn btn-sm btn-danger" id="btn-delete-table" type="button" hidden>Eliminar
+                            mesa</button>
                     </div>
 
                     <form class="order-form" id="form-add-order">
@@ -904,7 +935,9 @@
 
                     <label class="field-label" for="local-sale-client">
                         Cliente de la venta (opcional)
-                        <select id="local-sale-client"><option value="">Consumidor final</option></select>
+                        <select id="local-sale-client">
+                            <option value="">Consumidor final</option>
+                        </select>
                     </label>
 
                     <label class="field-label" for="pay-method">
@@ -931,7 +964,8 @@
             </div>
 
             <div class="readonly-note" id="seller-inv-note" hidden>
-                Estás en perfil <strong>Vendedor</strong>: puedes consultar precios y existencias disponibles en tiempo real. La edición del inventario está reservada al Administrador.
+                Estás en perfil <strong>Vendedor</strong>: puedes consultar precios y existencias disponibles en tiempo
+                real. La edición del inventario está reservada al Administrador.
             </div>
 
             <form class="card-box inline-form cols-5" id="form-new-product">
@@ -1055,32 +1089,66 @@
 
         <!-- PESTAÑA 4: CLIENTES Y FACTURAS LOCALES -->
         <section id="tab-clientes" hidden>
-            <div class="section-bar"><h2>Clientes y facturas de prueba</h2></div>
-            <div class="crm-note">Este módulo se agregó sin modificar SQL. Los clientes y las facturas de prueba se guardan únicamente en este navegador hasta conectar las tablas relacionales.</div>
+            <div class="section-bar">
+                <h2>Clientes y facturas de prueba</h2>
+            </div>
+            <div class="crm-note">Este módulo se agregó sin modificar SQL. Los clientes y las facturas de prueba se
+                guardan únicamente en este navegador hasta conectar las tablas relacionales.</div>
             <div class="crm-grid">
                 <div class="card-box">
                     <h3>Registrar cliente</h3>
                     <form class="auth-fields" id="crm-client-form">
                         <input id="crm-client-id" type="hidden">
                         <label class="field-label">Nombre<input id="crm-client-name" maxlength="100" required></label>
-                        <label class="field-label">Correo<input id="crm-client-email" type="email" maxlength="100"></label>
+                        <label class="field-label">Correo<input id="crm-client-email" type="email"
+                                maxlength="100"></label>
                         <label class="field-label">Teléfono<input id="crm-client-phone" maxlength="20"></label>
                         <label class="field-label">Dirección<input id="crm-client-address" maxlength="150"></label>
                         <label class="field-label">Ciudad<input id="crm-client-city" maxlength="50"></label>
-                        <label class="field-label">País<input id="crm-client-country" maxlength="50" value="Colombia" required></label>
-                        <div class="crm-actions"><button class="btn btn-primary" type="submit">Guardar cliente</button><button class="btn" id="crm-client-clear" type="button">Limpiar</button></div>
+                        <label class="field-label">País<input id="crm-client-country" maxlength="50" value="Colombia"
+                                required></label>
+                        <div class="crm-actions"><button class="btn btn-primary" type="submit">Guardar
+                                cliente</button><button class="btn" id="crm-client-clear" type="button">Limpiar</button>
+                        </div>
                     </form>
                     <div class="status-banner" id="crm-client-status" role="status" aria-live="polite" hidden></div>
                 </div>
                 <div class="card-box">
                     <h3>Clientes registrados</h3>
-                    <div class="table-wrap"><table class="crm-table"><thead><tr><th>Nombre</th><th>Contacto</th><th>Ciudad / país</th><th>Acciones</th></tr></thead><tbody id="crm-clients-tbody"></tbody></table></div>
-                    <div class="crm-actions"><button class="btn btn-sm" id="crm-print-report" type="button">Imprimir clasificación por país</button></div>
+                    <div class="table-wrap">
+                        <table class="crm-table">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Contacto</th>
+                                    <th>Ciudad / país</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="crm-clients-tbody"></tbody>
+                        </table>
+                    </div>
+                    <div class="crm-actions"><button class="btn btn-sm" id="crm-print-report" type="button">Imprimir
+                            clasificación por país</button></div>
                 </div>
             </div>
             <div class="card-box">
                 <h3>Historial de facturas ficticias</h3>
-                <div class="table-wrap"><table><thead><tr><th>Folio</th><th>Fecha</th><th>Cliente</th><th>Detalle</th><th>Total</th><th>Acción</th></tr></thead><tbody id="crm-invoices-tbody"></tbody></table></div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Folio</th>
+                                <th>Fecha</th>
+                                <th>Cliente</th>
+                                <th>Detalle</th>
+                                <th>Total</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="crm-invoices-tbody"></tbody>
+                    </table>
+                </div>
             </div>
         </section>
     </main>
@@ -1526,16 +1594,16 @@
             const readCrm = () => { try { return JSON.parse(localStorage.getItem(CRM_KEY) || '{"clients":[],"invoices":[]}'); } catch { return { clients: [], invoices: [] }; } };
             let crm = readCrm();
             const saveCrm = () => safeSet(localStorage, CRM_KEY, JSON.stringify(crm));
-            const crmEsc = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char]));
-            const crmId = prefix => `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2,7)}`;
+            const crmEsc = value => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[char]));
+            const crmId = prefix => `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
             const renderCrm = () => {
-                const body=document.getElementById('crm-clients-tbody'); if(!body)return;
-                body.innerHTML=crm.clients.map(c=>`<tr><td>${crmEsc(c.name)}</td><td>${crmEsc(c.email)}<br>${crmEsc(c.phone)}</td><td>${crmEsc(c.city)}<br>${crmEsc(c.country)}</td><td><button class="btn btn-sm" type="button" data-crm-edit="${c.id}">Editar</button><button class="btn btn-sm btn-danger" type="button" data-crm-delete="${c.id}">Eliminar</button></td></tr>`).join('')||'<tr><td colspan="4" class="crm-empty">No hay clientes registrados.</td></tr>';
-                const inv=document.getElementById('crm-invoices-tbody'); inv.innerHTML=crm.invoices.map(i=>`<tr><td>${crmEsc(i.folio)}</td><td>${crmEsc(i.date)}</td><td>${crmEsc(i.client)}</td><td>${crmEsc(i.detail)}</td><td>${cop(i.total)}</td><td><button class="btn btn-sm" type="button" data-crm-print="${i.id}">Imprimir</button></td></tr>`).join('')||'<tr><td colspan="6" class="crm-empty">No hay facturas ficticias.</td></tr>';
-                const select=document.getElementById('local-sale-client'); if(select){ const value=select.value; select.innerHTML='<option value="">Consumidor final</option>'+crm.clients.map(c=>`<option value="${c.id}">${crmEsc(c.name)} · ${crmEsc(c.country)}</option>`).join(''); select.value=value; }
+                const body = document.getElementById('crm-clients-tbody'); if (!body) return;
+                body.innerHTML = crm.clients.map(c => `<tr><td>${crmEsc(c.name)}</td><td>${crmEsc(c.email)}<br>${crmEsc(c.phone)}</td><td>${crmEsc(c.city)}<br>${crmEsc(c.country)}</td><td><button class="btn btn-sm" type="button" data-crm-edit="${c.id}">Editar</button><button class="btn btn-sm btn-danger" type="button" data-crm-delete="${c.id}">Eliminar</button></td></tr>`).join('') || '<tr><td colspan="4" class="crm-empty">No hay clientes registrados.</td></tr>';
+                const inv = document.getElementById('crm-invoices-tbody'); inv.innerHTML = crm.invoices.map(i => `<tr><td>${crmEsc(i.folio)}</td><td>${crmEsc(i.date)}</td><td>${crmEsc(i.client)}</td><td>${crmEsc(i.detail)}</td><td>${cop(i.total)}</td><td><button class="btn btn-sm" type="button" data-crm-print="${i.id}">Imprimir</button></td></tr>`).join('') || '<tr><td colspan="6" class="crm-empty">No hay facturas ficticias.</td></tr>';
+                const select = document.getElementById('local-sale-client'); if (select) { const value = select.value; select.innerHTML = '<option value="">Consumidor final</option>' + crm.clients.map(c => `<option value="${c.id}">${crmEsc(c.name)} · ${crmEsc(c.country)}</option>`).join(''); select.value = value; }
             };
-            const crmPrint = (title, html) => { const w=window.open('','_blank','width=900,height=700'); if(!w){showBanner('Habilita las ventanas emergentes del navegador para imprimir.',true);return;} w.document.write(`<html lang="es"><head><title>${crmEsc(title)}</title><style>body{font-family:Arial;padding:28px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #bbb;padding:8px;text-align:left}th{background:#e9dfcd}</style></head><body><h1>${crmEsc(title)}</h1>${html}</body></html>`);w.document.close();w.focus();w.print(); };
-            const crmCreateInvoice = (total, detail) => { const clientId=document.getElementById('local-sale-client')?.value; const client=crm.clients.find(c=>c.id===clientId); const date=new Date().toLocaleString('es-CO'); const invoice={id:crmId('fac'),folio:`FAC-LOCAL-${String(crm.invoices.length+1).padStart(5,'0')}`,date,client:client?.name||'Consumidor final',detail,total:Number(total)||0};crm.invoices.push(invoice);saveCrm();renderCrm();return invoice; };
+            const crmPrint = (title, html) => { const w = window.open('', '_blank', 'width=900,height=700'); if (!w) { showBanner('Habilita las ventanas emergentes del navegador para imprimir.', true); return; } w.document.write(`<html lang="es"><head><title>${crmEsc(title)}</title><style>body{font-family:Arial;padding:28px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #bbb;padding:8px;text-align:left}th{background:#e9dfcd}</style></head><body><h1>${crmEsc(title)}</h1>${html}</body></html>`); w.document.close(); w.focus(); w.print(); };
+            const crmCreateInvoice = (total, detail) => { const clientId = document.getElementById('local-sale-client')?.value; const client = crm.clients.find(c => c.id === clientId); const date = new Date().toLocaleString('es-CO'); const invoice = { id: crmId('fac'), folio: `FAC-LOCAL-${String(crm.invoices.length + 1).padStart(5, '0')}`, date, client: client?.name || 'Consumidor final', detail, total: Number(total) || 0 }; crm.invoices.push(invoice); saveCrm(); renderCrm(); return invoice; };
             const switchTab = tabName => {
                 if (tabName === 'admin' && !isAdmin()) tabName = 'mesas';
                 document.querySelectorAll('.nav-tab').forEach(x => {
@@ -2092,10 +2160,10 @@
             });
 
 
-            document.getElementById('crm-client-form').addEventListener('submit', e => { e.preventDefault(); const id=document.getElementById('crm-client-id').value; const item={id:id||crmId('cli'),name:document.getElementById('crm-client-name').value.trim(),email:document.getElementById('crm-client-email').value.trim(),phone:document.getElementById('crm-client-phone').value.trim(),address:document.getElementById('crm-client-address').value.trim(),city:document.getElementById('crm-client-city').value.trim(),country:document.getElementById('crm-client-country').value.trim()}; const index=crm.clients.findIndex(c=>c.id===id); if(index>=0)crm.clients[index]=item;else crm.clients.push(item);saveCrm();e.target.reset();document.getElementById('crm-client-id').value='';const st=document.getElementById('crm-client-status');st.textContent='Cliente guardado en este navegador.';st.hidden=false;renderCrm(); });
-            document.getElementById('crm-client-clear').addEventListener('click',()=>{document.getElementById('crm-client-form').reset();document.getElementById('crm-client-id').value='';const st=document.getElementById('crm-client-status');if(st){st.textContent='';st.hidden=true;}});
-            document.getElementById('crm-print-report').addEventListener('click',()=>{const groups={};crm.clients.forEach(c=>(groups[c.country||'Sin país']??=[]).push(c));const rows=Object.entries(groups).sort().map(([country,items])=>`<tr><th colspan="4">${crmEsc(country)} (${items.length})</th></tr>`+items.map(c=>`<tr><td>${crmEsc(c.name)}</td><td>${crmEsc(c.email)}</td><td>${crmEsc(c.phone)}</td><td>${crmEsc(c.city)}</td></tr>`).join('')).join('');crmPrint('Reporte de clasificación de clientes por nacionalidad',`<table><thead><tr><th>Cliente</th><th>Correo</th><th>Teléfono</th><th>Ciudad</th></tr></thead><tbody>${rows||'<tr><td colspan="4">Sin clientes.</td></tr>'}</tbody></table>`);});
-            document.addEventListener('click',e=>{const el=e.target&&typeof e.target.closest==='function'?e.target:null;const b=el?el.closest('[data-crm-edit],[data-crm-delete],[data-crm-print]'):null;if(!b)return;if(b.dataset.crmEdit){const c=crm.clients.find(x=>x.id===b.dataset.crmEdit);if(c){document.getElementById('crm-client-id').value=c.id;for(const [id,key] of Object.entries({'crm-client-name':'name','crm-client-email':'email','crm-client-phone':'phone','crm-client-address':'address','crm-client-city':'city','crm-client-country':'country'}))document.getElementById(id).value=c[key]||'';switchTab('clientes');}}if(b.dataset.crmDelete&&confirm('¿Eliminar este cliente?')){crm.clients=crm.clients.filter(c=>c.id!==b.dataset.crmDelete);saveCrm();renderCrm();}if(b.dataset.crmPrint){const i=crm.invoices.find(x=>x.id===b.dataset.crmPrint);if(i)crmPrint(`Factura ${i.folio}`,`<p><b>Folio:</b> ${crmEsc(i.folio)}<br><b>Fecha:</b> ${crmEsc(i.date)}<br><b>Cliente:</b> ${crmEsc(i.client)}</p><table><tr><th>Detalle</th><th>Total</th></tr><tr><td>${crmEsc(i.detail)}</td><td>${cop(i.total)}</td></tr></table>`);}});
+            document.getElementById('crm-client-form').addEventListener('submit', e => { e.preventDefault(); const id = document.getElementById('crm-client-id').value; const item = { id: id || crmId('cli'), name: document.getElementById('crm-client-name').value.trim(), email: document.getElementById('crm-client-email').value.trim(), phone: document.getElementById('crm-client-phone').value.trim(), address: document.getElementById('crm-client-address').value.trim(), city: document.getElementById('crm-client-city').value.trim(), country: document.getElementById('crm-client-country').value.trim() }; const index = crm.clients.findIndex(c => c.id === id); if (index >= 0) crm.clients[index] = item; else crm.clients.push(item); saveCrm(); e.target.reset(); document.getElementById('crm-client-id').value = ''; const st = document.getElementById('crm-client-status'); st.textContent = 'Cliente guardado en este navegador.'; st.hidden = false; renderCrm(); });
+            document.getElementById('crm-client-clear').addEventListener('click', () => { document.getElementById('crm-client-form').reset(); document.getElementById('crm-client-id').value = ''; const st = document.getElementById('crm-client-status'); if (st) { st.textContent = ''; st.hidden = true; } });
+            document.getElementById('crm-print-report').addEventListener('click', () => { const groups = {}; crm.clients.forEach(c => (groups[c.country || 'Sin país'] ??= []).push(c)); const rows = Object.entries(groups).sort().map(([country, items]) => `<tr><th colspan="4">${crmEsc(country)} (${items.length})</th></tr>` + items.map(c => `<tr><td>${crmEsc(c.name)}</td><td>${crmEsc(c.email)}</td><td>${crmEsc(c.phone)}</td><td>${crmEsc(c.city)}</td></tr>`).join('')).join(''); crmPrint('Reporte de clasificación de clientes por nacionalidad', `<table><thead><tr><th>Cliente</th><th>Correo</th><th>Teléfono</th><th>Ciudad</th></tr></thead><tbody>${rows || '<tr><td colspan="4">Sin clientes.</td></tr>'}</tbody></table>`); });
+            document.addEventListener('click', e => { const el = e.target && typeof e.target.closest === 'function' ? e.target : null; const b = el ? el.closest('[data-crm-edit],[data-crm-delete],[data-crm-print]') : null; if (!b) return; if (b.dataset.crmEdit) { const c = crm.clients.find(x => x.id === b.dataset.crmEdit); if (c) { document.getElementById('crm-client-id').value = c.id; for (const [id, key] of Object.entries({ 'crm-client-name': 'name', 'crm-client-email': 'email', 'crm-client-phone': 'phone', 'crm-client-address': 'address', 'crm-client-city': 'city', 'crm-client-country': 'country' })) document.getElementById(id).value = c[key] || ''; switchTab('clientes'); } } if (b.dataset.crmDelete && confirm('¿Eliminar este cliente?')) { crm.clients = crm.clients.filter(c => c.id !== b.dataset.crmDelete); saveCrm(); renderCrm(); } if (b.dataset.crmPrint) { const i = crm.invoices.find(x => x.id === b.dataset.crmPrint); if (i) crmPrint(`Factura ${i.folio}`, `<p><b>Folio:</b> ${crmEsc(i.folio)}<br><b>Fecha:</b> ${crmEsc(i.date)}<br><b>Cliente:</b> ${crmEsc(i.client)}</p><table><tr><th>Detalle</th><th>Total</th></tr><tr><td>${crmEsc(i.detail)}</td><td>${cop(i.total)}</td></tr></table>`); } });
 
             /* Navegación por pestañas */
             document.querySelectorAll('.nav-tab').forEach(btn => {
