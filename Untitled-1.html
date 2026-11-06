@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>Barrica · Software de gestión para bares</title>
     <meta name="description" content="Controla mesas, pedidos, inventario de licores, cuentas, turnos y reportes desde una sola pantalla.">
-    <link rel="icon" type="image/svg+xml" href="/icon.svg">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='96' fill='%230E1B17'/%3E%3Ccircle cx='256' cy='256' r='148' fill='none' stroke='%23D9A441' stroke-width='36'/%3E%3Ccircle cx='256' cy='256' r='92' fill='none' stroke='%23EFE6D2' stroke-width='14'/%3E%3C/svg%3E">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&family=Instrument+Sans:wght@400..600&display=swap">
@@ -1256,6 +1256,22 @@
         .app-dialog-actions { display: grid; gap: .75rem; margin-top: var(--sp-3); }
         .app-dialog-actions .btn { width: 100%; text-align: center; }
 
+
+        .social-icon, .support-icon { width: 1.35rem; height: 1.35rem; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: 0 0 auto; }
+        .social-icon.fill, .support-icon.fill { fill: currentColor; stroke: none; }
+        .social-grid a { align-items: center; gap: .65rem; }
+        .social-grid a > span:first-child { display: inline-flex; align-items: center; gap: .65rem; }
+        .social-grid a:hover .social-icon { transform: scale(1.08); }
+        .support-fab { gap: .2rem; }
+
+
+        .social-icon, .support-icon { width: 1.35rem; height: 1.35rem; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: 0 0 auto; }
+        .social-icon.fill, .support-icon.fill { fill: currentColor; stroke: none; }
+        .social-grid a { align-items: center; gap: .65rem; }
+        .social-grid a > span:first-child { display: inline-flex; align-items: center; gap: .65rem; }
+        .social-grid a:hover .social-icon { transform: scale(1.08); }
+        .support-fab { gap: .2rem; }
+
     </style>
 </head>
 
@@ -1636,7 +1652,14 @@
                 <div class="social-panel">
                     <div class="sec-head"><h2>Atención y redes sociales</h2><p>Comparte novedades, eventos y mantenimientos. También puedes contactar al equipo si ocurre una falla.</p></div>
                     <div class="community-actions"><a class="btn btn-primary" href="https://wa.me/?text=Hola%2C%20necesito%20ayuda%20con%20Barrica" target="_blank" rel="noopener noreferrer">Escribir por WhatsApp</a><a class="btn btn-ghost" href="mailto:soporte@barrica.app?subject=Ayuda%20con%20Barrica">Enviar correo</a></div>
-                    <div class="social-grid" aria-label="Redes sociales"><a href="https://instagram.com" target="_blank" rel="noopener noreferrer"><span>Instagram</span><b>↗</b></a><a href="https://facebook.com" target="_blank" rel="noopener noreferrer"><span>Facebook</span><b>↗</b></a><a href="https://www.tiktok.com" target="_blank" rel="noopener noreferrer"><span>TikTok</span><b>↗</b></a><a href="https://x.com" target="_blank" rel="noopener noreferrer"><span>X / Twitter</span><b>↗</b></a></div>
+                    <div class="social-grid" aria-label="Redes sociales">
+                        <a href="https://wa.me/?text=Hola%2C%20necesito%20ayuda%20con%20Barrica" target="_blank" rel="noopener noreferrer"><span><svg class="social-icon fill" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.2a9.7 9.7 0 0 0-8.4 14.6L2.2 21.8l5.1-1.3A9.8 9.8 0 1 0 12 2.2Zm0 17.7a8 8 0 0 1-4.1-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8 8 0 1 1 12 19.9Zm4.4-5.9c-.2-.1-1.4-.7-1.6-.8-.2-.1-.4-.1-.5.1-.2.2-.6.8-.7.9-.1.2-.3.2-.5.1-1.5-.7-2.5-1.3-3.5-3-.3-.5.3-.5.8-1.7.1-.2 0-.4 0-.5l-.7-1.6c-.2-.4-.4-.4-.5-.4h-.5c-.2 0-.5.1-.7.3-.8.8-1.1 1.9-.8 3 .1.4.3.8.5 1.1 1.1 1.8 2.6 3.2 4.6 4.1.6.3 1.1.4 1.5.6.6.2 1.2.2 1.7.1.5-.1 1.4-.6 1.6-1.2.2-.6.2-1.1.1-1.2-.1-.1-.2-.2-.4-.3Z"/></svg>WhatsApp</span><b>↗</b></a>
+                        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer"><span><svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".5"/></svg>Instagram</span><b>↗</b></a>
+                        <a href="https://www.tiktok.com" target="_blank" rel="noopener noreferrer"><span><svg class="social-icon fill" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.4 3h3.1c.2 1.5 1 2.8 2.5 3.6v3.1a8.6 8.6 0 0 1-2.5-.8v6.2a5.9 5.9 0 1 1-5.9-5.9c.3 0 .6 0 .9.1v3.1a2.9 2.9 0 1 0 1.9 2.7V3Z"/></svg>TikTok</span><b>↗</b></a>
+                        <a href="mailto:soporte@barrica.app?subject=Ayuda%20con%20Barrica"><span><svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></svg>Gmail / soporte</span><b>↗</b></a>
+                        <a href="https://facebook.com" target="_blank" rel="noopener noreferrer"><span><svg class="social-icon fill" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 8h3V4h-3c-2.8 0-4 1.8-4 4.5V10H7v4h3v8h4v-8h3l1-4h-4V8.5c0-.3.2-.5.5-.5Z"/></svg>Facebook</span><b>↗</b></a>
+                        <a href="https://x.com" target="_blank" rel="noopener noreferrer"><span><svg class="social-icon fill" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.8 3h3.1l-6.8 7.8L22 21h-6.2l-4.8-6.3L5.4 21H2.3l7.2-8.2L2 3h6.3l4.4 5.8L17.8 3Zm-1.1 15.3h1.7L7.3 4.6H5.5l11.2 13.7Z"/></svg>X / Twitter</span><b>↗</b></a>
+                    </div>
                     <p class="location-note">Reemplaza estos enlaces por los perfiles reales de tu negocio y configura el correo de soporte antes de publicar.</p>
                 </div>
             </div>
@@ -1671,7 +1694,7 @@
         <button class="btn btn-ghost" id="notice-more" type="button">Entendido</button>
     </aside>
     <button class="notice-reopen" id="notice-reopen" type="button" aria-label="Volver a ver avisos" hidden>Avisos</button>
-    <a class="support-fab" href="#comunidad" aria-label="Ir a atención al cliente">?</a>
+    <a class="support-fab" href="https://wa.me/?text=Hola%2C%20necesito%20ayuda%20con%20Barrica" target="_blank" rel="noopener noreferrer" aria-label="Contactar atención al cliente por WhatsApp"><svg class="support-icon fill" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.2a9.7 9.7 0 0 0-8.4 14.6L2.2 21.8l5.1-1.3A9.8 9.8 0 1 0 12 2.2Zm0 17.7a8 8 0 0 1-4.1-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8 8 0 1 1 12 19.9Zm4.4-5.9c-.2-.1-1.4-.7-1.6-.8-.2-.1-.4-.1-.5.1-.2.2-.6.8-.7.9-.1.2-.3.2-.5.1-1.5-.7-2.5-1.3-3.5-3-.3-.5.3-.5.8-1.7.1-.2 0-.4 0-.5l-.7-1.6c-.2-.4-.4-.4-.5-.4h-.5c-.2 0-.5.1-.7.3-.8.8-1.1 1.9-.8 3 .1.4.3.8.5 1.1 1.1 1.8 2.6 3.2 4.6 4.1.6.3 1.1.4 1.5.6.6.2 1.2.2 1.7.1.5-.1 1.4-.6 1.6-1.2.2-.6.2-1.1.1-1.2-.1-.1-.2-.2-.4-.3Z"/></svg></a>
 
     <dialog class="auth-dialog app-dialog" id="app-dialog" aria-labelledby="app-dialog-title">
         <button class="auth-close" id="app-dialog-close" type="button" aria-label="Cerrar">×</button>
@@ -1719,6 +1742,7 @@
         </form>
         <p class="auth-status" id="auth-status" role="status" aria-live="polite"></p>
         <button class="auth-switch" id="auth-switch" type="button">¿No tienes cuenta? Crear una</button>
+        <a class="btn btn-ghost" id="auth-direct-pos" href="./bar_app.html" style="display:block;text-align:center;margin-top:.65rem">Abrir App Operativa (bar_app) ↗</a>
         <div class="auth-logged-actions" id="auth-logged-actions" hidden>
             <a class="btn btn-primary" id="auth-open-pos" href="/app">Abrir Sistema Operativo Barrica ↗</a>
             <button class="btn btn-ghost" id="auth-logout" type="button">Cerrar sesión</button>
@@ -2024,6 +2048,93 @@
                 });
             });
 
+            const isLocalPreview = (location.hostname === '127.0.0.1' || location.hostname === 'localhost') &&
+                location.port !== '' && location.port !== '5000';
+            const API_BASE = isLocalPreview ? `${location.protocol}//${location.hostname}:5000` : '';
+            const apiFetch = (path, options = {}) => fetch(
+                `${API_BASE}${path}`,
+                isLocalPreview ? { ...options, credentials: 'include' } : options
+            );
+            const formatApiError = (error, fallback) => {
+                if (error instanceof TypeError || (error instanceof Error && /failed to fetch|networkerror|load failed/i.test(error.message))) {
+                    return 'No se pudo conectar con el servidor de Barrica. Ejecuta py app.py (o iniciar_bar_app.bat) o abre «Abrir App Operativa (bar_app)» abajo.';
+                }
+                return error instanceof Error ? error.message : fallback;
+            };
+
+            const getApiUnavailableMessage = () => {
+                if (location.protocol === 'file:') {
+                    return 'Abriste el HTML directamente desde tu equipo. Puedes ingresar en Modo Local o pulsar «Abrir App Operativa (bar_app)» abajo.';
+                }
+                return '';
+            };
+
+            const LOCAL_DB_KEY = 'barrica-pos-local-db-v1';
+            const syncLocalPosUser = user => {
+                try {
+                    const raw = localStorage.getItem(LOCAL_DB_KEY);
+                    const db = raw ? JSON.parse(raw) : null;
+                    if (db && typeof db === 'object') {
+                        db.sessionUser = user;
+                        localStorage.setItem(LOCAL_DB_KEY, JSON.stringify(db));
+                    } else if (user) {
+                        localStorage.setItem(LOCAL_DB_KEY, JSON.stringify({
+                            tables: [
+                                { id: 1, table_number: 1, label: 'Mesa 1 · Salón', capacity: 4, status: 'libre' },
+                                { id: 2, table_number: 2, label: 'Mesa 2 · Salón', capacity: 4, status: 'libre' },
+                                { id: 3, table_number: 3, label: 'Mesa 3 · Ventana', capacity: 2, status: 'libre' },
+                                { id: 4, table_number: 4, label: 'Mesa 4 · Terraza', capacity: 6, status: 'libre' },
+                                { id: 5, table_number: 5, label: 'Mesa 5 · Terraza', capacity: 4, status: 'libre' },
+                                { id: 6, table_number: 6, label: 'Mesa 6 · VIP', capacity: 8, status: 'libre' },
+                                { id: 7, table_number: 7, label: 'Barra 1 · Principal', capacity: 2, status: 'libre' },
+                                { id: 8, table_number: 8, label: 'Barra 2 · Principal', capacity: 2, status: 'libre' }
+                            ],
+                            products: [
+                                { id: 1, name: 'Negroni', category: 'Cócteles', price_cop: 28000, stock: 24, min_stock: 5 },
+                                { id: 2, name: 'Old Fashioned', category: 'Cócteles', price_cop: 30000, stock: 20, min_stock: 5 },
+                                { id: 3, name: 'Margarita Artesanal', category: 'Cócteles', price_cop: 26000, stock: 18, min_stock: 5 },
+                                { id: 4, name: 'Cerveza Club Colombia', category: 'Cervezas', price_cop: 9000, stock: 48, min_stock: 12 },
+                                { id: 5, name: 'Cerveza Artesanal IPA', category: 'Cervezas', price_cop: 15000, stock: 30, min_stock: 8 },
+                                { id: 6, name: 'Botella Ginebra Tanqueray', category: 'Licores', price_cop: 165000, stock: 3, min_stock: 4 },
+                                { id: 7, name: 'Botella Aguardiente Antioqueño', category: 'Licores', price_cop: 85000, stock: 10, min_stock: 4 },
+                                { id: 8, name: 'Tabla de Quesos y Madurados', category: 'Comida', price_cop: 42000, stock: 12, min_stock: 3 }
+                            ],
+                            orders: [],
+                            sales: [],
+                            users: [
+                                { id: 1, full_name: user.name, email: user.email, role: user.role, created_at: new Date().toISOString().slice(0, 19).replace('T', ' ') }
+                            ],
+                            sessions: [
+                                { full_name: user.name, email: user.email, role: user.role, created_at: new Date().toISOString().slice(0, 19).replace('T', ' '), active: true }
+                            ],
+                            sessionUser: user
+                        }));
+                    }
+                    if (user) {
+                        sessionStorage.setItem('barrica-pos-auth-token', 'local-mode-token');
+                        localStorage.setItem('barrica-pos-auth-token', 'local-mode-token');
+                    } else {
+                        sessionStorage.removeItem('barrica-pos-auth-token');
+                        localStorage.removeItem('barrica-pos-auth-token');
+                    }
+                } catch { /* almacenamiento restringido */ }
+            };
+
+            const readLocalPosUser = () => {
+                try {
+                    const token = sessionStorage.getItem('barrica-pos-auth-token') || localStorage.getItem('barrica-pos-auth-token') || '';
+                    if (token !== 'local-mode-token') return null;
+                    const db = JSON.parse(localStorage.getItem(LOCAL_DB_KEY) || 'null');
+                    return db && db.sessionUser ? db.sessionUser : null;
+                } catch {
+                    return null;
+                }
+            };
+
+            const getPosHref = () => location.protocol === 'file:' ? './bar_app.html' : `${API_BASE || ''}/bar_app`;
+            const authDirectPos = document.getElementById('auth-direct-pos');
+            if (authDirectPos) authDirectPos.href = getPosHref();
+
             const setAuthMode = mode => {
                 authMode = mode;
                 authTitle.textContent = mode === 'register' ? 'Crear cuenta' : 'Iniciar sesión';
@@ -2041,6 +2152,7 @@
                 if (authRolesBox) authRolesBox.hidden = false;
                 authForm.hidden = false;
                 authSwitch.hidden = false;
+                if (authDirectPos) authDirectPos.hidden = false;
                 if (authLoggedActions) authLoggedActions.hidden = true;
                 authStatus.textContent = '';
                 updateRoleButtons();
@@ -2055,8 +2167,9 @@
                 if (authRolesBox) authRolesBox.hidden = true;
                 authForm.hidden = true;
                 authSwitch.hidden = true;
+                if (authDirectPos) authDirectPos.hidden = true;
                 if (authLoggedActions) authLoggedActions.hidden = false;
-                if (authOpenPos) authOpenPos.href = `${API_BASE || ''}/app`;
+                if (authOpenPos) authOpenPos.href = getPosHref();
                 authStatus.textContent = message || `Tu sesión de ${rLabel} está activa.`;
             };
 
@@ -2081,27 +2194,6 @@
                 return data;
             };
 
-            const isLocalPreview = (location.hostname === '127.0.0.1' || location.hostname === 'localhost') &&
-                location.port !== '' && location.port !== '5000';
-            const API_BASE = isLocalPreview ? `${location.protocol}//${location.hostname}:5000` : '';
-            const apiFetch = (path, options = {}) => fetch(
-                `${API_BASE}${path}`,
-                isLocalPreview ? { ...options, credentials: 'include' } : options
-            );
-            const formatApiError = (error, fallback) => {
-                if (error instanceof TypeError || (error instanceof Error && /failed to fetch|networkerror|load failed/i.test(error.message))) {
-                    return 'No se pudo conectar con el servidor de Barrica. Ejecuta .\\.venv\\Scripts\\python.exe app.py y abre http://127.0.0.1:5000.';
-                }
-                return error instanceof Error ? error.message : fallback;
-            };
-
-            const getApiUnavailableMessage = () => {
-                if (location.protocol === 'file:') {
-                    return 'Abriste el HTML directamente desde tu equipo. Inicia el servidor con .\\.venv\\Scripts\\python.exe app.py y abre http://127.0.0.1:5000 (o despliega en Vercel).';
-                }
-                return '';
-            };
-
             const openAuth = async mode => {
                 if (authUser) {
                     showAuthenticatedUser(authUser);
@@ -2111,6 +2203,12 @@
                 if (!authDialog.open) authDialog.showModal();
 
                 if (!sessionChecked) {
+                    const localUser = readLocalPosUser();
+                    if (localUser) {
+                        sessionChecked = true;
+                        showAuthenticatedUser(localUser, `Sesión activa en Modo Local (${roleDisplay(localUser.role)}).`);
+                        return;
+                    }
                     const unavailableMessage = getApiUnavailableMessage();
                     if (unavailableMessage) {
                         authStatus.textContent = unavailableMessage;
@@ -2122,18 +2220,25 @@
                         const response = await apiFetch('/api/auth/session', {
                             headers: { Accept: 'application/json' }
                         });
+                        if (response.status === 503) {
+                            sessionChecked = true;
+                            if (authDialog.open && !authUser) authStatus.textContent = '';
+                            return;
+                        }
                         const data = await readApiResponse(response);
                         sessionChecked = true;
                         if (data.user) {
                             showAuthenticatedUser(data.user);
-                        } else if (authDialog.open) {
+                        } else if (authDialog.open && !authUser) {
                             authStatus.textContent = '';
                         }
                     } catch (error) {
-                        authStatus.textContent = formatApiError(
-                            error,
-                            'No se pudo comprobar la sesión. Inténtalo de nuevo.'
-                        );
+                        if (!authUser) {
+                            authStatus.textContent = formatApiError(
+                                error,
+                                'No se pudo comprobar la sesión. Inténtalo de nuevo.'
+                            );
+                        }
                     } finally {
                         authSubmit.disabled = false;
                     }
@@ -2152,6 +2257,20 @@
             authSwitch.addEventListener('click', () => {
                 setAuthMode(authMode === 'register' ? 'login' : 'register');
             });
+
+            const loginInLocalFallback = (email, nameHint, role) => {
+                const cleanEmail = String(email || '').trim().toLowerCase() || (role === 'administrador' ? 'admin@barrica.local' : 'vendedor@barrica.local');
+                const derivedName = String(nameHint || '').trim() || cleanEmail.split('@')[0].replace(/[^a-záéíóúñü\s]/gi, ' ').trim() || roleDisplay(role);
+                const localUser = { name: derivedName, email: cleanEmail, role };
+                syncLocalPosUser(localUser);
+                sessionChecked = true;
+                showAuthenticatedUser(
+                    localUser,
+                    `Sesión iniciada como ${roleDisplay(role)} (Modo Local listo para usar).`
+                );
+                authForm.reset();
+                setNameHint('');
+            };
 
             authForm.addEventListener('submit', async event => {
                 event.preventDefault();
@@ -2181,14 +2300,28 @@
                 if (endpoint === 'register') payload.name = authName.value;
 
                 try {
-                    const unavailableMessage = getApiUnavailableMessage();
-                    if (unavailableMessage) throw new Error(unavailableMessage);
+                    if (location.protocol === 'file:') {
+                        loginInLocalFallback(payload.email, payload.name, selectedRole);
+                        return;
+                    }
 
-                    const response = await apiFetch(`/api/auth/${endpoint}`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
+                    let response;
+                    try {
+                        response = await apiFetch(`/api/auth/${endpoint}`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+                    } catch {
+                        loginInLocalFallback(payload.email, payload.name, selectedRole);
+                        return;
+                    }
+
+                    if (response.status === 503) {
+                        loginInLocalFallback(payload.email, payload.name, selectedRole);
+                        return;
+                    }
+
                     const data = await readApiResponse(response);
                     if (!data.user) throw new Error('El servidor no devolvió los datos de la cuenta.');
                     if (data.token) {
@@ -2220,25 +2353,17 @@
                 authLogout.disabled = true;
                 authStatus.textContent = '';
                 try {
-                    const unavailableMessage = getApiUnavailableMessage();
-                    if (unavailableMessage) throw new Error(unavailableMessage);
-
-                    const response = await apiFetch('/api/auth/logout', { method: 'POST' });
-                    await readApiResponse(response);
-                    try {
-                        sessionStorage.removeItem('barrica-pos-auth-token');
-                        localStorage.removeItem('barrica-pos-auth-token');
-                    } catch { /* almacenamiento restringido */ }
+                    if (location.protocol !== 'file:') {
+                        try {
+                            await apiFetch('/api/auth/logout', { method: 'POST' });
+                        } catch { /* permitir cierre local sin red */ }
+                    }
+                    syncLocalPosUser(null);
                     authUser = null;
                     sessionChecked = true;
                     accountButton.textContent = 'Iniciar sesión';
                     setAuthMode('login');
                     authStatus.textContent = 'Cerraste sesión.';
-                } catch (error) {
-                    authStatus.textContent = formatApiError(
-                        error,
-                        'No se pudo cerrar sesión. Inténtalo de nuevo.'
-                    );
                 } finally {
                     authLogout.disabled = false;
                 }
@@ -2246,6 +2371,12 @@
 
             /* Al iniciar la página: comprueba sesión o solicita inicio de sesión (Administrador / Vendedor) */
             const checkSessionOnPageLoad = async () => {
+                const localUser = readLocalPosUser();
+                if (localUser) {
+                    sessionChecked = true;
+                    showAuthenticatedUser(localUser);
+                    return;
+                }
                 const unavailableMessage = getApiUnavailableMessage();
                 if (unavailableMessage) {
                     setAuthMode('login');
@@ -2261,17 +2392,26 @@
                             ...(savedToken ? { Authorization: `Bearer ${savedToken}` } : {})
                         }
                     });
+                    if (authUser) return;
+                    if (response.status === 503) {
+                        sessionChecked = true;
+                        setAuthMode('login');
+                        if (!authDialog.open) authDialog.showModal();
+                        return;
+                    }
                     const data = await readApiResponse(response);
                     sessionChecked = true;
                     if (data.user) {
                         showAuthenticatedUser(data.user);
-                    } else {
+                    } else if (!authUser) {
                         setAuthMode('login');
                         if (!authDialog.open) authDialog.showModal();
                     }
                 } catch {
-                    setAuthMode('login');
-                    if (!authDialog.open) authDialog.showModal();
+                    if (!authUser) {
+                        setAuthMode('login');
+                        if (!authDialog.open) authDialog.showModal();
+                    }
                 }
             };
             void checkSessionOnPageLoad();
@@ -2487,16 +2627,55 @@
                     card_brand: cardBrand(cardDigits)
                 };
 
+                const buildLocalSimulatedReceipt = () => {
+                    const planObj = plans[payload.plan] || plans.pro;
+                    const now = new Date();
+                    const ymd = now.toISOString().slice(0, 10).replace(/-/g, '');
+                    const hex = Array.from({ length: 6 }, () => Math.floor(Math.random() * 16).toString(16).toUpperCase()).join('');
+                    const amounts = { USD: planObj.USD, COP: planObj.COP };
+                    return {
+                        number: `SIM-${ymd}-${hex}`,
+                        issued_at: now.toISOString(),
+                        simulated: true,
+                        plan: { id: planObj.id, name: planObj.name },
+                        period: '1 mes',
+                        currency: payload.currency,
+                        amount: amounts[payload.currency],
+                        amounts,
+                        payer: {
+                            name: payload.payer_name,
+                            email: payload.email.toLowerCase(),
+                            document_type: payload.document_type,
+                            document_number: payload.document_number,
+                            phone: payload.phone
+                        },
+                        card: {
+                            holder: payload.card_holder,
+                            brand: payload.card_brand,
+                            last4: payload.card_last4
+                        }
+                    };
+                };
+
                 try {
-                    const unavailableMessage = getApiUnavailableMessage();
-                    if (unavailableMessage) throw new Error(unavailableMessage);
+                    if (location.protocol === 'file:') {
+                        renderReceipt(buildLocalSimulatedReceipt());
+                        return;
+                    }
 
                     payStatus.textContent = 'Procesando pago de prueba…';
-                    const response = await apiFetch('/api/payments/simulate', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
+                    let response;
+                    try {
+                        response = await apiFetch('/api/payments/simulate', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+                    } catch {
+                        payStatus.textContent = '';
+                        renderReceipt(buildLocalSimulatedReceipt());
+                        return;
+                    }
                     const data = await readApiResponse(response);
                     if (!data.receipt) throw new Error('El servidor no devolvió el comprobante.');
                     payStatus.textContent = '';
@@ -2589,7 +2768,7 @@
             const appSecondaryLink = document.getElementById('app-secondary-link');
             const appDialogStatus = document.getElementById('app-dialog-status');
 
-            const getBackendOrigin = () => API_BASE || location.origin;
+            const getBackendOrigin = () => location.protocol === 'file:' ? '.' : (API_BASE || location.origin);
 
             const APP_PLATFORMS = {
                 pc: {
@@ -2611,12 +2790,12 @@
                     title: 'Aplicación Móvil Barrica POS',
                     desc: 'Aplicación operativa separada de la web promocional (abre directo en Mesas, Inventario y Administración):',
                     steps: [
-                        'Toca «Abrir e instalar Barrica POS» para lanzar la app operativa independiente (/app).',
+                        'Toca «Abrir e instalar Barrica POS» para lanzar la app operativa independiente (/bar_app).',
                         'En Chrome para Android, toca «Instalar en celular» arriba a la derecha para dejarla fija en tu pantalla de inicio.',
                         'O descarga el archivo autónomo Barrica-Movil.html para abrirlo directamente cuando quieras.'
                     ],
                     primaryText: 'Abrir e instalar Barrica POS',
-                    primaryHref: () => `${getBackendOrigin()}/app`,
+                    primaryHref: () => location.protocol === 'file:' ? './bar_app.html' : `${getBackendOrigin()}/bar_app`,
                     primaryDownload: null,
                     showSecondary: true
                 },
@@ -2630,7 +2809,7 @@
                         'El ícono de Barrica POS abrirá directamente tus mesas, inventario y sesiones en pantalla completa.'
                     ],
                     primaryText: 'Abrir Barrica POS',
-                    primaryHref: () => `${getBackendOrigin()}/app`,
+                    primaryHref: () => location.protocol === 'file:' ? './bar_app.html' : `${getBackendOrigin()}/bar_app`,
                     primaryDownload: null,
                     showSecondary: true
                 }
@@ -2659,7 +2838,7 @@
                     appPrimaryLink.setAttribute('rel', 'noopener noreferrer');
                 }
                 appSecondaryLink.hidden = !info.showSecondary;
-                appSecondaryLink.href = `${getBackendOrigin()}/downloads/Barrica-Movil.html`;
+                appSecondaryLink.href = location.protocol === 'file:' ? './bar_app.html' : `${getBackendOrigin()}/downloads/Barrica-Movil.html`;
                 appDialogStatus.textContent = '';
                 if (!appDialog.open) appDialog.showModal();
             };

@@ -402,12 +402,13 @@ class AuthenticationApiTests(unittest.TestCase):
         self.assertEqual(manifest["display"], "standalone")
         manifest_response.close()
 
-        app_response = self.client.get("/app")
-        self.assertEqual(app_response.status_code, 200)
-        self.assertIn(b"Control de mesas y cuentas", app_response.data)
-        self.assertIn(b"Administrador", app_response.data)
-        self.assertIn(b"Vendedor", app_response.data)
-        app_response.close()
+        for route in ("/app", "/bar_app", "/bar_app.html"):
+            app_response = self.client.get(route)
+            self.assertEqual(app_response.status_code, 200, route)
+            self.assertIn(b"Control de mesas y cuentas", app_response.data)
+            self.assertIn(b"Administrador", app_response.data)
+            self.assertIn(b"Vendedor", app_response.data)
+            app_response.close()
 
         exe_response = self.client.get("/downloads/BarricaDesktop.exe")
         self.assertEqual(exe_response.status_code, 200)

@@ -1,8 +1,11 @@
 <!DOCTYPE html>
 <!--
-  link: http://127.0.0.1:5000
-  Prender: .\.venv\Scripts\python.exe app.py
-  .\.venv\Scripts\python.exe conection.py, para consultar registros en la base de datos de usuarios.
+  En cualquier PC (después de clonar o descomprimir):
+    - Comando universal para encender el servidor: py app.py   (o python app.py / .\iniciar_bar_app.bat)
+    - Sin instalar nada (Modo Local): abre bar_app.html con doble clic.
+  Rutas con servidor encendido:
+    - App operativa (bar_app): http://127.0.0.1:5000/bar_app  (o http://127.0.0.1:5000/app)
+    - Web principal:           http://127.0.0.1:5000
 -->
 <html lang="es">
 
@@ -13,9 +16,8 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Barrica POS">
-    <link rel="icon" type="image/svg+xml" href="/icon.svg">
-    <link rel="apple-touch-icon" href="/icon.svg">
-    <link rel="manifest" href="/app/manifest.webmanifest">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='96' fill='%230E1B17'/%3E%3Ccircle cx='256' cy='256' r='148' fill='none' stroke='%23D9A441' stroke-width='36'/%3E%3Ccircle cx='256' cy='256' r='92' fill='none' stroke='%23EFE6D2' stroke-width='14'/%3E%3C/svg%3E">
+    <script>if (location.protocol !== 'file:') { const m = document.createElement('link'); m.rel = 'manifest'; m.href = '/app/manifest.webmanifest'; document.head.appendChild(m); }</script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet"
@@ -732,6 +734,14 @@
             -webkit-backdrop-filter: blur(4px);
             backdrop-filter: blur(4px);
         }
+
+        .crm-note { margin-bottom: 1rem; padding: .75rem 1rem; border-left: 3px solid #D9A441; background: rgba(217,164,65,.12); color: var(--muted, #8f9c92); }
+        .crm-grid { display: grid; grid-template-columns: minmax(16rem,.8fr) minmax(0,1.2fr); gap: 1rem; }
+        @media(max-width:850px){ .crm-grid { grid-template-columns: 1fr; } }
+        .crm-actions { display:flex; gap:.5rem; flex-wrap:wrap; align-items:center; }
+        .crm-empty { color: var(--muted, #8f9c92); padding: 1rem 0; }
+        .crm-table button { margin: .15rem; }
+
     </style>
 </head>
 
@@ -740,7 +750,7 @@
         <div class="brand">
             <span class="brand-ring" aria-hidden="true"></span>
             <span>Barrica</span>
-            <small>POS Operativo</small>
+            <small id="brand-mode-badge">POS Operativo</small>
         </div>
         <div class="top-actions">
             <div class="user-chip" id="user-chip" hidden>
@@ -794,6 +804,10 @@
 
                 <button class="btn btn-primary btn-block" id="gate-submit" type="submit">Ingresar como Vendedor</button>
             </form>
+
+            <button class="btn btn-block" id="gate-local-btn" type="button" style="margin-top:.65rem">
+                Abrir sin servidor como Vendedor (Modo Local)
+            </button>
 
             <div class="auth-footer">
                 <button class="link-btn" id="gate-switch-mode" type="button">¿Nuevo en el equipo? Crear cuenta</button>
@@ -887,6 +901,11 @@
                             <strong id="cash-change">Cambio: $0</strong>
                         </div>
                     </div>
+
+                    <label class="field-label" for="local-sale-client">
+                        Cliente de la venta (opcional)
+                        <select id="local-sale-client"><option value="">Consumidor final</option></select>
+                    </label>
 
                     <label class="field-label" for="pay-method">
                         Método de cobro
@@ -1033,12 +1052,43 @@
                 </table>
             </div>
         </section>
-    </main>
 
+        <!-- PESTAÑA 4: CLIENTES Y FACTURAS LOCALES -->
+        <section id="tab-clientes" hidden>
+            <div class="section-bar"><h2>Clientes y facturas de prueba</h2></div>
+            <div class="crm-note">Este módulo se agregó sin modificar SQL. Los clientes y las facturas de prueba se guardan únicamente en este navegador hasta conectar las tablas relacionales.</div>
+            <div class="crm-grid">
+                <div class="card-box">
+                    <h3>Registrar cliente</h3>
+                    <form class="auth-fields" id="crm-client-form">
+                        <input id="crm-client-id" type="hidden">
+                        <label class="field-label">Nombre<input id="crm-client-name" maxlength="100" required></label>
+                        <label class="field-label">Correo<input id="crm-client-email" type="email" maxlength="100"></label>
+                        <label class="field-label">Teléfono<input id="crm-client-phone" maxlength="20"></label>
+                        <label class="field-label">Dirección<input id="crm-client-address" maxlength="150"></label>
+                        <label class="field-label">Ciudad<input id="crm-client-city" maxlength="50"></label>
+                        <label class="field-label">País<input id="crm-client-country" maxlength="50" value="Colombia" required></label>
+                        <div class="crm-actions"><button class="btn btn-primary" type="submit">Guardar cliente</button><button class="btn" id="crm-client-clear" type="button">Limpiar</button></div>
+                    </form>
+                    <div class="status-banner" id="crm-client-status" role="status" aria-live="polite" hidden></div>
+                </div>
+                <div class="card-box">
+                    <h3>Clientes registrados</h3>
+                    <div class="table-wrap"><table class="crm-table"><thead><tr><th>Nombre</th><th>Contacto</th><th>Ciudad / país</th><th>Acciones</th></tr></thead><tbody id="crm-clients-tbody"></tbody></table></div>
+                    <div class="crm-actions"><button class="btn btn-sm" id="crm-print-report" type="button">Imprimir clasificación por país</button></div>
+                </div>
+            </div>
+            <div class="card-box">
+                <h3>Historial de facturas ficticias</h3>
+                <div class="table-wrap"><table><thead><tr><th>Folio</th><th>Fecha</th><th>Cliente</th><th>Detalle</th><th>Total</th><th>Acción</th></tr></thead><tbody id="crm-invoices-tbody"></tbody></table></div>
+            </div>
+        </section>
+    </main>
     <nav class="bottom-nav" id="bottom-nav" aria-label="Navegación de la aplicación" hidden>
         <button class="nav-tab active" type="button" data-tab="mesas">▣ Mesas y Caja</button>
         <button class="nav-tab" type="button" data-tab="inventario">◫ Carta e Inventario</button>
         <button class="nav-tab" id="nav-tab-admin" type="button" data-tab="admin">◈ Administración</button>
+        <button class="nav-tab" type="button" data-tab="clientes">♙ Clientes y facturas</button>
     </nav>
 
     <dialog id="cfg-dialog" aria-labelledby="cfg-title">
@@ -1059,10 +1109,23 @@
         (() => {
             const STORAGE_API_KEY = 'barrica-pos-api-base';
             const STORAGE_TOKEN_KEY = 'barrica-pos-auth-token';
+            const LOCAL_DB_KEY = 'barrica-pos-local-db-v1';
+
+            const safeGet = (store, key) => {
+                try { return store.getItem(key); } catch { return null; }
+            };
+            const safeSet = (store, key, val) => {
+                try { store.setItem(key, val); } catch { /* almacenamiento restringido */ }
+            };
+
+            const normalizeApiBase = raw => {
+                if (!raw) return '';
+                return raw.trim().replace(/\/+$/, '').replace(/\/(?:app|bar_app(?:\.html)?)$/i, '');
+            };
 
             const defaultBase = () => {
-                const saved = localStorage.getItem(STORAGE_API_KEY);
-                if (saved) return saved.replace(/\/+$/, '');
+                const saved = normalizeApiBase(safeGet(localStorage, STORAGE_API_KEY));
+                if (saved) return saved;
                 if (location.protocol === 'file:') return 'http://127.0.0.1:5000';
                 if ((location.hostname === '127.0.0.1' || location.hostname === 'localhost') && location.port && location.port !== '5000') {
                     return `${location.protocol}//${location.hostname}:5000`;
@@ -1071,7 +1134,9 @@
             };
 
             let apiBase = defaultBase();
-            let authToken = sessionStorage.getItem(STORAGE_TOKEN_KEY) || localStorage.getItem(STORAGE_TOKEN_KEY) || '';
+            let authToken = safeGet(sessionStorage, STORAGE_TOKEN_KEY) || safeGet(localStorage, STORAGE_TOKEN_KEY) || '';
+            let localMode = false;
+            let memoryLocalDb = null;
             let currentUser = null;
             let loginRole = 'vendedor';
             let authMode = 'login';
@@ -1113,7 +1178,289 @@
                 } catch { /* almacenamiento restringido */ }
             };
 
+            const setLocalMode = enabled => {
+                localMode = Boolean(enabled);
+                const modeBadge = document.getElementById('brand-mode-badge');
+                if (modeBadge) modeBadge.textContent = localMode ? 'POS · Modo Local' : 'POS Operativo';
+            };
+
+            const nowUtcStr = () => new Date().toISOString().slice(0, 19).replace('T', ' ');
+            const todayUtcKey = () => new Date().toISOString().slice(0, 10);
+
+            const createDefaultLocalDb = () => ({
+                tables: [
+                    { id: 1, table_number: 1, label: 'Mesa 1 · Salón', capacity: 4, status: 'libre' },
+                    { id: 2, table_number: 2, label: 'Mesa 2 · Salón', capacity: 4, status: 'libre' },
+                    { id: 3, table_number: 3, label: 'Mesa 3 · Ventana', capacity: 2, status: 'libre' },
+                    { id: 4, table_number: 4, label: 'Mesa 4 · Terraza', capacity: 6, status: 'libre' },
+                    { id: 5, table_number: 5, label: 'Mesa 5 · Terraza', capacity: 4, status: 'libre' },
+                    { id: 6, table_number: 6, label: 'Mesa 6 · VIP', capacity: 8, status: 'libre' },
+                    { id: 7, table_number: 7, label: 'Barra 1 · Principal', capacity: 2, status: 'libre' },
+                    { id: 8, table_number: 8, label: 'Barra 2 · Principal', capacity: 2, status: 'libre' }
+                ],
+                products: [
+                    { id: 1, name: 'Negroni', category: 'Cócteles', price_cop: 28000, stock: 24, min_stock: 5 },
+                    { id: 2, name: 'Old Fashioned', category: 'Cócteles', price_cop: 30000, stock: 20, min_stock: 5 },
+                    { id: 3, name: 'Margarita Artesanal', category: 'Cócteles', price_cop: 26000, stock: 18, min_stock: 5 },
+                    { id: 4, name: 'Cerveza Club Colombia', category: 'Cervezas', price_cop: 9000, stock: 48, min_stock: 12 },
+                    { id: 5, name: 'Cerveza Artesanal IPA', category: 'Cervezas', price_cop: 15000, stock: 30, min_stock: 8 },
+                    { id: 6, name: 'Botella Ginebra Tanqueray', category: 'Licores', price_cop: 165000, stock: 3, min_stock: 4 },
+                    { id: 7, name: 'Botella Aguardiente Antioqueño', category: 'Licores', price_cop: 85000, stock: 10, min_stock: 4 },
+                    { id: 8, name: 'Tabla de Quesos y Madurados', category: 'Comida', price_cop: 42000, stock: 12, min_stock: 3 }
+                ],
+                orders: [],
+                sales: [],
+                users: [
+                    { id: 1, full_name: 'Administrador Local', email: 'admin@barrica.local', role: 'administrador', created_at: nowUtcStr() },
+                    { id: 2, full_name: 'Vendedor Local', email: 'vendedor@barrica.local', role: 'vendedor', created_at: nowUtcStr() }
+                ],
+                sessions: [],
+                sessionUser: null
+            });
+
+            const readLocalDb = () => {
+                if (memoryLocalDb) return memoryLocalDb;
+                const raw = safeGet(localStorage, LOCAL_DB_KEY);
+                if (raw) {
+                    try {
+                        const parsed = JSON.parse(raw);
+                        if (parsed && Array.isArray(parsed.tables) && Array.isArray(parsed.products)) {
+                            memoryLocalDb = parsed;
+                            return memoryLocalDb;
+                        }
+                    } catch { /* restaurar semilla */ }
+                }
+                memoryLocalDb = createDefaultLocalDb();
+                return memoryLocalDb;
+            };
+
+            const saveLocalDb = db => {
+                memoryLocalDb = db;
+                safeSet(localStorage, LOCAL_DB_KEY, JSON.stringify(db));
+            };
+
+            const localApi = async (path, options = {}) => {
+                const method = (options.method || 'GET').toUpperCase();
+                const body = options.body ? JSON.parse(options.body) : {};
+                const db = readLocalDb();
+                const nextId = list => list.reduce((mx, item) => Math.max(mx, Number(item.id) || 0), 0) + 1;
+
+                if (path === '/api/auth/session' && method === 'GET') {
+                    return { user: db.sessionUser || null };
+                }
+
+                if ((path === '/api/auth/login' || path === '/api/auth/register') && method === 'POST') {
+                    const role = body.role === 'administrador' ? 'administrador' : 'vendedor';
+                    const email = String(body.email || (role === 'administrador' ? 'admin@barrica.local' : 'vendedor@barrica.local')).trim().toLowerCase();
+                    let userRow = db.users.find(u => u.email === email);
+                    if (!userRow) {
+                        const fallbackName = String(body.name || (role === 'administrador' ? 'Administrador Local' : 'Vendedor Local')).trim() || 'Usuario Local';
+                        userRow = { id: nextId(db.users), full_name: fallbackName, email, role, created_at: nowUtcStr() };
+                        db.users.unshift(userRow);
+                    } else if (body.quick) {
+                        userRow.role = role;
+                    } else if (role === 'administrador' && userRow.role !== 'administrador' && path === '/api/auth/login') {
+                        userRow.role = 'administrador';
+                    }
+                    const sessionUser = { name: userRow.full_name, email: userRow.email, role };
+                    db.sessionUser = sessionUser;
+                    db.sessions.unshift({
+                        full_name: sessionUser.name,
+                        email: sessionUser.email,
+                        role: sessionUser.role,
+                        created_at: nowUtcStr(),
+                        active: true
+                    });
+                    saveLocalDb(db);
+                    return { user: sessionUser, token: 'local-mode-token' };
+                }
+
+                if (path === '/api/auth/logout' && method === 'POST') {
+                    if (db.sessions[0]) db.sessions[0].active = false;
+                    db.sessionUser = null;
+                    saveLocalDb(db);
+                    return { ok: true };
+                }
+
+                if (path === '/api/bar/dashboard' && method === 'GET') {
+                    const tables = [...db.tables]
+                        .sort((a, b) => a.table_number - b.table_number)
+                        .map(t => {
+                            const orders = db.orders
+                                .filter(o => o.table_id === t.id)
+                                .map(o => ({ ...o, subtotal_cop: o.quantity * o.unit_price_cop }));
+                            return { ...t, orders, total_cop: orders.reduce((s, o) => s + o.subtotal_cop, 0) };
+                        });
+                    const products = [...db.products]
+                        .sort((a, b) => a.category.localeCompare(b.category) || a.name.localeCompare(b.name))
+                        .map(p => ({ ...p, low_stock: p.stock <= p.min_stock }));
+                    const today = todayUtcKey();
+                    const todaySales = db.sales.filter(s => String(s.created_at || '').startsWith(today));
+                    return {
+                        current_user: db.sessionUser,
+                        tables,
+                        products,
+                        admin: {
+                            sales_today_cop: todaySales.reduce((s, x) => s + Number(x.total_cop || 0), 0),
+                            sales_count_today: todaySales.length,
+                            recent_sales: db.sales.slice(0, 30),
+                            users: db.users,
+                            sessions: db.sessions.slice(0, 50)
+                        }
+                    };
+                }
+
+                const roleMatch = /^\/api\/bar\/users\/(\d+)\/role$/.exec(path);
+                if (roleMatch && method === 'POST') {
+                    const uid = Number(roleMatch[1]);
+                    const target = db.users.find(u => u.id === uid);
+                    if (!target) throw new Error('Usuario no encontrado.');
+                    const newRole = body.role === 'administrador' ? 'administrador' : 'vendedor';
+                    if (target.role === 'administrador' && newRole !== 'administrador') {
+                        const admins = db.users.filter(u => u.role === 'administrador').length;
+                        if (admins <= 1) throw new Error('Debe existir al menos un Administrador en el sistema.');
+                    }
+                    target.role = newRole;
+                    saveLocalDb(db);
+                    return { ok: true, role: newRole };
+                }
+
+                if (path === '/api/bar/products' && method === 'POST') {
+                    const name = String(body.name || '').trim();
+                    const category = String(body.category || 'Licores').trim() || 'Licores';
+                    const price_cop = Number(body.price_cop || 0);
+                    const stock = Number(body.stock || 0);
+                    const min_stock = Number(body.min_stock ?? 5);
+                    if (name.length < 2 || price_cop <= 0 || stock < 0 || min_stock < 0) {
+                        throw new Error('Revisa el nombre, precio mayor a 0 y stock válido.');
+                    }
+                    const id = nextId(db.products);
+                    db.products.push({ id, name, category, price_cop, stock, min_stock });
+                    saveLocalDb(db);
+                    return { id, ok: true };
+                }
+
+                const stockMatch = /^\/api\/bar\/products\/(\d+)\/stock$/.exec(path);
+                if (stockMatch && method === 'POST') {
+                    const prod = db.products.find(p => p.id === Number(stockMatch[1]));
+                    if (prod) prod.stock = Math.max(0, prod.stock + Number(body.delta || 0));
+                    saveLocalDb(db);
+                    return { ok: true };
+                }
+
+                const delProdMatch = /^\/api\/bar\/products\/(\d+)$/.exec(path);
+                if (delProdMatch && method === 'DELETE') {
+                    db.products = db.products.filter(p => p.id !== Number(delProdMatch[1]));
+                    saveLocalDb(db);
+                    return { ok: true };
+                }
+
+                if (path === '/api/bar/tables' && method === 'POST') {
+                    const table_number = Number(body.table_number || 0);
+                    const label = String(body.label || '').trim();
+                    const capacity = Number(body.capacity || 4);
+                    if (table_number <= 0 || label.length < 2) throw new Error('Datos de la mesa inválidos.');
+                    if (db.tables.some(t => t.table_number === table_number)) {
+                        throw new Error('Ya existe una mesa con ese número.');
+                    }
+                    db.tables.push({ id: nextId(db.tables), table_number, label, capacity, status: 'libre' });
+                    saveLocalDb(db);
+                    return { ok: true };
+                }
+
+                const delTableMatch = /^\/api\/bar\/tables\/(\d+)$/.exec(path);
+                if (delTableMatch && method === 'DELETE') {
+                    const tid = Number(delTableMatch[1]);
+                    if (db.orders.some(o => o.table_id === tid)) {
+                        throw new Error('No se puede eliminar una mesa que tiene consumos activos.');
+                    }
+                    db.tables = db.tables.filter(t => t.id !== tid);
+                    saveLocalDb(db);
+                    return { ok: true };
+                }
+
+                const addOrderMatch = /^\/api\/bar\/tables\/(\d+)\/orders$/.exec(path);
+                if (addOrderMatch && method === 'POST') {
+                    const tid = Number(addOrderMatch[1]);
+                    const pid = Number(body.product_id || 0);
+                    const qty = Number(body.quantity || 1);
+                    const prod = db.products.find(p => p.id === pid);
+                    const tbl = db.tables.find(t => t.id === tid);
+                    if (!prod || !tbl) throw new Error('Producto o mesa no encontrados.');
+                    if (prod.stock < qty) throw new Error(`Stock insuficiente de ${prod.name} (quedan ${prod.stock}).`);
+                    const existing = db.orders.find(o => o.table_id === tid && o.product_id === pid);
+                    if (existing) {
+                        existing.quantity += qty;
+                    } else {
+                        db.orders.push({
+                            id: nextId(db.orders),
+                            table_id: tid,
+                            product_id: pid,
+                            product_name: prod.name,
+                            quantity: qty,
+                            unit_price_cop: prod.price_cop
+                        });
+                    }
+                    prod.stock -= qty;
+                    tbl.status = 'ocupada';
+                    saveLocalDb(db);
+                    return { ok: true };
+                }
+
+                const delOrderMatch = /^\/api\/bar\/orders\/(\d+)$/.exec(path);
+                if (delOrderMatch && method === 'DELETE') {
+                    const oid = Number(delOrderMatch[1]);
+                    const ord = db.orders.find(o => o.id === oid);
+                    if (!ord) throw new Error('Pedido no encontrado.');
+                    db.orders = db.orders.filter(o => o.id !== oid);
+                    const prod = db.products.find(p => p.id === ord.product_id);
+                    if (prod) prod.stock += ord.quantity;
+                    if (!db.orders.some(o => o.table_id === ord.table_id)) {
+                        const tbl = db.tables.find(t => t.id === ord.table_id);
+                        if (tbl) tbl.status = 'libre';
+                    }
+                    saveLocalDb(db);
+                    return { ok: true };
+                }
+
+                const statusMatch = /^\/api\/bar\/tables\/(\d+)\/status$/.exec(path);
+                if (statusMatch && method === 'POST') {
+                    const tbl = db.tables.find(t => t.id === Number(statusMatch[1]));
+                    if (tbl && ['libre', 'ocupada', 'por_cobrar'].includes(body.status)) {
+                        tbl.status = body.status;
+                        saveLocalDb(db);
+                    }
+                    return { ok: true };
+                }
+
+                const checkoutMatch = /^\/api\/bar\/tables\/(\d+)\/checkout$/.exec(path);
+                if (checkoutMatch && method === 'POST') {
+                    const tid = Number(checkoutMatch[1]);
+                    const tbl = db.tables.find(t => t.id === tid);
+                    const tOrders = db.orders.filter(o => o.table_id === tid);
+                    if (!tbl || !tOrders.length) throw new Error('Esta mesa no tiene consumos por cobrar.');
+                    const total_cop = tOrders.reduce((s, o) => s + o.quantity * o.unit_price_cop, 0);
+                    const summary = tOrders.map(o => `${o.quantity}x ${o.product_name}`).join(', ').slice(0, 500);
+                    db.sales.unshift({
+                        id: nextId(db.sales),
+                        table_label: tbl.label,
+                        items_summary: summary,
+                        total_cop,
+                        payment_method: body.payment_method || 'Efectivo',
+                        created_at: nowUtcStr()
+                    });
+                    db.orders = db.orders.filter(o => o.table_id !== tid);
+                    tbl.status = 'libre';
+                    saveLocalDb(db);
+                    return { ok: true, total_cop, summary };
+                }
+
+                return { ok: true };
+            };
+
             const api = async (path, options = {}) => {
+                if (localMode) return localApi(path, options);
+
                 const headers = {
                     Accept: 'application/json',
                     ...(options.body ? { 'Content-Type': 'application/json' } : {}),
@@ -1121,14 +1468,25 @@
                     ...(options.headers || {})
                 };
                 let res;
+                const timeoutMs = location.protocol === 'file:' ? 900 : 2500;
+                const controller = typeof AbortController !== 'undefined' && path === '/api/auth/session' ? new AbortController() : null;
+                const timer = controller ? setTimeout(() => controller.abort(), timeoutMs) : null;
                 try {
                     res = await fetch(`${apiBase}${path}`, {
                         ...options,
                         credentials: 'include',
-                        headers
+                        headers,
+                        ...(controller ? { signal: controller.signal } : {})
                     });
                 } catch {
-                    throw new Error(`No hay conexión con el servidor (${apiBase || location.origin}). Ejecuta .\\.venv\\Scripts\\python.exe app.py.`);
+                    setLocalMode(true);
+                    return localApi(path, options);
+                } finally {
+                    if (timer) clearTimeout(timer);
+                }
+                if (res.status === 503) {
+                    setLocalMode(true);
+                    return localApi(path, options);
                 }
                 const data = await res.json().catch(() => ({}));
                 if (res.status === 401 && !path.startsWith('/api/auth/')) {
@@ -1153,6 +1511,10 @@
                 document.getElementById('gate-name').required = authMode === 'register';
                 document.getElementById('gate-submit').textContent =
                     authMode === 'register' ? `Crear e ingresar como ${roleLabel}` : `Ingresar como ${roleLabel}`;
+                const localBtn = document.getElementById('gate-local-btn');
+                if (localBtn) {
+                    localBtn.textContent = `Abrir sin servidor como ${roleLabel} (Modo Local)`;
+                }
                 document.getElementById('gate-switch-mode').textContent =
                     authMode === 'register' ? '¿Ya tienes cuenta? Iniciar sesión' : '¿Nuevo en el equipo? Crear cuenta';
                 document.querySelectorAll('[data-login-role]').forEach(btn => {
@@ -1160,6 +1522,20 @@
                 });
             };
 
+            const CRM_KEY = 'barrica-crm-local-v1';
+            const readCrm = () => { try { return JSON.parse(localStorage.getItem(CRM_KEY) || '{"clients":[],"invoices":[]}'); } catch { return { clients: [], invoices: [] }; } };
+            let crm = readCrm();
+            const saveCrm = () => safeSet(localStorage, CRM_KEY, JSON.stringify(crm));
+            const crmEsc = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char]));
+            const crmId = prefix => `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2,7)}`;
+            const renderCrm = () => {
+                const body=document.getElementById('crm-clients-tbody'); if(!body)return;
+                body.innerHTML=crm.clients.map(c=>`<tr><td>${crmEsc(c.name)}</td><td>${crmEsc(c.email)}<br>${crmEsc(c.phone)}</td><td>${crmEsc(c.city)}<br>${crmEsc(c.country)}</td><td><button class="btn btn-sm" type="button" data-crm-edit="${c.id}">Editar</button><button class="btn btn-sm btn-danger" type="button" data-crm-delete="${c.id}">Eliminar</button></td></tr>`).join('')||'<tr><td colspan="4" class="crm-empty">No hay clientes registrados.</td></tr>';
+                const inv=document.getElementById('crm-invoices-tbody'); inv.innerHTML=crm.invoices.map(i=>`<tr><td>${crmEsc(i.folio)}</td><td>${crmEsc(i.date)}</td><td>${crmEsc(i.client)}</td><td>${crmEsc(i.detail)}</td><td>${cop(i.total)}</td><td><button class="btn btn-sm" type="button" data-crm-print="${i.id}">Imprimir</button></td></tr>`).join('')||'<tr><td colspan="6" class="crm-empty">No hay facturas ficticias.</td></tr>';
+                const select=document.getElementById('local-sale-client'); if(select){ const value=select.value; select.innerHTML='<option value="">Consumidor final</option>'+crm.clients.map(c=>`<option value="${c.id}">${crmEsc(c.name)} · ${crmEsc(c.country)}</option>`).join(''); select.value=value; }
+            };
+            const crmPrint = (title, html) => { const w=window.open('','_blank','width=900,height=700'); if(!w){showBanner('Habilita las ventanas emergentes del navegador para imprimir.',true);return;} w.document.write(`<html lang="es"><head><title>${crmEsc(title)}</title><style>body{font-family:Arial;padding:28px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #bbb;padding:8px;text-align:left}th{background:#e9dfcd}</style></head><body><h1>${crmEsc(title)}</h1>${html}</body></html>`);w.document.close();w.focus();w.print(); };
+            const crmCreateInvoice = (total, detail) => { const clientId=document.getElementById('local-sale-client')?.value; const client=crm.clients.find(c=>c.id===clientId); const date=new Date().toLocaleString('es-CO'); const invoice={id:crmId('fac'),folio:`FAC-LOCAL-${String(crm.invoices.length+1).padStart(5,'0')}`,date,client:client?.name||'Consumidor final',detail,total:Number(total)||0};crm.invoices.push(invoice);saveCrm();renderCrm();return invoice; };
             const switchTab = tabName => {
                 if (tabName === 'admin' && !isAdmin()) tabName = 'mesas';
                 document.querySelectorAll('.nav-tab').forEach(x => {
@@ -1168,6 +1544,8 @@
                 document.getElementById('tab-mesas').hidden = tabName !== 'mesas';
                 document.getElementById('tab-inventario').hidden = tabName !== 'inventario';
                 document.getElementById('tab-admin').hidden = tabName !== 'admin';
+                document.getElementById('tab-clientes').hidden = tabName !== 'clientes';
+                if (tabName === 'clientes') renderCrm();
             };
 
             const applyRoleUI = () => {
@@ -1192,7 +1570,7 @@
                 document.getElementById('seller-inv-note').hidden = admin;
                 document.getElementById('inv-actions-th').hidden = !admin;
                 document.getElementById('inv-heading').textContent = admin ?
-                    'Inventario de licores y carta (MySQL)' :
+                    (localMode ? 'Inventario de licores y carta (Modo Local)' : 'Inventario de licores y carta (MySQL)') :
                     'Carta de precios y existencias disponibles';
                 document.getElementById('nav-tab-admin').hidden = !admin;
 
@@ -1227,6 +1605,7 @@
 
             const renderAll = () => {
                 if (!currentUser) return;
+                renderCrm();
                 const admin = isAdmin();
                 const occupied = state.tables.filter(t => t.status !== 'libre').length;
                 const lowStock = state.products.filter(p => p.low_stock).length;
@@ -1474,19 +1853,34 @@
                 }
             };
 
+            let gateInteracted = false;
+
             const checkExistingSession = async () => {
                 updateGateLabels();
                 try {
                     const data = await api('/api/auth/session');
+                    if (currentUser) return;
                     if (data.user) {
                         currentUser = data.user;
                         applyRoleUI();
                         await loadDashboard();
-                    } else {
+                        if (localMode) {
+                            showBanner('Modo local activo: puedes ver y probar todas las funciones desde este equipo sin servidor MySQL.');
+                        }
+                    } else if (!gateInteracted) {
                         enterLoggedOutState();
+                        if (localMode) {
+                            showBanner(
+                                'Sin servidor activo en este equipo: pulsa «Abrir sin servidor (Modo Local)» para entrar de inmediato, o ejecuta py app.py.',
+                                false,
+                                true
+                            );
+                        }
                     }
                 } catch (err) {
-                    enterLoggedOutState(err.message);
+                    if (!currentUser && !gateInteracted) {
+                        enterLoggedOutState(err.message);
+                    }
                 }
             };
 
@@ -1507,6 +1901,7 @@
             /* Eventos de Login / Registro */
             document.querySelectorAll('[data-login-role]').forEach(btn => {
                 btn.addEventListener('click', () => {
+                    gateInteracted = true;
                     loginRole = btn.dataset.loginRole;
                     showBanner('', false, true);
                     updateGateLabels();
@@ -1514,6 +1909,7 @@
             });
 
             document.getElementById('gate-switch-mode').addEventListener('click', () => {
+                gateInteracted = true;
                 authMode = authMode === 'register' ? 'login' : 'register';
                 showBanner('', false, true);
                 updateGateLabels();
@@ -1521,6 +1917,7 @@
 
             document.getElementById('gate-form').addEventListener('submit', async e => {
                 e.preventDefault();
+                gateInteracted = true;
                 showBanner('', false, true);
                 const submitBtn = document.getElementById('gate-submit');
                 const email = document.getElementById('gate-email').value.trim();
@@ -1552,6 +1949,25 @@
                 } finally {
                     submitBtn.disabled = false;
                 }
+            });
+
+            document.getElementById('gate-local-btn').addEventListener('click', async () => {
+                gateInteracted = true;
+                setLocalMode(true);
+                const data = await localApi('/api/auth/login', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        email: loginRole === 'administrador' ? 'admin@barrica.local' : 'vendedor@barrica.local',
+                        password: 'localmodepassword',
+                        role: loginRole,
+                        quick: true
+                    })
+                });
+                if (data.token) saveToken(data.token);
+                currentUser = data.user;
+                applyRoleUI();
+                await loadDashboard();
+                showBanner('Modo local activo: los pedidos, inventario, clientes y facturas de prueba se guardan en este navegador.');
             });
 
             document.getElementById('btn-logout').addEventListener('click', async () => {
@@ -1649,8 +2065,11 @@
                         body: JSON.stringify({ payment_method })
                     });
                     document.getElementById('cash-received').value = '';
-                    showBanner(`Cuenta cobrada (${cop(res.total_cop)}) en ${payment_method}. Mesa liberada.`);
+                    const activeTable = state.tables.find(t => t.id === selectedTableId);
+                    const detail = activeTable ? (activeTable.orders || []).map(o => `${o.quantity}x ${o.product_name}`).join(', ') : 'Venta de mesa';
+                    const invoice = crmCreateInvoice(res.total_cop, detail);
                     await loadDashboard();
+                    showBanner(`Cuenta cobrada (${cop(res.total_cop)}) en ${payment_method}. Factura ficticia ${invoice.folio} generada.`);
                 } catch (err) { showBanner(err.message, true); }
             });
 
@@ -1672,6 +2091,12 @@
                 } catch (err) { showBanner(err.message, true); }
             });
 
+
+            document.getElementById('crm-client-form').addEventListener('submit', e => { e.preventDefault(); const id=document.getElementById('crm-client-id').value; const item={id:id||crmId('cli'),name:document.getElementById('crm-client-name').value.trim(),email:document.getElementById('crm-client-email').value.trim(),phone:document.getElementById('crm-client-phone').value.trim(),address:document.getElementById('crm-client-address').value.trim(),city:document.getElementById('crm-client-city').value.trim(),country:document.getElementById('crm-client-country').value.trim()}; const index=crm.clients.findIndex(c=>c.id===id); if(index>=0)crm.clients[index]=item;else crm.clients.push(item);saveCrm();e.target.reset();document.getElementById('crm-client-id').value='';const st=document.getElementById('crm-client-status');st.textContent='Cliente guardado en este navegador.';st.hidden=false;renderCrm(); });
+            document.getElementById('crm-client-clear').addEventListener('click',()=>{document.getElementById('crm-client-form').reset();document.getElementById('crm-client-id').value='';const st=document.getElementById('crm-client-status');if(st){st.textContent='';st.hidden=true;}});
+            document.getElementById('crm-print-report').addEventListener('click',()=>{const groups={};crm.clients.forEach(c=>(groups[c.country||'Sin país']??=[]).push(c));const rows=Object.entries(groups).sort().map(([country,items])=>`<tr><th colspan="4">${crmEsc(country)} (${items.length})</th></tr>`+items.map(c=>`<tr><td>${crmEsc(c.name)}</td><td>${crmEsc(c.email)}</td><td>${crmEsc(c.phone)}</td><td>${crmEsc(c.city)}</td></tr>`).join('')).join('');crmPrint('Reporte de clasificación de clientes por nacionalidad',`<table><thead><tr><th>Cliente</th><th>Correo</th><th>Teléfono</th><th>Ciudad</th></tr></thead><tbody>${rows||'<tr><td colspan="4">Sin clientes.</td></tr>'}</tbody></table>`);});
+            document.addEventListener('click',e=>{const el=e.target&&typeof e.target.closest==='function'?e.target:null;const b=el?el.closest('[data-crm-edit],[data-crm-delete],[data-crm-print]'):null;if(!b)return;if(b.dataset.crmEdit){const c=crm.clients.find(x=>x.id===b.dataset.crmEdit);if(c){document.getElementById('crm-client-id').value=c.id;for(const [id,key] of Object.entries({'crm-client-name':'name','crm-client-email':'email','crm-client-phone':'phone','crm-client-address':'address','crm-client-city':'city','crm-client-country':'country'}))document.getElementById(id).value=c[key]||'';switchTab('clientes');}}if(b.dataset.crmDelete&&confirm('¿Eliminar este cliente?')){crm.clients=crm.clients.filter(c=>c.id!==b.dataset.crmDelete);saveCrm();renderCrm();}if(b.dataset.crmPrint){const i=crm.invoices.find(x=>x.id===b.dataset.crmPrint);if(i)crmPrint(`Factura ${i.folio}`,`<p><b>Folio:</b> ${crmEsc(i.folio)}<br><b>Fecha:</b> ${crmEsc(i.date)}<br><b>Cliente:</b> ${crmEsc(i.client)}</p><table><tr><th>Detalle</th><th>Total</th></tr><tr><td>${crmEsc(i.detail)}</td><td>${cop(i.total)}</td></tr></table>`);}});
+
             /* Navegación por pestañas */
             document.querySelectorAll('.nav-tab').forEach(btn => {
                 btn.addEventListener('click', () => switchTab(btn.dataset.tab));
@@ -1680,7 +2105,7 @@
             /* Configurar URL del servidor */
             const cfgDialog = document.getElementById('cfg-dialog');
             const openServerCfg = () => {
-                document.getElementById('cfg-url').value = apiBase || location.origin;
+                document.getElementById('cfg-url').value = apiBase || (location.protocol === 'file:' ? 'http://127.0.0.1:5000' : location.origin);
                 cfgDialog.showModal();
             };
             document.getElementById('btn-server-cfg').addEventListener('click', openServerCfg);
@@ -1688,9 +2113,10 @@
             document.getElementById('cfg-cancel').addEventListener('click', () => cfgDialog.close());
             document.getElementById('cfg-form').addEventListener('submit', e => {
                 e.preventDefault();
-                const val = document.getElementById('cfg-url').value.trim().replace(/\/+$/, '');
-                localStorage.setItem(STORAGE_API_KEY, val);
+                const val = normalizeApiBase(document.getElementById('cfg-url').value);
+                safeSet(localStorage, STORAGE_API_KEY, val);
                 apiBase = val;
+                setLocalMode(false);
                 cfgDialog.close();
                 void checkExistingSession();
             });

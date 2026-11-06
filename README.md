@@ -73,14 +73,18 @@ Edita `.env` con las credenciales de tu instancia MySQL (`DB_HOST`, `DB_PORT`, `
 .\.venv\Scripts\python.exe database\run_schema.py
 ```
 
-### 4. Encender y apagar el servidor
+### 4. Encender y apagar el servidor (o abrir en otro PC al descomprimir)
 
-- **Encender:**
+- **Inicio rápido en cualquier PC (1 clic):**
+  - **Con servidor automático:** haz doble clic en `iniciar_bar_app.bat` (detecta o recrea `.venv` automáticamente para la ruta de ese computador, instala dependencias y abre `http://127.0.0.1:5000/bar_app`).
+  - **Sin servidor / sin Python (Modo Local):** abre `bar_app.html` con doble clic y pulsa **«Abrir sin servidor (Modo Local)»** para ver y probar todas las funciones desde el navegador.
+- **Encender manualmente por terminal:**
   ```powershell
   .\.venv\Scripts\python.exe app.py
   ```
   - Web principal: `http://127.0.0.1:5000`
-  - App operativa POS (móvil/navegador): `http://127.0.0.1:5000/app`
+  - App operativa POS (`bar_app`): `http://127.0.0.1:5000/bar_app` (o `http://127.0.0.1:5000/app`)
+  - Desde otro equipo en la misma red Wi-Fi/LAN: usa la URL `http://<IP-LOCAL>:5000/bar_app` que aparece en la consola al encender `app.py`.
   - App nativa Windows: ejecuta `downloads\BarricaDesktop.exe`
 - **Apagar:** Presiona `Ctrl + C` en la terminal donde corre `app.py`.
 

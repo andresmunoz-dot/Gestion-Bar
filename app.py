@@ -8,16 +8,83 @@ import os
 from pathlib import Path
 import re
 import secrets
+import shutil
+import socket
+import subprocess
+import sys
 import threading
-from typing import Any, Generator, TypedDict, TypeGuard, cast
-
-import bcrypt
-from dotenv import load_dotenv
-from flask import Flask, Response, current_app, jsonify, make_response, request, send_file
-import mysql.connector
-from mysql.connector import IntegrityError, pooling
+from typing import Any, Generator, NoReturn, TypedDict, TypeGuard, cast
+import urllib.request
 
 ROOT = Path(__file__).resolve().parent
+
+
+def _bootstrap_and_reexec() -> NoReturn:
+    """Prepara `.venv` automáticamente al ejecutar `py app.py` o `python app.py` en otro equipo."""
+    venv_dir = ROOT / ".venv"
+    venv_python = (
+        venv_dir / "Scripts" / "python.exe"
+        if os.name == "nt"
+        else venv_dir / "bin" / "python"
+    )
+    venv_ready = False
+    if venv_python.is_file():
+        probe = subprocess.run(
+            [str(venv_python), "-c", "import bcrypt, dotenv, flask, mysql.connector"],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            check=False,
+        )
+        venv_ready = probe.returncode == 0
+
+    if not venv_ready:
+        if venv_dir.exists():
+            print("[Barrica] Actualizando entorno virtual (.venv) para este computador...")
+            shutil.rmtree(venv_dir, ignore_errors=True)
+        else:
+            print("[Barrica] Creando entorno virtual (.venv) para este computador...")
+        subprocess.check_call([sys.executable, "-m", "venv", str(venv_dir)])
+        print("[Barrica] Instalando dependencias desde requirements.txt...")
+        subprocess.check_call(
+            [
+                str(venv_python),
+                "-m",
+                "pip",
+                "install",
+                "--disable-pip-version-check",
+                "-r",
+                str(ROOT / "requirements.txt"),
+            ]
+        )
+
+    env_file = ROOT / ".env"
+    env_example = ROOT / ".env.example"
+    if not env_file.exists() and env_example.exists():
+        shutil.copyfile(env_example, env_file)
+
+    child_env = {**os.environ, "BARRICA_BOOTSTRAPPED": "1"}
+    try:
+        raise SystemExit(
+            subprocess.call(
+                [str(venv_python), str(Path(__file__).resolve()), *sys.argv[1:]],
+                env=child_env,
+            )
+        )
+    except KeyboardInterrupt:
+        raise SystemExit(0)
+
+
+try:
+    import bcrypt
+    from dotenv import load_dotenv
+    from flask import Flask, Response, current_app, jsonify, make_response, request, send_file
+    import mysql.connector
+    from mysql.connector import IntegrityError, pooling
+except ModuleNotFoundError:
+    if __name__ != "__main__" or os.getenv("BARRICA_BOOTSTRAPPED") == "1":
+        raise
+    _bootstrap_and_reexec()
+
 load_dotenv(ROOT / ".env")
 SESSION_COOKIE = "barrica_session"
 SESSION_DURATION = timedelta(days=7)
@@ -49,7 +116,9 @@ COLOMBIA_TIME = timezone(timedelta(hours=-5), "COT")  # Colombia no usa horario 
 
 app = Flask(__name__)
 app.config["JSON_AS_ASCII"] = False
-LOCAL_ORIGIN_PATTERN = re.compile(r"^(?:http://(?:127\.0\.0\.1|localhost)(?::\d+)?|null)$")
+LOCAL_ORIGIN_PATTERN = re.compile(
+    r"^(?:http://(?:127\.0\.0\.1|localhost|192\.168\.\d{1,3}\.\d{1,3}|10\.\d{1,3}\.\d{1,3}\.\d{1,3}|172\.(?:1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3})(?::\d+)?|null)$"
+)
 
 _DB_POOL: pooling.MySQLConnectionPool | None = None
 _DB_POOL_KEY: tuple[Any, ...] | None = None
@@ -401,6 +470,9 @@ def home():
 
 @app.get("/app")
 @app.get("/app/")
+@app.get("/bar_app")
+@app.get("/bar_app/")
+@app.get("/bar_app.html")
 def standalone_bar_app():
     return send_file(ROOT / "bar_app.html")
 
@@ -1491,6 +1563,68 @@ def checkout_bar_table(table_id: int) -> Response:
     return _json_success({"ok": True, "total_cop": total_cop, "summary": summary})
 
 
+def _detect_lan_ip() -> str:
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        sock.connect(("10.255.255.255", 1))
+        return str(sock.getsockname()[0])
+    except OSError:
+        return "127.0.0.1"
+    finally:
+        sock.close()
+
+
+def _is_port_in_use(port: int) -> bool:
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as probe:
+        probe.settimeout(0.35)
+        return probe.connect_ex(("127.0.0.1", port)) == 0
+
+
+def _is_barrica_running_on(port: int) -> bool:
+    try:
+        with urllib.request.urlopen(f"http://127.0.0.1:{port}/icon.svg", timeout=1.0) as resp:
+            body = resp.read(512).decode("utf-8", errors="ignore")
+            return resp.status == 200 and "#D9A441" in body
+    except Exception:
+        return False
+
+
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
-    app.run(host="127.0.0.1", port=int(os.getenv("PORT", "5000")), debug=False)
+    logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
+    env_file = ROOT / ".env"
+    env_example = ROOT / ".env.example"
+    if not env_file.exists() and env_example.exists():
+        shutil.copyfile(env_example, env_file)
+        load_dotenv(env_file)
+
+    host = os.getenv("HOST", "0.0.0.0")
+    requested_port = int(os.getenv("PORT", "5000"))
+    port = requested_port
+
+    if _is_port_in_use(port):
+        if _is_barrica_running_on(port):
+            logging.info("Barrica ya está encendido en http://127.0.0.1:%s/bar_app", port)
+            raise SystemExit(0)
+        if "PORT" not in os.environ:
+            for candidate in range(5001, 5020):
+                if not _is_port_in_use(candidate):
+                    port = candidate
+                    break
+
+    lan_ip = _detect_lan_ip()
+    logging.info("Web principal: http://127.0.0.1:%s", port)
+    logging.info("App operativa (bar_app) en este equipo: http://127.0.0.1:%s/bar_app", port)
+    if lan_ip != "127.0.0.1":
+        logging.info(
+            "Abrir desde otro PC o celular en la misma red Wi-Fi/LAN: http://%s:%s/bar_app",
+            lan_ip,
+            port,
+        )
+    if not os.getenv("DB_HOST"):
+        logging.info(
+            "Sin credenciales MySQL en .env: bar_app funcionará automáticamente en Modo Local (puedes configurar .env cuando quieras conectar MySQL)."
+        )
+    try:
+        app.run(host=host, port=port, debug=False)
+    except KeyboardInterrupt:
+        pass
