@@ -18,6 +18,7 @@ Este documento reúne todos los entregables formales del trabajo escrito del sis
 6. [Scripts de la Base de Datos](#6-scripts-de-la-base-de-datos)
 7. [Backup de Base de Datos](#7-backup-de-base-de-datos)
 8. [Mockups de la Aplicación](#8-mockups-de-la-aplicación)
+9. [Enlace de Código Fuente de la Aplicación en un Repositorio de GIT](#9-enlace-de-código-fuente-de-la-aplicación-en-un-repositorio-de-git)
 
 ---
 
@@ -983,4 +984,40 @@ SET FOREIGN_KEY_CHECKS = 1;
 |  - FAC-FANTASMA-00001 | Mesa 1 · Salón | Cliente: Juan Pérez (Colombia) | $56.000|
 |    Detalle: 2x Negroni ($28,000) | Pago: Efectivo ($100k -> Cambio $44k) [Ver]   |
 +----------------------------------------------------------------------------------+
+```
+
+---
+
+## 9. Enlace de Código Fuente de la Aplicación en un Repositorio de GIT
+
+Todo el código fuente del proyecto **Barrica POS**, junto con sus scripts de base de datos, pruebas unitarias, aplicación de escritorio y documentación técnica, se encuentra alojado y versionado en **GitHub**:
+
+- **URL del Repositorio en GitHub:** https://github.com/andresmunoz-dot/Gestion-Bar
+- **URL de Clonación HTTPS (Git):** `https://github.com/andresmunoz-dot/Gestion-Bar.git`
+- **Rama Principal:** `master`
+- **Autor / Propietario:** `andresmunoz-dot` (Andrés Muñoz)
+
+### 9.1 Enlaces Directos a los Módulos del Código Fuente en GitHub
+
+| Componente del Sistema | Enlace en el Repositorio Git |
+| :--- | :--- |
+| **Repositorio Principal (Raíz)** | https://github.com/andresmunoz-dot/Gestion-Bar |
+| **Backend Flask y API REST (`app.py`)** | https://github.com/andresmunoz-dot/Gestion-Bar/blob/master/app.py |
+| **Aplicación Operativa POS / PWA / Demo Local JSON (`bar_app.html`)** | https://github.com/andresmunoz-dot/Gestion-Bar/blob/master/bar_app.html |
+| **Portal Web Principal (`Untitled-1.html`)** | https://github.com/andresmunoz-dot/Gestion-Bar/blob/master/Untitled-1.html |
+| **Código Fuente App Escritorio C# (`desktop/BarricaDesktop.cs`)** | https://github.com/andresmunoz-dot/Gestion-Bar/blob/master/desktop/BarricaDesktop.cs |
+| **Ejecutable Windows (`downloads/BarricaDesktop.exe`)** | https://github.com/andresmunoz-dot/Gestion-Bar/blob/master/downloads/BarricaDesktop.exe |
+| **Script DDL Base de Datos (`database/schema.sql`)** | https://github.com/andresmunoz-dot/Gestion-Bar/blob/master/database/schema.sql |
+| **Backup Base de Datos (`database/backup_barrica.sql`)** | https://github.com/andresmunoz-dot/Gestion-Bar/blob/master/database/backup_barrica.sql |
+| **Ejecutor de Esquema y Migraciones (`database/run_schema.py`)** | https://github.com/andresmunoz-dot/Gestion-Bar/blob/master/database/run_schema.py |
+| **CLI de Usuarios, Sesiones y Admin (`conection.py`)** | https://github.com/andresmunoz-dot/Gestion-Bar/blob/master/conection.py |
+| **Suite de 43 Pruebas Unitarias (`tests/`)** | https://github.com/andresmunoz-dot/Gestion-Bar/tree/master/tests |
+| **Trabajo Escrito en Word (`docs/Trabajo_Escrito_Barrica_POS.docx`)** | https://github.com/andresmunoz-dot/Gestion-Bar/blob/master/docs/Trabajo_Escrito_Barrica_POS.docx |
+
+### 9.2 Comandos para Clonar y Ejecutar desde Git
+
+```powershell
+git clone https://github.com/andresmunoz-dot/Gestion-Bar.git
+cd Gestion-Bar
+.\iniciar_demo_local_json.bat
 ```

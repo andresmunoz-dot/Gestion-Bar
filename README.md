@@ -7,7 +7,9 @@ El ecosistema incluye **tres interfaces sincronizadas** contra la misma base de 
 2. **Aplicación Operativa Móvil / Web PWA (`bar_app.html`):** Interfaz táctil independiente para celulares, tablets y navegador (`/app` y descargable como `Barrica-Movil.html`).
 3. **Aplicación Nativa de Escritorio para Windows (`downloads/BarricaDesktop.exe`):** Ejecutable real en C# WinForms compilado sin dependencias externas, con renderizado de alta definición (DPI-aware), doble búfer gráfico y peticiones asíncronas sin bloqueos.
 
-> **Documentación de Ingeniería y Base de Datos:** Consulta [`docs/DOCUMENTACION_TECNICA.md`](docs/DOCUMENTACION_TECNICA.md) para ver el **Diagrama Entidad-Relación (DER)**, **Modelo Relacional (MR)**, **Diccionario de Datos**, **Diagramas UML** (Casos de Uso, Clases, Actividades y Secuencias), **Especificación de Casos de Uso** y **Mockups**.
+> **Documentación de Ingeniería y Base de Datos:** Consulta [`docs/DOCUMENTACION_TECNICA.md`](docs/DOCUMENTACION_TECNICA.md) (o descarga el documento Word [`docs/Trabajo_Escrito_Barrica_POS.docx`](docs/Trabajo_Escrito_Barrica_POS.docx)) para ver el **Diagrama Entidad-Relación (DER)**, **Modelo Relacional (MR)**, **Diccionario de Datos**, **Diagramas UML** (Casos de Uso, Clases, Actividades y Secuencias), **Especificación de Casos de Uso**, **Scripts y Backup SQL**, **Mockups** y **Enlaces del Repositorio Git**.
+>
+> **Enlace del Repositorio Git (GitHub):** https://github.com/andresmunoz-dot/Gestion-Bar (`https://github.com/andresmunoz-dot/Gestion-Bar.git`)
 
 ---
 
