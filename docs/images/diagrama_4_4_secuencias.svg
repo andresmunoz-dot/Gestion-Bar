@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680">
+  <rect width="1200" height="680" rx="18" fill="#0E1B17" stroke="#3B82F6" stroke-width="2.5"/>
+  <rect x="3" y="3" width="1194" height="62" rx="15" fill="#15271F"/>
+  <text x="34" y="34" fill="#60A5FA" font-family="Segoe UI, sans-serif" font-size="20" font-weight="900">4.4 DIAGRAMA UML DE SECUENCIAS · AUTENTICACIÓN, COMANDA, COBRO Y CIERRE DE TURNO</text>
+  <text x="34" y="54" fill="#EFE6D2" font-family="Segoe UI, sans-serif" font-size="13.5">Interacción Cronológica de Mensajes entre Actor, Cliente POS, Servidor Flask y Base de Datos MySQL / SQLite</text>
+
+  <!-- Lifeline Headers -->
+  <rect x="45" y="82" width="190" height="46" rx="8" fill="#D9A441"/>
+  <text x="140" y="110" fill="#18140E" font-family="Segoe UI, sans-serif" font-size="14" font-weight="900" text-anchor="middle">Actor: Admin / Vendedor</text>
+
+  <rect x="335" y="82" width="210" height="46" rx="8" fill="#2563EB"/>
+  <text x="440" y="110" fill="#FFFFFF" font-family="Segoe UI, sans-serif" font-size="14" font-weight="900" text-anchor="middle">Cliente Web / POS (.html/.exe)</text>
+
+  <rect x="645" y="82" width="210" height="46" rx="8" fill="#059669"/>
+  <text x="750" y="110" fill="#FFFFFF" font-family="Segoe UI, sans-serif" font-size="14" font-weight="900" text-anchor="middle">Flask REST API (app.py)</text>
+
+  <rect x="955" y="82" width="200" height="46" rx="8" fill="#7C3AED"/>
+  <text x="1055" y="110" fill="#FFFFFF" font-family="Segoe UI, sans-serif" font-size="14" font-weight="900" text-anchor="middle">MySQL 8 / SQLite DB</text>
+
+  <!-- Lifelines vertical dashed lines -->
+  <line x1="140" y1="128" x2="140" y2="650" stroke="#D9A441" stroke-width="2" stroke-dasharray="6 4"/>
+  <line x1="440" y1="128" x2="440" y2="650" stroke="#3B82F6" stroke-width="2" stroke-dasharray="6 4"/>
+  <line x1="750" y1="128" x2="750" y2="650" stroke="#10B981" stroke-width="2" stroke-dasharray="6 4"/>
+  <line x1="1055" y1="128" x2="1055" y2="650" stroke="#8B5CF6" stroke-width="2" stroke-dasharray="6 4"/>
+
+  <!-- Message 1: Login / Register -->
+  <line x1="140" y1="162" x2="440" y2="162" stroke="#FDE047" stroke-width="2.2"/>
+  <text x="290" y="154" fill="#FDE047" font-family="Segoe UI, sans-serif" font-size="12.5" font-weight="700" text-anchor="middle">1. Ingresa credenciales (login / register)</text>
+
+  <line x1="440" y1="185" x2="750" y2="185" stroke="#60A5FA" stroke-width="2.2"/>
+  <text x="595" y="177" fill="#93C5FD" font-family="Consolas, monospace" font-size="12" font-weight="700" text-anchor="middle">2. POST /api/auth/login {purpose: "pos"}</text>
+
+  <line x1="750" y1="208" x2="1055" y2="208" stroke="#86EFAC" stroke-width="2.2"/>
+  <text x="902" y="200" fill="#86EFAC" font-family="Consolas, monospace" font-size="11.5" font-weight="700" text-anchor="middle">3. SELECT user + Verify subscription</text>
+
+  <!-- ALT Fragment Box -->
+  <rect x="310" y="226" width="860" height="108" rx="8" fill="#12231C" stroke="#D9A441" stroke-width="1.6"/>
+  <rect x="310" y="226" width="95" height="24" rx="4" fill="#D9A441"/>
+  <text x="357" y="242" fill="#18140E" font-family="Segoe UI, sans-serif" font-size="11.5" font-weight="900" text-anchor="middle">ALT [Paywall]</text>
+  <text x="325" y="264" fill="#FDA4AF" font-family="Segoe UI, sans-serif" font-size="12.5" font-weight="700">• [Cuenta Nueva sin Plan]: HTTP 402 → Abre #pay-dialog → POST /api/payments/simulate (Pago o 30 días gratis 1x cuenta)</text>
+  <text x="325" y="290" fill="#86EFAC" font-family="Segoe UI, sans-serif" font-size="12.5" font-weight="700">• [Admin admin@gmail.com]: Asigna plan Multi-local Vitalicio directo (HTTP 200 OK sin requerir suscripción)</text>
+  <text x="325" y="316" fill="#93C5FD" font-family="Segoe UI, sans-serif" font-size="12.5" font-weight="700">• [Vendedor con Plan Activo]: INSERT INTO sessions → Devuelve {user, token} guardado en sessionStorage</text>
+
+  <!-- Message 4: Open Shift -->
+  <line x1="140" y1="364" x2="440" y2="364" stroke="#FDE047" stroke-width="2.2"/>
+  <text x="290" y="356" fill="#FDE047" font-family="Segoe UI, sans-serif" font-size="12.5" font-weight="700" text-anchor="middle">4. Abre turno con datos del encargado</text>
+  <line x1="440" y1="384" x2="750" y2="384" stroke="#60A5FA" stroke-width="2.2"/>
+  <text x="595" y="376" fill="#93C5FD" font-family="Consolas, monospace" font-size="12" font-weight="700" text-anchor="middle">5. POST /api/bar/shifts/open → 201 Created</text>
+
+  <!-- Message 6: Add Order -->
+  <line x1="140" y1="428" x2="440" y2="428" stroke="#FDE047" stroke-width="2.2"/>
+  <text x="290" y="420" fill="#FDE047" font-family="Segoe UI, sans-serif" font-size="12.5" font-weight="700" text-anchor="middle">6. Toma pedido (2x Negroni en Mesa 1)</text>
+  <line x1="440" y1="448" x2="750" y2="448" stroke="#60A5FA" stroke-width="2.2"/>
+  <text x="595" y="440" fill="#93C5FD" font-family="Consolas, monospace" font-size="12" font-weight="700" text-anchor="middle">7. POST /api/bar/tables/1/orders (Bearer)</text>
+  <line x1="750" y1="468" x2="1055" y2="468" stroke="#86EFAC" stroke-width="2.2"/>
+  <text x="902" y="460" fill="#86EFAC" font-family="Consolas, monospace" font-size="11.5" font-weight="700" text-anchor="middle">8. INSERT table_orders + UPDATE stock - 2</text>
+
+  <!-- Message 9: Checkout & Ghost Invoice -->
+  <line x1="140" y1="516" x2="440" y2="516" stroke="#FDE047" stroke-width="2.2"/>
+  <text x="290" y="508" fill="#FDE047" font-family="Segoe UI, sans-serif" font-size="12.5" font-weight="700" text-anchor="middle">9. Cobra mesa y selecciona cliente CRM</text>
+  <line x1="440" y1="536" x2="750" y2="536" stroke="#60A5FA" stroke-width="2.2"/>
+  <text x="595" y="528" fill="#93C5FD" font-family="Consolas, monospace" font-size="12" font-weight="700" text-anchor="middle">10. POST /api/bar/tables/1/checkout</text>
+  <line x1="750" y1="556" x2="1055" y2="556" stroke="#86EFAC" stroke-width="2.2"/>
+  <text x="902" y="548" fill="#86EFAC" font-family="Consolas, monospace" font-size="11.5" font-weight="700" text-anchor="middle">11. INSERT sales + Libera mesa + FAC-FANTASMA</text>
+
+  <!-- Message 12: Close Shift -->
+  <line x1="140" y1="604" x2="440" y2="604" stroke="#FDE047" stroke-width="2.2"/>
+  <text x="290" y="596" fill="#FDE047" font-family="Segoe UI, sans-serif" font-size="12.5" font-weight="700" text-anchor="middle">12. Solicita cierre de turno del día</text>
+  <line x1="440" y1="624" x2="750" y2="624" stroke="#10B981" stroke-width="2.5"/>
+  <text x="595" y="616" fill="#86EFAC" font-family="Consolas, monospace" font-size="12" font-weight="800" text-anchor="middle">13. POST /api/bar/shifts/close → Recibo Único CIERRE-TURNO-00001</text>
+</svg>

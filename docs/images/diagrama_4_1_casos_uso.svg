@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700">
+  <rect width="1200" height="700" rx="18" fill="#0E1B17" stroke="#D9A441" stroke-width="2.5"/>
+  <rect x="3" y="3" width="1194" height="62" rx="15" fill="#15271F"/>
+  <text x="34" y="34" fill="#D9A441" font-family="Segoe UI, sans-serif" font-size="21" font-weight="900">4.1 DIAGRAMA UML DE CASOS DE USO · SISTEMA BARRICA POS</text>
+  <text x="34" y="54" fill="#EFE6D2" font-family="Segoe UI, sans-serif" font-size="13.5">Actores del Sistema (Visitante, Vendedor/Cajero, Administrador Vitalicio) y los 11 Casos de Uso</text>
+
+  <!-- System Boundary Box -->
+  <rect x="290" y="82" width="875" height="592" rx="16" fill="#11211B" stroke="#D9A441" stroke-width="2" stroke-dasharray="8 4"/>
+  <text x="727" y="110" fill="#D9A441" font-family="Segoe UI, sans-serif" font-size="16" font-weight="900" text-anchor="middle">«Boundary» Ecosistema Barrica POS (Web + PWA Móvil + Desktop .exe + MySQL/SQLite)</text>
+
+  <!-- ACTOR 1: Visitante / Nuevo Usuario -->
+  <circle cx="115" cy="145" r="20" fill="none" stroke="#86EFAC" stroke-width="3"/>
+  <line x1="115" y1="165" x2="115" y2="215" stroke="#86EFAC" stroke-width="3"/>
+  <line x1="85" y1="182" x2="145" y2="182" stroke="#86EFAC" stroke-width="3"/>
+  <line x1="115" y1="215" x2="90" y2="250" stroke="#86EFAC" stroke-width="3"/>
+  <line x1="115" y1="215" x2="140" y2="250" stroke="#86EFAC" stroke-width="3"/>
+  <text x="115" y="274" fill="#86EFAC" font-family="Segoe UI, sans-serif" font-size="14" font-weight="800" text-anchor="middle">Actor: Visitante /</text>
+  <text x="115" y="292" fill="#86EFAC" font-family="Segoe UI, sans-serif" font-size="13" font-weight="700" text-anchor="middle">Cuenta Nueva</text>
+
+  <!-- ACTOR 2: Vendedor / Cajero -->
+  <circle cx="115" cy="365" r="20" fill="none" stroke="#60A5FA" stroke-width="3"/>
+  <line x1="115" y1="385" x2="115" y2="435" stroke="#60A5FA" stroke-width="3"/>
+  <line x1="85" y1="402" x2="145" y2="402" stroke="#60A5FA" stroke-width="3"/>
+  <line x1="115" y1="435" x2="90" y2="470" stroke="#60A5FA" stroke-width="3"/>
+  <line x1="115" y1="435" x2="140" y2="470" stroke="#60A5FA" stroke-width="3"/>
+  <text x="115" y="494" fill="#93C5FD" font-family="Segoe UI, sans-serif" font-size="14" font-weight="800" text-anchor="middle">Actor: Vendedor /</text>
+  <text x="115" y="512" fill="#93C5FD" font-family="Segoe UI, sans-serif" font-size="13" font-weight="700" text-anchor="middle">Cajero POS</text>
+
+  <!-- ACTOR 3: Administrador Vitalicio -->
+  <circle cx="115" cy="560" r="20" fill="none" stroke="#D9A441" stroke-width="3"/>
+  <line x1="115" y1="580" x2="115" y2="625" stroke="#D9A441" stroke-width="3"/>
+  <line x1="85" y1="597" x2="145" y2="597" stroke="#D9A441" stroke-width="3"/>
+  <line x1="115" y1="625" x2="90" y2="655" stroke="#D9A441" stroke-width="3"/>
+  <line x1="115" y1="625" x2="140" y2="655" stroke="#D9A441" stroke-width="3"/>
+  <text x="115" y="676" fill="#FDE047" font-family="Segoe UI, sans-serif" font-size="14" font-weight="900" text-anchor="middle">Actor: Administrador</text>
+  <text x="115" y="692" fill="#D9A441" font-family="Segoe UI, sans-serif" font-size="12" font-weight="700" text-anchor="middle">(admin@gmail.com)</text>
+
+  <!-- Association Lines -->
+  <line x1="155" y1="185" x2="340" y2="155" stroke="#86EFAC" stroke-width="1.8"/>
+  <line x1="155" y1="195" x2="340" y2="235" stroke="#86EFAC" stroke-width="1.8"/>
+
+  <line x1="155" y1="395" x2="340" y2="155" stroke="#60A5FA" stroke-width="1.6"/>
+  <line x1="155" y1="400" x2="340" y2="235" stroke="#60A5FA" stroke-width="1.6"/>
+  <line x1="155" y1="405" x2="340" y2="315" stroke="#60A5FA" stroke-width="1.6"/>
+  <line x1="155" y1="410" x2="340" y2="395" stroke="#60A5FA" stroke-width="1.6"/>
+  <line x1="155" y1="415" x2="340" y2="475" stroke="#60A5FA" stroke-width="1.6"/>
+  <line x1="155" y1="420" x2="340" y2="555" stroke="#60A5FA" stroke-width="1.6"/>
+  <line x1="155" y1="425" x2="340" y2="630" stroke="#60A5FA" stroke-width="1.6"/>
+
+  <line x1="155" y1="595" x2="755" y2="235" stroke="#D9A441" stroke-width="2"/>
+  <line x1="155" y1="600" x2="755" y2="345" stroke="#D9A441" stroke-width="2"/>
+  <line x1="155" y1="605" x2="755" y2="455" stroke="#D9A441" stroke-width="2"/>
+  <line x1="155" y1="610" x2="755" y2="565" stroke="#D9A441" stroke-width="2"/>
+  <line x1="155" y1="590" x2="340" y2="315" stroke="#D9A441" stroke-width="1.4" stroke-dasharray="4 3"/>
+
+  <!-- Left Column Use Case Ovals (Shared / Seller / Visitor) -->
+  <ellipse cx="525" cy="155" rx="185" ry="28" fill="#183026" stroke="#86EFAC" stroke-width="2"/>
+  <text x="525" y="160" fill="#EFE6D2" font-family="Segoe UI, sans-serif" font-size="13" font-weight="700" text-anchor="middle">CU-01: Registrarse e iniciar sesión por rol</text>
+
+  <ellipse cx="525" cy="235" rx="185" ry="28" fill="#183026" stroke="#86EFAC" stroke-width="2"/>
+  <text x="525" y="233" fill="#86EFAC" font-family="Segoe UI, sans-serif" font-size="12.5" font-weight="800" text-anchor="middle">CU-02: Activar suscripción en Pagos</text>
+  <text x="525" y="249" fill="#EFE6D2" font-family="Segoe UI, sans-serif" font-size="11.5" text-anchor="middle">(Pago normal o 30 días gratis · 1x cuenta)</text>
+
+  <ellipse cx="525" cy="315" rx="185" ry="28" fill="#16293B" stroke="#60A5FA" stroke-width="2"/>
+  <text x="525" y="320" fill="#EFE6D2" font-family="Segoe UI, sans-serif" font-size="13" font-weight="700" text-anchor="middle">CU-03: Abrir/cerrar turno y recibo único</text>
+
+  <ellipse cx="525" cy="395" rx="185" ry="28" fill="#16293B" stroke="#60A5FA" stroke-width="2"/>
+  <text x="525" y="400" fill="#EFE6D2" font-family="Segoe UI, sans-serif" font-size="13" font-weight="700" text-anchor="middle">CU-04: Gestionar mesas y tomar comandas</text>
+
+  <ellipse cx="525" cy="475" rx="185" ry="28" fill="#16293B" stroke="#60A5FA" stroke-width="2"/>
+  <text x="525" y="480" fill="#EFE6D2" font-family="Segoe UI, sans-serif" font-size="13" font-weight="700" text-anchor="middle">CU-05: Dividir cuenta y cobrar mesa</text>
+
+  <ellipse cx="525" cy="555" rx="185" ry="28" fill="#16293B" stroke="#60A5FA" stroke-width="2"/>
+  <text x="525" y="560" fill="#EFE6D2" font-family="Segoe UI, sans-serif" font-size="13" font-weight="700" text-anchor="middle">CU-06: Registrar clientes CRM por país</text>
+
+  <ellipse cx="525" cy="630" rx="185" ry="28" fill="#16293B" stroke="#60A5FA" stroke-width="2"/>
+  <text x="525" y="635" fill="#EFE6D2" font-family="Segoe UI, sans-serif" font-size="13" font-weight="700" text-anchor="middle">CU-07 / CU-11: Consultar carta y Demo JSON</text>
+
+  <!-- Right Column Use Case Ovals (Exclusive Admin Use Cases) -->
+  <ellipse cx="950" cy="235" rx="190" ry="34" fill="#2A2212" stroke="#D9A441" stroke-width="2.4"/>
+  <text x="950" y="232" fill="#FDE047" font-family="Segoe UI, sans-serif" font-size="13" font-weight="800" text-anchor="middle">CU-08: Administrar catálogo MySQL,</text>
+  <text x="950" y="250" fill="#EFE6D2" font-family="Segoe UI, sans-serif" font-size="12" text-anchor="middle">stock de barra y bodega de reserva</text>
+
+  <ellipse cx="950" cy="345" rx="190" ry="32" fill="#2A2212" stroke="#D9A441" stroke-width="2.4"/>
+  <text x="950" y="350" fill="#FDE047" font-family="Segoe UI, sans-serif" font-size="13" font-weight="800" text-anchor="middle">CU-09: Crear y eliminar mesas del salón</text>
+
+  <ellipse cx="950" cy="455" rx="190" ry="34" fill="#2A2212" stroke="#D9A441" stroke-width="2.4"/>
+  <text x="950" y="452" fill="#FDE047" font-family="Segoe UI, sans-serif" font-size="13" font-weight="800" text-anchor="middle">CU-10: Auditar facturas FAC-FANTASMA,</text>
+  <text x="950" y="470" fill="#EFE6D2" font-family="Segoe UI, sans-serif" font-size="12" text-anchor="middle">usuarios, sesiones, KPIs y roles</text>
+
+  <ellipse cx="950" cy="565" rx="190" ry="34" fill="#2A2212" stroke="#D9A441" stroke-width="2.4"/>
+  <text x="950" y="562" fill="#86EFAC" font-family="Segoe UI, sans-serif" font-size="13" font-weight="800" text-anchor="middle">Acceso Multi-local Vitalicio Directo</text>
+  <text x="950" y="580" fill="#EFE6D2" font-family="Segoe UI, sans-serif" font-size="12" text-anchor="middle">(Sin cobro ni paywall en Web ni POS)</text>
+</svg>

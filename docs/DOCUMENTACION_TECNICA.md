@@ -34,7 +34,11 @@ Este documento reúne todos los entregables formales del trabajo escrito del sis
 
 ## 1. Diagrama Entidad-Relación (DER)
 
-El modelo de datos de **Barrica POS** está compuesto por **8 entidades relacionales en MySQL** que garantizan la trazabilidad de usuarios, sesiones por pestaña, planes de suscripción, intentos de autenticación, catálogo de productos con bodega de reserva, mesas del salón, comandas activas e historial de ventas cerradas.
+El modelo de datos de **Barrica POS** está compuesto por **8 entidades relacionales en MySQL** que garantizan la trazabilidad de usuarios, sesiones por pestaña, planes de suscripción (con prueba gratuita única de 30 días por cuenta), intentos de autenticación, catálogo de productos con bodega de reserva, mesas del salón, comandas activas e historial de ventas cerradas.
+
+<p align="center">
+  <img src="images/diagrama_1_der.svg" alt="Diagrama Entidad-Relación (DER) Barrica POS" width="100%">
+</p>
 
 ```mermaid
 erDiagram
@@ -142,14 +146,32 @@ Notación relacional con llaves primarias (**PK**), llaves foráneas (*FK*) y re
 7. **TABLE_ORDERS** (**id** `PK`, *table_id* `FK → BAR_TABLES.id ON DELETE CASCADE`, *product_id* `FK → PRODUCTS.id ON DELETE SET NULL`, product_name, quantity, unit_price_cop, created_at)
 8. **SALES** (**id** `PK`, table_label, items_summary, total_cop, payment_method, created_at)
 
-### 2.2 Galería Visual de Tablas del Modelo Relacional
+### 2.2 Vista Completa en Tamaño Grande de las 8 Tablas del Modelo Relacional
 
-| Tarjeta Visual de Entidad (Bloque A) | Tarjeta Visual de Entidad (Bloque B) |
-| :---: | :---: |
-| ![Tabla users](images/table_users.svg) | ![Tabla sessions](images/table_sessions.svg) |
-| ![Tabla subscriptions](images/table_subscriptions.svg) | ![Tabla auth_attempts](images/table_auth_attempts.svg) |
-| ![Tabla products](images/table_products.svg) | ![Tabla bar_tables](images/table_bar_tables.svg) |
-| ![Tabla table_orders](images/table_orders.svg) | ![Tabla sales](images/table_sales.svg) |
+<p align="center">
+  <img src="images/table_users.svg" alt="Tabla 1: users" width="100%">
+</p>
+<p align="center">
+  <img src="images/table_sessions.svg" alt="Tabla 2: sessions" width="100%">
+</p>
+<p align="center">
+  <img src="images/table_subscriptions.svg" alt="Tabla 3: subscriptions" width="100%">
+</p>
+<p align="center">
+  <img src="images/table_auth_attempts.svg" alt="Tabla 4: auth_attempts" width="100%">
+</p>
+<p align="center">
+  <img src="images/table_products.svg" alt="Tabla 5: products" width="100%">
+</p>
+<p align="center">
+  <img src="images/table_bar_tables.svg" alt="Tabla 6: bar_tables" width="100%">
+</p>
+<p align="center">
+  <img src="images/table_orders.svg" alt="Tabla 7: table_orders" width="100%">
+</p>
+<p align="center">
+  <img src="images/table_sales.svg" alt="Tabla 8: sales" width="100%">
+</p>
 
 ### 2.3 Matriz de Integridad Referencial y Restricciones
 
@@ -167,7 +189,7 @@ Notación relacional con llaves primarias (**PK**), llaves foráneas (*FK*) y re
 ### 3.1 Tabla `users` (Usuarios del sistema y sus roles)
 
 <p align="center">
-  <img src="images/table_users.svg" alt="Esquema visual tabla users" width="660">
+  <img src="images/table_users.svg" alt="Esquema visual tabla users" width="100%">
 </p>
 
 | Campo | Tipo de Dato | Nulabilidad | Clave / Índice | Por Defecto | Descripción |
@@ -182,7 +204,7 @@ Notación relacional con llaves primarias (**PK**), llaves foráneas (*FK*) y re
 ### 3.2 Tabla `sessions` (Sesiones activas e historial de accesos)
 
 <p align="center">
-  <img src="images/table_sessions.svg" alt="Esquema visual tabla sessions" width="660">
+  <img src="images/table_sessions.svg" alt="Esquema visual tabla sessions" width="100%">
 </p>
 
 | Campo | Tipo de Dato | Nulabilidad | Clave / Índice | Por Defecto | Descripción |
@@ -196,7 +218,7 @@ Notación relacional con llaves primarias (**PK**), llaves foráneas (*FK*) y re
 ### 3.3 Tabla `subscriptions` (Planes pagos, prueba gratuita de 30 días y control de acceso al POS)
 
 <p align="center">
-  <img src="images/table_subscriptions.svg" alt="Esquema visual tabla subscriptions" width="660">
+  <img src="images/table_subscriptions.svg" alt="Esquema visual tabla subscriptions" width="100%">
 </p>
 
 | Campo | Tipo de Dato | Nulabilidad | Clave / Índice | Por Defecto | Descripción |
@@ -222,7 +244,7 @@ Notación relacional con llaves primarias (**PK**), llaves foráneas (*FK*) y re
 ### 3.4 Tabla `auth_attempts` (Protección contra ataques de fuerza bruta)
 
 <p align="center">
-  <img src="images/table_auth_attempts.svg" alt="Esquema visual tabla auth_attempts" width="660">
+  <img src="images/table_auth_attempts.svg" alt="Esquema visual tabla auth_attempts" width="100%">
 </p>
 
 | Campo | Tipo de Dato | Nulabilidad | Clave / Índice | Por Defecto | Descripción |
@@ -235,7 +257,7 @@ Notación relacional con llaves primarias (**PK**), llaves foráneas (*FK*) y re
 ### 3.5 Tabla `products` (Inventario de licores, carta y bodega de reserva)
 
 <p align="center">
-  <img src="images/table_products.svg" alt="Esquema visual tabla products" width="660">
+  <img src="images/table_products.svg" alt="Esquema visual tabla products" width="100%">
 </p>
 
 | Campo | Tipo de Dato | Nulabilidad | Clave / Índice | Por Defecto | Descripción |
@@ -254,20 +276,20 @@ Notación relacional con llaves primarias (**PK**), llaves foráneas (*FK*) y re
 
 | Fotografía | ID | Producto | Categoría | Precio (`price_cop`) | Stock Barra (`stock`) | Mínimo (`min_stock`) | Estado en Barra | Receta / Estándar Operativo |
 | :---: | :---: | :--- | :---: | :---: | :---: | :---: | :---: | :--- |
-| <img src="../static/product_images/optimized/negroni.jpg" alt="Negroni" width="64"> | `1` | **Negroni** | Cócteles | **`$28.000 COP`** | `24 uds` | `5 uds` | ![Disponible](images/badge_libre.svg) | 30ml Gin Tanqueray + 30ml Campari + 30ml Vermut Rosso + Piel de naranja |
-| <img src="../static/product_images/optimized/old-fashioned.jpg" alt="Old Fashioned" width="64"> | `2` | **Old Fashioned** | Cócteles | **`$30.000 COP`** | `20 uds` | `5 uds` | ![Disponible](images/badge_libre.svg) | 60ml Bourbon + 1 Terrón azúcar + 3 dash Angostura + Hielo roca |
-| <img src="../static/product_images/optimized/margarita.jpg" alt="Margarita Artesanal" width="64"> | `3` | **Margarita Artesanal** | Cócteles | **`$26.000 COP`** | `18 uds` | `5 uds` | ![Disponible](images/badge_libre.svg) | 50ml Tequila Blanco + 25ml Triple Sec + 25ml Lima fresca + Sal |
-| <img src="../static/product_images/optimized/club-colombia.jpg" alt="Cerveza Club Colombia" width="64"> | `4` | **Cerveza Club Colombia** | Cervezas | **`$9.000 COP`** | `48 uds` | `12 uds` | ![Disponible](images/badge_libre.svg) | Botella 330ml fría (3°C) + Vaso cervecero escarchado |
-| <img src="../static/product_images/optimized/ipa.jpg" alt="Cerveza Artesanal IPA" width="64"> | `5` | **Cerveza Artesanal IPA** | Cervezas | **`$15.000 COP`** | `30 uds` | `8 uds` | ![Disponible](images/badge_libre.svg) | Pinta 473ml barril artesanal + Posavasos Barrica |
-| <img src="../static/product_images/optimized/tanqueray.jpg" alt="Botella Ginebra Tanqueray" width="64"> | `6` | **Botella Ginebra Tanqueray** | Licores | **`$165.000 COP`** | `3 uds` | `4 uds` | ![Alerta Stock](images/badge_cobrar.svg) | Botella 700ml + 4 Tónicas Premium + Botánicos cítricos |
-| <img src="../static/product_images/optimized/aguardiente.jpg" alt="Botella Aguardiente Antioqueño" width="64"> | `7` | **Botella Aguardiente Antioqueño** | Licores | **`$85.000 COP`** | `10 uds` | `4 uds` | ![Disponible](images/badge_libre.svg) | Botella 750ml + Copas cristalería + Limón |
-| <img src="../static/product_images/optimized/tabla-quesos.jpg" alt="Tabla de Quesos y Madurados" width="64"> | `8` | **Tabla de Quesos y Madurados** | Comida | **`$42.000 COP`** | `12 uds` | `3 uds` | ![Disponible](images/badge_libre.svg) | 120g Queso Paipa + 80g Prosciutto + Aceitunas + Pan masa madre |
-| <img src="../static/product_images/optimized/whisky.jpg" alt="Whisky Reserva" width="64"> | `9` | **Whisky Reserva 12 Años** | Licores | **`$185.000 COP`** | `15 uds` | `4 uds` | ![Disponible](images/badge_libre.svg) | Servicio de botella 750ml + Hielo cristalino tallado + Agua mineral |
+| <img src="../static/product_images/optimized/negroni.jpg" alt="Negroni" width="130"> | `1` | **Negroni** | Cócteles | **`$28.000 COP`** | `24 uds` | `5 uds` | ![Disponible](images/badge_libre.svg) | 30ml Gin Tanqueray + 30ml Campari + 30ml Vermut Rosso + Piel de naranja |
+| <img src="../static/product_images/optimized/old-fashioned.jpg" alt="Old Fashioned" width="130"> | `2` | **Old Fashioned** | Cócteles | **`$30.000 COP`** | `20 uds` | `5 uds` | ![Disponible](images/badge_libre.svg) | 60ml Bourbon + 1 Terrón azúcar + 3 dash Angostura + Hielo roca |
+| <img src="../static/product_images/optimized/margarita.jpg" alt="Margarita Artesanal" width="130"> | `3` | **Margarita Artesanal** | Cócteles | **`$26.000 COP`** | `18 uds` | `5 uds` | ![Disponible](images/badge_libre.svg) | 50ml Tequila Blanco + 25ml Triple Sec + 25ml Lima fresca + Sal |
+| <img src="../static/product_images/optimized/club-colombia.jpg" alt="Cerveza Club Colombia" width="130"> | `4` | **Cerveza Club Colombia** | Cervezas | **`$9.000 COP`** | `48 uds` | `12 uds` | ![Disponible](images/badge_libre.svg) | Botella 330ml fría (3°C) + Vaso cervecero escarchado |
+| <img src="../static/product_images/optimized/ipa.jpg" alt="Cerveza Artesanal IPA" width="130"> | `5` | **Cerveza Artesanal IPA** | Cervezas | **`$15.000 COP`** | `30 uds` | `8 uds` | ![Disponible](images/badge_libre.svg) | Pinta 473ml barril artesanal + Posavasos Barrica |
+| <img src="../static/product_images/optimized/tanqueray.jpg" alt="Botella Ginebra Tanqueray" width="130"> | `6` | **Botella Ginebra Tanqueray** | Licores | **`$165.000 COP`** | `3 uds` | `4 uds` | ![Alerta Stock](images/badge_cobrar.svg) | Botella 700ml + 4 Tónicas Premium + Botánicos cítricos |
+| <img src="../static/product_images/optimized/aguardiente.jpg" alt="Botella Aguardiente Antioqueño" width="130"> | `7` | **Botella Aguardiente Antioqueño** | Licores | **`$85.000 COP`** | `10 uds` | `4 uds` | ![Disponible](images/badge_libre.svg) | Botella 750ml + Copas cristalería + Limón |
+| <img src="../static/product_images/optimized/tabla-quesos.jpg" alt="Tabla de Quesos y Madurados" width="130"> | `8` | **Tabla de Quesos y Madurados** | Comida | **`$42.000 COP`** | `12 uds` | `3 uds` | ![Disponible](images/badge_libre.svg) | 120g Queso Paipa + 80g Prosciutto + Aceitunas + Pan masa madre |
+| <img src="../static/product_images/optimized/whisky.jpg" alt="Whisky Reserva" width="130"> | `9` | **Whisky Reserva 12 Años** | Licores | **`$185.000 COP`** | `15 uds` | `4 uds` | ![Disponible](images/badge_libre.svg) | Servicio de botella 750ml + Hielo cristalino tallado + Agua mineral |
 
 ### 3.6 Tabla `bar_tables` (Mesas y puestos de barra del salón)
 
 <p align="center">
-  <img src="images/table_bar_tables.svg" alt="Esquema visual tabla bar_tables" width="660">
+  <img src="images/table_bar_tables.svg" alt="Esquema visual tabla bar_tables" width="100%">
 </p>
 
 | Campo | Tipo de Dato | Nulabilidad | Clave / Índice | Por Defecto | Descripción |
@@ -294,7 +316,7 @@ Notación relacional con llaves primarias (**PK**), llaves foráneas (*FK*) y re
 ### 3.7 Tabla `table_orders` (Comandas y consumos activos por mesa)
 
 <p align="center">
-  <img src="images/table_orders.svg" alt="Esquema visual tabla table_orders" width="660">
+  <img src="images/table_orders.svg" alt="Esquema visual tabla table_orders" width="100%">
 </p>
 
 | Campo | Tipo de Dato | Nulabilidad | Clave / Índice | Por Defecto | Descripción |
@@ -310,7 +332,7 @@ Notación relacional con llaves primarias (**PK**), llaves foráneas (*FK*) y re
 ### 3.8 Tabla `sales` (Historial contable de ventas cobradas)
 
 <p align="center">
-  <img src="images/table_sales.svg" alt="Esquema visual tabla sales" width="660">
+  <img src="images/table_sales.svg" alt="Esquema visual tabla sales" width="100%">
 </p>
 
 | Campo | Tipo de Dato | Nulabilidad | Clave / Índice | Por Defecto | Descripción |
@@ -334,6 +356,10 @@ Además de las 8 tablas MySQL, el sistema gestiona tres estructuras JSON para co
 ## 4. Diagramas UML
 
 ### 4.1 Diagrama de Casos de Uso
+
+<p align="center">
+  <img src="images/diagrama_4_1_casos_uso.svg" alt="Diagrama UML de Casos de Uso Barrica POS" width="100%">
+</p>
 
 ```mermaid
 flowchart LR
@@ -382,6 +408,10 @@ flowchart LR
 ---
 
 ### 4.2 Diagrama de Clases
+
+<p align="center">
+  <img src="images/diagrama_4_2_clases.svg" alt="Diagrama UML de Clases Barrica POS" width="100%">
+</p>
 
 ```mermaid
 classDiagram
@@ -480,6 +510,10 @@ classDiagram
 
 #### 4.3.1 Flujo de Login Obligatorio, Verificación de Suscripción (Paywall) y Acceso por Rol
 
+<p align="center">
+  <img src="images/diagrama_4_3_1_actividad_login.svg" alt="Diagrama de Actividades: Login, Paywall 402, Prueba Gratuita 30 Días y Admin Vitalicio" width="100%">
+</p>
+
 ```mermaid
 flowchart TD
     A(["Inicio"]) --> B["Abrir Barrica POS (Web / Móvil / Desktop .exe)"]
@@ -504,6 +538,10 @@ flowchart TD
 ```
 
 #### 4.3.2 Flujo Operativo de Turno de Caja, Pedido en Mesa, Cobro y Cierre Consolidado
+
+<p align="center">
+  <img src="images/diagrama_4_3_2_actividad_operacion.svg" alt="Diagrama de Actividades: Turno, Comanda, Cobro y Cierre Consolidado" width="100%">
+</p>
 
 ```mermaid
 flowchart TD
@@ -530,6 +568,10 @@ flowchart TD
 ---
 
 ### 4.4 Diagramas de Secuencias
+
+<p align="center">
+  <img src="images/diagrama_4_4_secuencias.svg" alt="Diagrama UML de Secuencias: Login, Comanda, Cobro y Cierre de Turno" width="100%">
+</p>
 
 #### 4.4.1 Secuencia de Login con Paywall, Toma de Pedido y Cobro con Factura Fantasma
 
