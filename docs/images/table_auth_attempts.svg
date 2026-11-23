@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="680" height="226" viewBox="0 0 680 226">
+  <rect width="680" height="226" rx="14" fill="#0E1B17" stroke="#F59E0B" stroke-width="2"/>
+  <rect x="2" y="2" width="676" height="66" rx="12" fill="#15271F"/>
+  <circle cx="32" cy="35" r="10" fill="#F59E0B"/>
+  <text x="52" y="30" fill="#F59E0B" font-family="Segoe UI, sans-serif" font-size="15" font-weight="800">4. TABLA: auth_attempts</text>
+  <text x="52" y="51" fill="#EFE6D2" font-family="Segoe UI, sans-serif" font-size="12" font-weight="600">Protección Anti-Fuerza Bruta (Rate Limiting 5 intentos / 15 min)</text>
+  <text x="658" y="31" fill="#A3AB9D" font-family="Segoe UI, sans-serif" font-size="11" text-anchor="end">4 Columnas · PK: key_hash (email:IP)</text>
+  
+        <rect x="18" y="84" width="644" height="27" rx="5" fill="#11201A" stroke="#24382F"/>
+        <text x="30" y="101.5" fill="#EFE6D2" font-family="Consolas, monospace" font-size="12" font-weight="700">key_hash</text>
+        <text x="275" y="101.5" fill="#93C5FD" font-family="Consolas, monospace" font-size="11.5">CHAR(64)</text>
+        <rect x="495" y="87.5" width="155" height="20" rx="4" fill="#1B3228" stroke="#F59E0B" stroke-width="0.9"/>
+        <text x="572" y="101" fill="#F59E0B" font-family="Segoe UI, sans-serif" font-size="10.5" font-weight="700" text-anchor="middle">PK · SHA-256</text>
+        
+        <rect x="18" y="116" width="644" height="27" rx="5" fill="#11201A" stroke="#24382F"/>
+        <text x="30" y="133.5" fill="#EFE6D2" font-family="Consolas, monospace" font-size="12" font-weight="700">attempts</text>
+        <text x="275" y="133.5" fill="#93C5FD" font-family="Consolas, monospace" font-size="11.5">SMALLINT UNSIGNED</text>
+        <rect x="495" y="119.5" width="155" height="20" rx="4" fill="#1B3228" stroke="#F59E0B" stroke-width="0.9"/>
+        <text x="572" y="133" fill="#F59E0B" font-family="Segoe UI, sans-serif" font-size="10.5" font-weight="700" text-anchor="middle">Máx 5 / 15 min</text>
+        
+        <rect x="18" y="148" width="644" height="27" rx="5" fill="#11201A" stroke="#24382F"/>
+        <text x="30" y="165.5" fill="#EFE6D2" font-family="Consolas, monospace" font-size="12" font-weight="700">window_started_at</text>
+        <text x="275" y="165.5" fill="#93C5FD" font-family="Consolas, monospace" font-size="11.5">DATETIME</text>
+        <rect x="495" y="151.5" width="155" height="20" rx="4" fill="#1B3228" stroke="#F59E0B" stroke-width="0.9"/>
+        <text x="572" y="165" fill="#F59E0B" font-family="Segoe UI, sans-serif" font-size="10.5" font-weight="700" text-anchor="middle">Inicio ventana</text>
+        
+        <rect x="18" y="180" width="644" height="27" rx="5" fill="#11201A" stroke="#24382F"/>
+        <text x="30" y="197.5" fill="#EFE6D2" font-family="Consolas, monospace" font-size="12" font-weight="700">last_attempt_at</text>
+        <text x="275" y="197.5" fill="#93C5FD" font-family="Consolas, monospace" font-size="11.5">DATETIME</text>
+        <rect x="495" y="183.5" width="155" height="20" rx="4" fill="#1B3228" stroke="#F59E0B" stroke-width="0.9"/>
+        <text x="572" y="197" fill="#F59E0B" font-family="Segoe UI, sans-serif" font-size="10.5" font-weight="700" text-anchor="middle">INDEX · Último</text>
+        
+</svg>

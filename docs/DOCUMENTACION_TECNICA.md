@@ -1,6 +1,16 @@
 # Trabajo Escrito de Ingeniería de Software y Base de Datos — Proyecto Barrica POS
 
-Este documento reúne todos los entregables formales del trabajo escrito del sistema **Barrica POS** (Sistema de Gestión, Inventario, Turnos y Punto de Venta para Bares conectado a **MySQL 8.0** con backend en **Python / Flask**, interfaz web/móvil en **HTML5/CSS3/JS** con **Modo Demo Local JSON** y aplicación nativa de escritorio en **C# WinForms**).
+<p align="center">
+  <img src="images/banner_arquitectura_barrica.svg" alt="Arquitectura Ecosistema Barrica POS" width="100%">
+</p>
+
+Este documento reúne todos los entregables formales del trabajo escrito del sistema **Barrica POS** (Sistema de Gestión, Inventario, Turnos y Punto de Venta para Bares conectado a **MySQL 8.0** con respaldo local **SQLite / Modo Demo Local JSON**, backend en **Python / Flask**, interfaz web/móvil en **HTML5/CSS3/JS** y aplicación nativa de escritorio en **C# WinForms**).
+
+| Vista Rápida de Perfiles y Suscripciones | Credencial / Modalidad | Acceso al Sistema POS | Vigencia / Regla de Negocio |
+| :--- | :--- | :---: | :--- |
+| ![Admin Vitalicio](images/badge_admin.svg) | `admin@gmail.com` (`AdminBarrica2026*`) | **Acceso Total Directo** (Web + POS + Admin) | **Vitalicio (`lifetime`)** · Plan `Multi-local` sin pago |
+| ![30 Días Gratis](images/badge_trial.svg) | Cuenta nueva en Checkout (`#pay-dialog`) | **Paywall HTTP 402 → Activa en Pagos ($0)** | **30 días gratis (`trial_active`)** · Máximo **1 vez por cuenta** |
+| ![Vendedor POS](images/badge_vendedor.svg) | Suscripción Paga (`Básico` / `Pro` / `Multi-local`) | **Acceso Operativo Completo según Plan** | **30 días renovables (`test_active` / `active`)** con recibo `SIM-...` |
 
 ---
 
@@ -132,108 +142,185 @@ Notación relacional con llaves primarias (**PK**), llaves foráneas (*FK*) y re
 7. **TABLE_ORDERS** (**id** `PK`, *table_id* `FK → BAR_TABLES.id ON DELETE CASCADE`, *product_id* `FK → PRODUCTS.id ON DELETE SET NULL`, product_name, quantity, unit_price_cop, created_at)
 8. **SALES** (**id** `PK`, table_label, items_summary, total_cop, payment_method, created_at)
 
-### 2.2 Matriz de Integridad Referencial y Restricciones
+### 2.2 Galería Visual de Tablas del Modelo Relacional
 
-| Tabla Origen | Columna Foránea (`FK`) | Tabla Destino (`PK`) | Regla `ON DELETE` | Propósito en el Negocio |
-| :--- | :--- | :--- | :---: | :--- |
-| `sessions` | `user_id` | `users(id)` | `CASCADE` | Revoca automáticamente todas las sesiones si se elimina el usuario. |
-| `subscriptions` | `user_id` | `users(id)` | `CASCADE` | Elimina el historial de planes asociados si se borra la cuenta titular. |
-| `table_orders` | `table_id` | `bar_tables(id)` | `CASCADE` | Limpia las órdenes abiertas si una mesa es eliminada del salón. |
-| `table_orders` | `product_id` | `products(id)` | `SET NULL` | Mantiene el ítem en la cuenta abierta usando `product_name` y `unit_price_cop` aunque el producto se borre del catálogo. |
+| Tarjeta Visual de Entidad (Bloque A) | Tarjeta Visual de Entidad (Bloque B) |
+| :---: | :---: |
+| ![Tabla users](images/table_users.svg) | ![Tabla sessions](images/table_sessions.svg) |
+| ![Tabla subscriptions](images/table_subscriptions.svg) | ![Tabla auth_attempts](images/table_auth_attempts.svg) |
+| ![Tabla products](images/table_products.svg) | ![Tabla bar_tables](images/table_bar_tables.svg) |
+| ![Tabla table_orders](images/table_orders.svg) | ![Tabla sales](images/table_sales.svg) |
+
+### 2.3 Matriz de Integridad Referencial y Restricciones
+
+| Tabla Origen | Columna Foránea (`FK`) | Tipo de Vínculo | Tabla Destino (`PK`) | Regla `ON DELETE` | Propósito en el Negocio |
+| :--- | :--- | :---: | :--- | :---: | :--- |
+| `sessions` | `user_id` | ![FK](images/badge_fk.svg) → ![PK](images/badge_pk.svg) | `users(id)` | `CASCADE` | Revoca automáticamente todas las sesiones si se elimina el usuario. |
+| `subscriptions` | `user_id` | ![FK](images/badge_fk.svg) → ![PK](images/badge_pk.svg) | `users(id)` | `CASCADE` | Elimina el historial de planes y prueba gratuita asociados si se borra la cuenta titular. |
+| `table_orders` | `table_id` | ![FK](images/badge_fk.svg) → ![PK](images/badge_pk.svg) | `bar_tables(id)` | `CASCADE` | Limpia las órdenes abiertas si una mesa es eliminada del salón. |
+| `table_orders` | `product_id` | ![FK](images/badge_fk.svg) → ![PK](images/badge_pk.svg) | `products(id)` | `SET NULL` | Mantiene el ítem en la cuenta abierta usando `product_name` y `unit_price_cop` aunque el producto se borre del catálogo. |
 
 ---
 
-## 3. Diccionario de Datos
+## 3. Diccionario de Datos Visual e Interactivo
 
 ### 3.1 Tabla `users` (Usuarios del sistema y sus roles)
 
-| Campo | Tipo de Dato | Nulo | Clave | Por Defecto | Descripción |
-| :--- | :--- | :---: | :---: | :--- | :--- |
-| `id` | `BIGINT UNSIGNED` | NO | `PK`, `AI` | — | Identificador único autoincremental del usuario. |
-| `full_name` | `VARCHAR(120)` | NO | — | — | Nombre completo del integrante (validado sin dígitos numéricos). |
-| `email` | `VARCHAR(254)` | NO | `UNIQUE` | — | Correo electrónico único normalizado en minúsculas. |
-| `password_hash` | `VARCHAR(100)` | NO | — | — | Hash criptográfico `bcrypt` (12 rondas de costo). |
-| `role` | `VARCHAR(20)` | NO | — | `'vendedor'` | Rol de autorización: `'administrador'` o `'vendedor'`. |
-| `created_at` | `TIMESTAMP` | NO | — | `CURRENT_TIMESTAMP` | Fecha y hora UTC de creación de la cuenta. |
+<p align="center">
+  <img src="images/table_users.svg" alt="Esquema visual tabla users" width="660">
+</p>
+
+| Campo | Tipo de Dato | Nulabilidad | Clave / Índice | Por Defecto | Descripción |
+| :--- | :--- | :---: | :---: | :---: | :--- |
+| `id` | `BIGINT UNSIGNED` | ![NOT NULL](images/badge_nn.svg) | ![PK](images/badge_pk.svg) | `AUTO_INCREMENT` | Identificador único autoincremental del usuario. |
+| `full_name` | `VARCHAR(120)` | ![NOT NULL](images/badge_nn.svg) | — | — | Nombre completo del integrante (validado sin dígitos numéricos). |
+| `email` | `VARCHAR(254)` | ![NOT NULL](images/badge_nn.svg) | ![UQ](images/badge_uq.svg) | — | Correo electrónico único normalizado en minúsculas. |
+| `password_hash` | `VARCHAR(100)` | ![NOT NULL](images/badge_nn.svg) | — | — | Hash criptográfico `bcrypt` (12 rondas de costo). |
+| `role` | `VARCHAR(20)` | ![NOT NULL](images/badge_nn.svg) | — | `'vendedor'` | Rol de autorización: ![Admin](images/badge_admin.svg) o ![Vendedor](images/badge_vendedor.svg). |
+| `created_at` | `TIMESTAMP` | ![NOT NULL](images/badge_nn.svg) | — | `CURRENT_TIMESTAMP` | Fecha y hora UTC de creación de la cuenta. |
 
 ### 3.2 Tabla `sessions` (Sesiones activas e historial de accesos)
 
-| Campo | Tipo de Dato | Nulo | Clave | Por Defecto | Descripción |
-| :--- | :--- | :---: | :---: | :--- | :--- |
-| `token_hash` | `CHAR(64)` | NO | `PK` | — | Hash SHA-256 en ASCII del token de sesión aleatorio emitido al cliente. |
-| `user_id` | `BIGINT UNSIGNED` | NO | `FK`, `INDEX` | — | Referencia al propietario de la sesión en `users(id)`. |
-| `role` | `VARCHAR(20)` | NO | — | `'vendedor'` | Rol efectivo con el que se autenticó la sesión. |
-| `expires_at` | `DATETIME` | NO | `INDEX` | — | Fecha y hora UTC de expiración del token (12 horas operativas). |
-| `created_at` | `TIMESTAMP` | NO | — | `CURRENT_TIMESTAMP` | Fecha y hora UTC del inicio de sesión. |
+<p align="center">
+  <img src="images/table_sessions.svg" alt="Esquema visual tabla sessions" width="660">
+</p>
 
-### 3.3 Tabla `subscriptions` (Planes y control de acceso al POS)
+| Campo | Tipo de Dato | Nulabilidad | Clave / Índice | Por Defecto | Descripción |
+| :--- | :--- | :---: | :---: | :---: | :--- |
+| `token_hash` | `CHAR(64)` | ![NOT NULL](images/badge_nn.svg) | ![PK](images/badge_pk.svg) | — | Hash SHA-256 en ASCII del token de sesión aleatorio emitido al cliente. |
+| `user_id` | `BIGINT UNSIGNED` | ![NOT NULL](images/badge_nn.svg) | ![FK](images/badge_fk.svg) ![IDX](images/badge_idx.svg) | — | Referencia al propietario de la sesión en `users(id)`. |
+| `role` | `VARCHAR(20)` | ![NOT NULL](images/badge_nn.svg) | — | `'vendedor'` | Rol efectivo con el que se autenticó la sesión. |
+| `expires_at` | `DATETIME` | ![NOT NULL](images/badge_nn.svg) | ![IDX](images/badge_idx.svg) | — | Fecha y hora UTC de expiración del token (12 horas operativas). |
+| `created_at` | `TIMESTAMP` | ![NOT NULL](images/badge_nn.svg) | — | `CURRENT_TIMESTAMP` | Fecha y hora UTC del inicio de sesión. |
 
-| Campo | Tipo de Dato | Nulo | Clave | Por Defecto | Descripción |
-| :--- | :--- | :---: | :---: | :--- | :--- |
-| `id` | `BIGINT UNSIGNED` | NO | `PK`, `AI` | — | Identificador único de la suscripción. |
-| `user_id` | `BIGINT UNSIGNED` | NO | `FK`, `INDEX` | — | Usuario titular de la suscripción (`users.id`). |
-| `plan_id` | `VARCHAR(30)` | NO | — | — | Código del plan contratado (`basico`, `pro`, `multilocal`). |
-| `status` | `VARCHAR(20)` | NO | `INDEX` | `'pending'` | Estado de vigencia (`active`, `test_active`, `pending`, `expired`). |
-| `payment_reference` | `VARCHAR(80)` | SÍ | `UNIQUE` | `NULL` | Referencia única del recibo o transacción de pago. |
-| `starts_at` | `DATETIME` | NO | — | — | Fecha y hora UTC de inicio de cobertura del plan. |
-| `expires_at` | `DATETIME` | NO | `INDEX` | — | Fecha y hora UTC de corte/expiración del plan. |
-| `created_at` | `TIMESTAMP` | NO | — | `CURRENT_TIMESTAMP` | Marca temporal de creación del registro. |
+### 3.3 Tabla `subscriptions` (Planes pagos, prueba gratuita de 30 días y control de acceso al POS)
+
+<p align="center">
+  <img src="images/table_subscriptions.svg" alt="Esquema visual tabla subscriptions" width="660">
+</p>
+
+| Campo | Tipo de Dato | Nulabilidad | Clave / Índice | Por Defecto | Descripción |
+| :--- | :--- | :---: | :---: | :---: | :--- |
+| `id` | `BIGINT UNSIGNED` | ![NOT NULL](images/badge_nn.svg) | ![PK](images/badge_pk.svg) | `AUTO_INCREMENT` | Identificador único de la suscripción. |
+| `user_id` | `BIGINT UNSIGNED` | ![NOT NULL](images/badge_nn.svg) | ![FK](images/badge_fk.svg) ![IDX](images/badge_idx.svg) | — | Usuario titular de la suscripción (`users.id`). |
+| `plan_id` | `VARCHAR(30)` | ![NOT NULL](images/badge_nn.svg) | — | — | Código del plan contratado (`basico`, `pro`, `multilocal`). |
+| `status` | `VARCHAR(20)` | ![NOT NULL](images/badge_nn.svg) | ![IDX](images/badge_idx.svg) | `'pending'` | Estado de vigencia (`active`, `test_active`, `trial_active`, `expired`). |
+| `payment_reference` | `VARCHAR(80)` | ![NULL](images/badge_null.svg) | ![UQ](images/badge_uq.svg) | `NULL` | Referencia única del comprobante (`SIM-AAAAMMDD-XXXXXX` o `TRIAL-AAAAMMDD-XXXXXX`). |
+| `starts_at` | `DATETIME` | ![NOT NULL](images/badge_nn.svg) | — | — | Fecha y hora UTC de inicio de cobertura del plan. |
+| `expires_at` | `DATETIME` | ![NOT NULL](images/badge_nn.svg) | ![IDX](images/badge_idx.svg) | — | Fecha y hora UTC de corte/expiración del plan (+30 días). |
+| `created_at` | `TIMESTAMP` | ![NOT NULL](images/badge_nn.svg) | — | `CURRENT_TIMESTAMP` | Marca temporal de creación del registro. |
+
+#### Catálogo Visual de Planes y Modalidades en `subscriptions`
+
+| Plan / Nivel | Precio Mensual (USD / COP) | Prueba Gratuita 30 Días (1 por cuenta) | Alcance Operativo en el POS |
+| :--- | :---: | :---: | :--- |
+| **Plan Básico** (`basico`) | **`$29 USD`** / `$116.000 COP` | ![Trial](images/badge_trial.svg) (`$0,00` hoy) | 1 local · hasta 10 mesas · comandas y cuentas · inventario básico · soporte correo |
+| **Plan Pro** (`pro`) | **`$59 USD`** / `$236.000 COP` | ![Trial](images/badge_trial.svg) (`$0,00` hoy) | 1 local · mesas ilimitadas · recetas y alertas de stock · turnos y roles · reportes y chat |
+| **Plan Multi-local** (`multilocal`) | **`$129 USD`** / `$516.000 COP` | ![Trial](images/badge_trial.svg) (`$0,00` hoy) | Hasta 5 locales · reportes consolidados · traslado entre sedes · gerente VIP dedicado |
+| **Administrador Vitalicio** | **`$0 USD`** (Sin cobro) | ![Admin](images/badge_admin.svg) | Acceso total permanente (`admin@gmail.com`) desde Web o POS sin requerir checkout |
 
 ### 3.4 Tabla `auth_attempts` (Protección contra ataques de fuerza bruta)
 
-| Campo | Tipo de Dato | Nulo | Clave | Por Defecto | Descripción |
-| :--- | :--- | :---: | :---: | :--- | :--- |
-| `key_hash` | `CHAR(64)` | NO | `PK` | — | Hash SHA-256 del par `email:ip_cliente`. |
-| `attempts` | `SMALLINT UNSIGNED` | NO | — | `0` | Contador de intentos fallidos dentro de la ventana de 15 minutos (máx. 5). |
-| `window_started_at` | `DATETIME` | NO | — | — | Inicio de la ventana temporal de evaluación. |
-| `last_attempt_at` | `DATETIME` | NO | `INDEX` | — | Fecha y hora UTC del último intento fallido registrado. |
+<p align="center">
+  <img src="images/table_auth_attempts.svg" alt="Esquema visual tabla auth_attempts" width="660">
+</p>
+
+| Campo | Tipo de Dato | Nulabilidad | Clave / Índice | Por Defecto | Descripción |
+| :--- | :--- | :---: | :---: | :---: | :--- |
+| `key_hash` | `CHAR(64)` | ![NOT NULL](images/badge_nn.svg) | ![PK](images/badge_pk.svg) | — | Hash SHA-256 del par `email:ip_cliente`. |
+| `attempts` | `SMALLINT UNSIGNED` | ![NOT NULL](images/badge_nn.svg) | — | `0` | Contador de intentos fallidos dentro de la ventana de 15 minutos (máx. 5). |
+| `window_started_at` | `DATETIME` | ![NOT NULL](images/badge_nn.svg) | — | — | Inicio de la ventana temporal de evaluación. |
+| `last_attempt_at` | `DATETIME` | ![NOT NULL](images/badge_nn.svg) | ![IDX](images/badge_idx.svg) | — | Fecha y hora UTC del último intento fallido registrado. |
 
 ### 3.5 Tabla `products` (Inventario de licores, carta y bodega de reserva)
 
-| Campo | Tipo de Dato | Nulo | Clave | Por Defecto | Descripción |
-| :--- | :--- | :---: | :---: | :--- | :--- |
-| `id` | `INT UNSIGNED` | NO | `PK`, `AI` | — | Identificador único del producto en la carta. |
-| `name` | `VARCHAR(120)` | NO | — | — | Nombre comercial de la bebida, botella, cóctel o comida. |
-| `category` | `VARCHAR(60)` | NO | — | `'Licores'` | Categoría (`Licores`, `Cócteles`, `Cervezas`, `Comida`, `Sin alcohol`). |
-| `price_cop` | `INT UNSIGNED` | NO | — | — | Precio unitario de venta en pesos colombianos (COP). |
-| `stock` | `INT` | NO | — | `0` | Unidades disponibles para venta inmediata en barra. |
-| `min_stock` | `INT` | NO | — | `5` | Punto de reorden para encender alerta visual de agotamiento. |
-| `reserve_stock` | `INT` | NO | — | `0` | Unidades almacenadas en la bodega interna de reserva. |
-| `image_url` | `VARCHAR(500)` | SÍ | — | `NULL` | Ruta estática o URL de la fotografía optimizada del producto. |
-| `created_at` | `TIMESTAMP` | NO | — | `CURRENT_TIMESTAMP` | Fecha y hora UTC de incorporación al catálogo. |
+<p align="center">
+  <img src="images/table_products.svg" alt="Esquema visual tabla products" width="660">
+</p>
+
+| Campo | Tipo de Dato | Nulabilidad | Clave / Índice | Por Defecto | Descripción |
+| :--- | :--- | :---: | :---: | :---: | :--- |
+| `id` | `INT UNSIGNED` | ![NOT NULL](images/badge_nn.svg) | ![PK](images/badge_pk.svg) | `AUTO_INCREMENT` | Identificador único del producto en la carta. |
+| `name` | `VARCHAR(120)` | ![NOT NULL](images/badge_nn.svg) | — | — | Nombre comercial de la bebida, botella, cóctel o comida. |
+| `category` | `VARCHAR(60)` | ![NOT NULL](images/badge_nn.svg) | — | `'Licores'` | Categoría (`Licores`, `Cócteles`, `Cervezas`, `Comida`, `Sin alcohol`). |
+| `price_cop` | `INT UNSIGNED` | ![NOT NULL](images/badge_nn.svg) | — | — | Precio unitario de venta en pesos colombianos (COP). |
+| `stock` | `INT` | ![NOT NULL](images/badge_nn.svg) | — | `0` | Unidades disponibles para venta inmediata en barra. |
+| `min_stock` | `INT` | ![NOT NULL](images/badge_nn.svg) | — | `5` | Punto de reorden para encender alerta visual de agotamiento. |
+| `reserve_stock` | `INT` | ![NOT NULL](images/badge_nn.svg) | — | `0` | Unidades almacenadas en la bodega interna de reserva. |
+| `image_url` | `VARCHAR(500)` | ![NULL](images/badge_null.svg) | — | `NULL` | Ruta estática o URL de la fotografía optimizada del producto. |
+| `created_at` | `TIMESTAMP` | ![NOT NULL](images/badge_nn.svg) | — | `CURRENT_TIMESTAMP` | Fecha y hora UTC de incorporación al catálogo. |
+
+#### Catálogo Visual de Productos con Imágenes Reales (`products` + `static/product_images/optimized/`)
+
+| Fotografía | ID | Producto | Categoría | Precio (`price_cop`) | Stock Barra (`stock`) | Mínimo (`min_stock`) | Estado en Barra | Receta / Estándar Operativo |
+| :---: | :---: | :--- | :---: | :---: | :---: | :---: | :---: | :--- |
+| <img src="../static/product_images/optimized/negroni.jpg" alt="Negroni" width="64"> | `1` | **Negroni** | Cócteles | **`$28.000 COP`** | `24 uds` | `5 uds` | ![Disponible](images/badge_libre.svg) | 30ml Gin Tanqueray + 30ml Campari + 30ml Vermut Rosso + Piel de naranja |
+| <img src="../static/product_images/optimized/old-fashioned.jpg" alt="Old Fashioned" width="64"> | `2` | **Old Fashioned** | Cócteles | **`$30.000 COP`** | `20 uds` | `5 uds` | ![Disponible](images/badge_libre.svg) | 60ml Bourbon + 1 Terrón azúcar + 3 dash Angostura + Hielo roca |
+| <img src="../static/product_images/optimized/margarita.jpg" alt="Margarita Artesanal" width="64"> | `3` | **Margarita Artesanal** | Cócteles | **`$26.000 COP`** | `18 uds` | `5 uds` | ![Disponible](images/badge_libre.svg) | 50ml Tequila Blanco + 25ml Triple Sec + 25ml Lima fresca + Sal |
+| <img src="../static/product_images/optimized/club-colombia.jpg" alt="Cerveza Club Colombia" width="64"> | `4` | **Cerveza Club Colombia** | Cervezas | **`$9.000 COP`** | `48 uds` | `12 uds` | ![Disponible](images/badge_libre.svg) | Botella 330ml fría (3°C) + Vaso cervecero escarchado |
+| <img src="../static/product_images/optimized/ipa.jpg" alt="Cerveza Artesanal IPA" width="64"> | `5` | **Cerveza Artesanal IPA** | Cervezas | **`$15.000 COP`** | `30 uds` | `8 uds` | ![Disponible](images/badge_libre.svg) | Pinta 473ml barril artesanal + Posavasos Barrica |
+| <img src="../static/product_images/optimized/tanqueray.jpg" alt="Botella Ginebra Tanqueray" width="64"> | `6` | **Botella Ginebra Tanqueray** | Licores | **`$165.000 COP`** | `3 uds` | `4 uds` | ![Alerta Stock](images/badge_cobrar.svg) | Botella 700ml + 4 Tónicas Premium + Botánicos cítricos |
+| <img src="../static/product_images/optimized/aguardiente.jpg" alt="Botella Aguardiente Antioqueño" width="64"> | `7` | **Botella Aguardiente Antioqueño** | Licores | **`$85.000 COP`** | `10 uds` | `4 uds` | ![Disponible](images/badge_libre.svg) | Botella 750ml + Copas cristalería + Limón |
+| <img src="../static/product_images/optimized/tabla-quesos.jpg" alt="Tabla de Quesos y Madurados" width="64"> | `8` | **Tabla de Quesos y Madurados** | Comida | **`$42.000 COP`** | `12 uds` | `3 uds` | ![Disponible](images/badge_libre.svg) | 120g Queso Paipa + 80g Prosciutto + Aceitunas + Pan masa madre |
+| <img src="../static/product_images/optimized/whisky.jpg" alt="Whisky Reserva" width="64"> | `9` | **Whisky Reserva 12 Años** | Licores | **`$185.000 COP`** | `15 uds` | `4 uds` | ![Disponible](images/badge_libre.svg) | Servicio de botella 750ml + Hielo cristalino tallado + Agua mineral |
 
 ### 3.6 Tabla `bar_tables` (Mesas y puestos de barra del salón)
 
-| Campo | Tipo de Dato | Nulo | Clave | Por Defecto | Descripción |
-| :--- | :--- | :---: | :---: | :--- | :--- |
-| `id` | `INT UNSIGNED` | NO | `PK`, `AI` | — | Identificador interno de la mesa. |
-| `table_number` | `INT UNSIGNED` | NO | `UNIQUE` | — | Número único visible de la mesa o puesto en el mapa del local. |
-| `label` | `VARCHAR(60)` | NO | — | — | Nombre descriptivo y zona (ej. `Mesa 4 · Terraza`, `Mesa 6 · VIP`). |
-| `capacity` | `SMALLINT UNSIGNED` | NO | — | `4` | Capacidad de personas sentadas en la mesa. |
-| `status` | `VARCHAR(20)` | NO | — | `'libre'` | Estado operativo en tiempo real (`libre`, `ocupada`, `por_cobrar`). |
+<p align="center">
+  <img src="images/table_bar_tables.svg" alt="Esquema visual tabla bar_tables" width="660">
+</p>
+
+| Campo | Tipo de Dato | Nulabilidad | Clave / Índice | Por Defecto | Descripción |
+| :--- | :--- | :---: | :---: | :---: | :--- |
+| `id` | `INT UNSIGNED` | ![NOT NULL](images/badge_nn.svg) | ![PK](images/badge_pk.svg) | `AUTO_INCREMENT` | Identificador interno de la mesa. |
+| `table_number` | `INT UNSIGNED` | ![NOT NULL](images/badge_nn.svg) | ![UQ](images/badge_uq.svg) | — | Número único visible de la mesa o puesto en el mapa del local. |
+| `label` | `VARCHAR(60)` | ![NOT NULL](images/badge_nn.svg) | — | — | Nombre descriptivo y zona (ej. `Mesa 4 · Terraza`, `Mesa 6 · VIP`). |
+| `capacity` | `SMALLINT UNSIGNED` | ![NOT NULL](images/badge_nn.svg) | — | `4` | Capacidad de personas sentadas en la mesa. |
+| `status` | `VARCHAR(20)` | ![NOT NULL](images/badge_nn.svg) | — | `'libre'` | Estado en tiempo real: ![Libre](images/badge_libre.svg), ![Ocupada](images/badge_ocupada.svg) o ![Por Cobrar](images/badge_cobrar.svg). |
+
+#### Distribución Semilla de Mesas del Salón (`bar_tables`)
+
+| N.º Mesa (`table_number`) | Etiqueta y Zona (`label`) | Capacidad (`capacity`) | Estado Inicial (`status`) | Tipo de Ubicación |
+| :---: | :--- | :---: | :---: | :--- |
+| **`01`** | `Mesa 1 · Salón` | 4 personas | ![Libre](images/badge_libre.svg) | Salón Principal |
+| **`02`** | `Mesa 2 · Salón` | 4 personas | ![Libre](images/badge_libre.svg) | Salón Principal |
+| **`03`** | `Mesa 3 · Ventana` | 2 personas | ![Libre](images/badge_libre.svg) | Zona Ventana |
+| **`04`** | `Mesa 4 · Terraza` | 6 personas | ![Libre](images/badge_libre.svg) | Terraza Exterior |
+| **`05`** | `Mesa 5 · Terraza` | 4 personas | ![Libre](images/badge_libre.svg) | Terraza Exterior |
+| **`06`** | `Mesa 6 · VIP` | 8 personas | ![Libre](images/badge_libre.svg) | Reservado VIP / Cava |
+| **`07`** | `Barra 1 · Principal` | 2 personas | ![Libre](images/badge_libre.svg) | Barra Central |
+| **`08`** | `Barra 2 · Principal` | 2 personas | ![Libre](images/badge_libre.svg) | Barra Central |
 
 ### 3.7 Tabla `table_orders` (Comandas y consumos activos por mesa)
 
-| Campo | Tipo de Dato | Nulo | Clave | Por Defecto | Descripción |
-| :--- | :--- | :---: | :---: | :--- | :--- |
-| `id` | `BIGINT UNSIGNED` | NO | `PK`, `AI` | — | Identificador único de la línea de pedido. |
-| `table_id` | `INT UNSIGNED` | NO | `FK`, `INDEX` | — | Referencia a la mesa activa (`bar_tables.id`). |
-| `product_id` | `INT UNSIGNED` | SÍ | `FK` | `NULL` | Referencia al producto descontado (`products.id`). |
-| `product_name` | `VARCHAR(120)` | NO | — | — | Nombre congelado del producto en el instante de la comanda. |
-| `quantity` | `INT UNSIGNED` | NO | — | `1` | Cantidad de unidades servidas en esa línea. |
-| `unit_price_cop` | `INT UNSIGNED` | NO | — | — | Precio unitario en COP congelado al tomar el pedido. |
-| `created_at` | `TIMESTAMP` | NO | — | `CURRENT_TIMESTAMP` | Hora exacta de solicitud del consumo. |
+<p align="center">
+  <img src="images/table_orders.svg" alt="Esquema visual tabla table_orders" width="660">
+</p>
+
+| Campo | Tipo de Dato | Nulabilidad | Clave / Índice | Por Defecto | Descripción |
+| :--- | :--- | :---: | :---: | :---: | :--- |
+| `id` | `BIGINT UNSIGNED` | ![NOT NULL](images/badge_nn.svg) | ![PK](images/badge_pk.svg) | `AUTO_INCREMENT` | Identificador único de la línea de pedido. |
+| `table_id` | `INT UNSIGNED` | ![NOT NULL](images/badge_nn.svg) | ![FK](images/badge_fk.svg) ![IDX](images/badge_idx.svg) | — | Referencia a la mesa activa (`bar_tables.id`). |
+| `product_id` | `INT UNSIGNED` | ![NULL](images/badge_null.svg) | ![FK](images/badge_fk.svg) | `NULL` | Referencia al producto descontado (`products.id`). |
+| `product_name` | `VARCHAR(120)` | ![NOT NULL](images/badge_nn.svg) | — | — | Nombre congelado del producto en el instante de la comanda. |
+| `quantity` | `INT UNSIGNED` | ![NOT NULL](images/badge_nn.svg) | — | `1` | Cantidad de unidades servidas en esa línea. |
+| `unit_price_cop` | `INT UNSIGNED` | ![NOT NULL](images/badge_nn.svg) | — | — | Precio unitario en COP congelado al tomar el pedido. |
+| `created_at` | `TIMESTAMP` | ![NOT NULL](images/badge_nn.svg) | — | `CURRENT_TIMESTAMP` | Hora exacta de solicitud del consumo. |
 
 ### 3.8 Tabla `sales` (Historial contable de ventas cobradas)
 
-| Campo | Tipo de Dato | Nulo | Clave | Por Defecto | Descripción |
-| :--- | :--- | :---: | :---: | :--- | :--- |
-| `id` | `BIGINT UNSIGNED` | NO | `PK`, `AI` | — | Consecutivo único de la venta cerrada. |
-| `table_label` | `VARCHAR(60)` | NO | — | — | Etiqueta de la mesa donde se efectuó el consumo. |
-| `items_summary` | `VARCHAR(500)` | NO | — | — | Resumen textual de los productos y cantidades facturadas. |
-| `total_cop` | `INT UNSIGNED` | NO | — | — | Monto total pagado en pesos colombianos (COP). |
-| `payment_method` | `VARCHAR(40)` | NO | — | `'Efectivo'` | Medio de pago (`Efectivo`, `Tarjeta`, `Transferencia / Nequi`). |
-| `created_at` | `TIMESTAMP` | NO | `INDEX` | `CURRENT_TIMESTAMP` | Fecha y hora UTC del cierre de cuenta. |
+<p align="center">
+  <img src="images/table_sales.svg" alt="Esquema visual tabla sales" width="660">
+</p>
+
+| Campo | Tipo de Dato | Nulabilidad | Clave / Índice | Por Defecto | Descripción |
+| :--- | :--- | :---: | :---: | :---: | :--- |
+| `id` | `BIGINT UNSIGNED` | ![NOT NULL](images/badge_nn.svg) | ![PK](images/badge_pk.svg) | `AUTO_INCREMENT` | Consecutivo único de la venta cerrada. |
+| `table_label` | `VARCHAR(60)` | ![NOT NULL](images/badge_nn.svg) | — | — | Etiqueta de la mesa donde se efectuó el consumo. |
+| `items_summary` | `VARCHAR(500)` | ![NOT NULL](images/badge_nn.svg) | — | — | Resumen textual de los productos y cantidades facturadas. |
+| `total_cop` | `INT UNSIGNED` | ![NOT NULL](images/badge_nn.svg) | — | — | Monto total pagado en pesos colombianos (COP). |
+| `payment_method` | `VARCHAR(40)` | ![NOT NULL](images/badge_nn.svg) | — | `'Efectivo'` | Medio de pago (`Efectivo`, `Tarjeta`, `Transferencia / Nequi`). |
+| `created_at` | `TIMESTAMP` | ![NOT NULL](images/badge_nn.svg) | ![IDX](images/badge_idx.svg) | `CURRENT_TIMESTAMP` | Fecha y hora UTC del cierre de cuenta. |
 
 ### 3.9 Entidades Operativas en Memoria / Almacenamiento JSON (`shifts`, `invoices`, `clients`)
 
@@ -872,9 +959,19 @@ SET FOREIGN_KEY_CHECKS = 1;
 
 ---
 
-## 8. Mockups de la Aplicación
+## 8. Mockups Visuales Interactivos de la Aplicación
 
-### 8.1 Portal Web Principal, Mapa de Villavicencio y Planes (`Untitled-1.html`)
+### 8.1 Galería Visual de Pantallas en Alta Definición (Para Presentación)
+
+| Vista Visual 1: Apartado de Pagos, Prueba Gratuita Única de 30 Días y Comprobante |
+| :---: |
+| ![Mockup Checkout y Prueba Gratuita 30 Días](images/mockup_checkout_30dias.svg) |
+
+| Vista Visual 2: Salón de Mesas en Tiempo Real, Comanda Activa, Turno y Factura Fantasma |
+| :---: |
+| ![Mockup POS Operativo Mesas y Turno](images/mockup_pos_mesas_turno.svg) |
+
+### 8.2 Portal Web Principal, Mapa de Villavicencio y Planes (`Untitled-1.html`)
 
 ```text
 +----------------------------------------------------------------------------------+
@@ -898,7 +995,7 @@ SET FOREIGN_KEY_CHECKS = 1;
 +----------------------------------------------------------------------------------+
 ```
 
-### 8.2 Pantalla de Inicio de Sesión Obligatorio por Rol (`bar_app.html` / `BarricaDesktop.exe`)
+### 8.3 Pantalla de Inicio de Sesión Obligatorio por Rol (`bar_app.html` / `BarricaDesktop.exe`)
 
 ```text
 +------------------------------------------------------------------+
@@ -919,7 +1016,7 @@ SET FOREIGN_KEY_CHECKS = 1;
 +------------------------------------------------------------------+
 ```
 
-### 8.3 Pantalla Operativa: Salón de Mesas, Comandas y Caja POS (`bar_app.html`)
+### 8.4 Pantalla Operativa: Salón de Mesas, Comandas y Caja POS (`bar_app.html`)
 
 ```text
 +----------------------------------------------------------------------------------------+
@@ -946,7 +1043,7 @@ SET FOREIGN_KEY_CHECKS = 1;
 +--------------------------------------------------+-------------------------------------+
 ```
 
-### 8.4 Apertura de Turno y Recibo Único Consolidado de Cierre (`CIERRE-TURNO-00001`)
+### 8.5 Apertura de Turno y Recibo Único Consolidado de Cierre (`CIERRE-TURNO-00001`)
 
 ```text
 +----------------------------------------------------------------------------------+
@@ -969,7 +1066,7 @@ SET FOREIGN_KEY_CHECKS = 1;
 +----------------------------------------+-----------------------------------------+
 ```
 
-### 8.5 Inventario con Bodega de Reserva y Módulo CRM / Facturas Fantasma
+### 8.6 Inventario con Bodega de Reserva y Módulo CRM / Facturas Fantasma
 
 ```text
 +----------------------------------------------------------------------------------+

@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="680" height="290" viewBox="0 0 680 290">
+  <rect width="680" height="290" rx="14" fill="#0E1B17" stroke="#EC4899" stroke-width="2"/>
+  <rect x="2" y="2" width="676" height="66" rx="12" fill="#15271F"/>
+  <circle cx="32" cy="35" r="10" fill="#EC4899"/>
+  <text x="52" y="30" fill="#EC4899" font-family="Segoe UI, sans-serif" font-size="15" font-weight="800">5. TABLA: products</text>
+  <text x="52" y="51" fill="#EFE6D2" font-family="Segoe UI, sans-serif" font-size="12" font-weight="600">Carta de Licores, Stock en Barra, Bodega Reserva y Fotos</text>
+  <text x="658" y="31" fill="#A3AB9D" font-family="Segoe UI, sans-serif" font-size="11" text-anchor="end">9 Columnas · PK: id · Fotos Optimizadas</text>
+  
+        <rect x="18" y="84" width="644" height="27" rx="5" fill="#11201A" stroke="#24382F"/>
+        <text x="30" y="101.5" fill="#EFE6D2" font-family="Consolas, monospace" font-size="12" font-weight="700">id</text>
+        <text x="275" y="101.5" fill="#93C5FD" font-family="Consolas, monospace" font-size="11.5">INT UNSIGNED</text>
+        <rect x="495" y="87.5" width="155" height="20" rx="4" fill="#1B3228" stroke="#EC4899" stroke-width="0.9"/>
+        <text x="572" y="101" fill="#EC4899" font-family="Segoe UI, sans-serif" font-size="10.5" font-weight="700" text-anchor="middle">PK · AI</text>
+        
+        <rect x="18" y="116" width="644" height="27" rx="5" fill="#11201A" stroke="#24382F"/>
+        <text x="30" y="133.5" fill="#EFE6D2" font-family="Consolas, monospace" font-size="12" font-weight="700">name / category</text>
+        <text x="275" y="133.5" fill="#93C5FD" font-family="Consolas, monospace" font-size="11.5">VARCHAR</text>
+        <rect x="495" y="119.5" width="155" height="20" rx="4" fill="#1B3228" stroke="#EC4899" stroke-width="0.9"/>
+        <text x="572" y="133" fill="#EC4899" font-family="Segoe UI, sans-serif" font-size="10.5" font-weight="700" text-anchor="middle">Nombre y Categoría</text>
+        
+        <rect x="18" y="148" width="644" height="27" rx="5" fill="#11201A" stroke="#24382F"/>
+        <text x="30" y="165.5" fill="#EFE6D2" font-family="Consolas, monospace" font-size="12" font-weight="700">price_cop</text>
+        <text x="275" y="165.5" fill="#93C5FD" font-family="Consolas, monospace" font-size="11.5">INT UNSIGNED</text>
+        <rect x="495" y="151.5" width="155" height="20" rx="4" fill="#1B3228" stroke="#EC4899" stroke-width="0.9"/>
+        <text x="572" y="165" fill="#EC4899" font-family="Segoe UI, sans-serif" font-size="10.5" font-weight="700" text-anchor="middle">Precio en COP</text>
+        
+        <rect x="18" y="180" width="644" height="27" rx="5" fill="#11201A" stroke="#24382F"/>
+        <text x="30" y="197.5" fill="#EFE6D2" font-family="Consolas, monospace" font-size="12" font-weight="700">stock / min_stock</text>
+        <text x="275" y="197.5" fill="#93C5FD" font-family="Consolas, monospace" font-size="11.5">INT</text>
+        <rect x="495" y="183.5" width="155" height="20" rx="4" fill="#1B3228" stroke="#EC4899" stroke-width="0.9"/>
+        <text x="572" y="197" fill="#EC4899" font-family="Segoe UI, sans-serif" font-size="10.5" font-weight="700" text-anchor="middle">Barra y Alerta</text>
+        
+        <rect x="18" y="212" width="644" height="27" rx="5" fill="#11201A" stroke="#24382F"/>
+        <text x="30" y="229.5" fill="#EFE6D2" font-family="Consolas, monospace" font-size="12" font-weight="700">reserve_stock</text>
+        <text x="275" y="229.5" fill="#93C5FD" font-family="Consolas, monospace" font-size="11.5">INT</text>
+        <rect x="495" y="215.5" width="155" height="20" rx="4" fill="#1B3228" stroke="#EC4899" stroke-width="0.9"/>
+        <text x="572" y="229" fill="#EC4899" font-family="Segoe UI, sans-serif" font-size="10.5" font-weight="700" text-anchor="middle">Bodega Reserva</text>
+        
+        <rect x="18" y="244" width="644" height="27" rx="5" fill="#11201A" stroke="#24382F"/>
+        <text x="30" y="261.5" fill="#EFE6D2" font-family="Consolas, monospace" font-size="12" font-weight="700">image_url</text>
+        <text x="275" y="261.5" fill="#93C5FD" font-family="Consolas, monospace" font-size="11.5">VARCHAR(500)</text>
+        <rect x="495" y="247.5" width="155" height="20" rx="4" fill="#1B3228" stroke="#EC4899" stroke-width="0.9"/>
+        <text x="572" y="261" fill="#EC4899" font-family="Segoe UI, sans-serif" font-size="10.5" font-weight="700" text-anchor="middle">Foto optimizada</text>
+        
+</svg>
