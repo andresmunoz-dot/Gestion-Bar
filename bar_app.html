@@ -3182,15 +3182,15 @@
                     </div>
                     <div style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap">
                         <details class="mesas-plans-collapse" id="mesas-plans-details">
-                            <summary>★ Renovar Suscripción ($29 · $59 · $129 USD)</summary>
+                            <summary>★ Renovar o Cambiar Suscripción ($29 · $59 · $129 USD)</summary>
                             <div style="display:flex;justify-content:space-between;align-items:center;margin-top:.75rem;padding-bottom:.45rem;border-bottom:1px solid var(--linea)">
-                                <strong style="font-size:.86rem;color:var(--ambar-claro)">Selecciona el plan para renovar o actualizar tu suscripción:</strong>
+                                <strong style="font-size:.86rem;color:var(--ambar-claro)">Selecciona un plan para ir al apartado de pagos o activar tu prueba gratuita de 30 días:</strong>
                                 <button class="btn btn-sm btn-danger" type="button" id="btn-close-plans-drawer">✕ Cerrar planes</button>
                             </div>
                             <div class="pos-plans-grid" style="margin-top:.75rem;margin-bottom:0">
                                 <article class="plan" data-plan="basico" data-name="Básico" data-usd="29" data-cop="116000">
                                     <h3>Básico</h3>
-                                    <div class="price">$29 <small>USD /mes</small><span class="cop">≈ $116.000 COP /mes</span></div>
+                                    <div class="price">$29 <small>USD /mes</small><span class="cop">≈ $116.000 COP /mes · 30 días gratis</span></div>
                                     <ul>
                                         <li>1 local · hasta 10 mesas</li>
                                         <li>Comandas y cuentas</li>
@@ -3198,15 +3198,15 @@
                                         <li>Soporte por correo</li>
                                     </ul>
                                     <div class="plan-card-actions">
-                                        <button class="btn btn-primary btn-sm" type="button" data-activate-plan="basico">Usar plan Básico</button>
+                                        <button class="btn btn-primary btn-sm" type="button" data-activate-plan="basico">Elegir Básico</button>
                                         <button class="btn btn-sm" type="button" data-checkout-plan="basico">Renovar / Pagar</button>
                                     </div>
                                 </article>
 
                                 <article class="plan featured active-plan" data-plan="pro" data-name="Pro" data-usd="59" data-cop="236000">
-                                    <span class="tag">Recomendado</span>
+                                    <span class="tag">Recomendado · 30 días gratis</span>
                                     <h3>Pro</h3>
-                                    <div class="price">$59 <small>USD /mes</small><span class="cop">≈ $236.000 COP /mes</span></div>
+                                    <div class="price">$59 <small>USD /mes</small><span class="cop">≈ $236.000 COP /mes · 30 días gratis</span></div>
                                     <ul>
                                         <li>1 local · mesas ilimitadas</li>
                                         <li>Inventario con recetas y alertas</li>
@@ -3214,14 +3214,14 @@
                                         <li>Reportes avanzados y soporte chat</li>
                                     </ul>
                                     <div class="plan-card-actions">
-                                        <button class="btn btn-primary btn-sm" type="button" data-activate-plan="pro">Plan Pro Activo</button>
+                                        <button class="btn btn-primary btn-sm" type="button" data-activate-plan="pro">Elegir Pro</button>
                                         <button class="btn btn-sm" type="button" data-checkout-plan="pro">Renovar / Pagar</button>
                                     </div>
                                 </article>
 
                                 <article class="plan" data-plan="multilocal" data-name="Multi-local" data-usd="129" data-cop="516000">
                                     <h3>Multi-local</h3>
-                                    <div class="price">$129 <small>USD /mes</small><span class="cop">≈ $516.000 COP /mes</span></div>
+                                    <div class="price">$129 <small>USD /mes</small><span class="cop">≈ $516.000 COP /mes · 30 días gratis</span></div>
                                     <ul>
                                         <li>Hasta 5 locales incluidos</li>
                                         <li>Reportes consolidados</li>
@@ -3229,7 +3229,7 @@
                                         <li>Gerente de cuenta dedicado</li>
                                     </ul>
                                     <div class="plan-card-actions">
-                                        <button class="btn btn-primary btn-sm" type="button" data-activate-plan="multilocal">Usar Multi-local</button>
+                                        <button class="btn btn-primary btn-sm" type="button" data-activate-plan="multilocal">Elegir Multi-local</button>
                                         <button class="btn btn-sm" type="button" data-checkout-plan="multilocal">Renovar / Pagar</button>
                                     </div>
                                 </article>
@@ -4739,8 +4739,8 @@
                 const lifetimeAdmin = db.sessionUser?.role === 'administrador';
                 if (!authRoute && !subscriptionRoute && !lifetimeAdmin) {
                     const entitlement = db.local_subscriptions[db.sessionUser.email];
-                    if (!entitlement || !['test_active', 'active'].includes(entitlement.status)) {
-                        throw new Error('Debes elegir y pagar un plan para usar el POS.');
+                    if (!entitlement || !(['test_active', 'active'].includes(entitlement.status) || entitlement.status === 'trial_active')) {
+                        throw new Error('Debes elegir y activar un plan para usar el POS.');
                     }
                 }
 
@@ -4750,8 +4750,10 @@
                         return { active: true, subscription: { plan_id: 'multilocal', status: 'lifetime', lifetime: true, local_only: true } };
                     }
                     const localPlan = db.local_subscriptions[db.sessionUser.email] || null;
-                    const active = Boolean(localPlan && ['test_active', 'active'].includes(localPlan.status));
-                    return { active, subscription: active ? { ...localPlan, local_only: true } : null };
+                    const active = Boolean(localPlan && (['test_active', 'active'].includes(localPlan.status) || localPlan.status === 'trial_active'));
+                    const usedMap = db.used_trials && typeof db.used_trials === 'object' ? db.used_trials : {};
+                    const trial_used = Boolean(usedMap[db.sessionUser.email] || (localPlan && (localPlan.trial || localPlan.status === 'trial_active')));
+                    return { active, trial_used, subscription: active ? { ...localPlan, local_only: true } : null };
                 }
 
                 if ((path === '/api/auth/login' || path === '/api/auth/register') && method === 'POST') {
@@ -4761,7 +4763,7 @@
                     const password = String(body.password || '');
                     const name = String(body.name || '').trim();
                     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new Error('Escribe un correo válido.');
-                    if (password.length < 12 || new TextEncoder().encode(password).length > 72) throw new Error('La contraseña debe tener al menos 12 caracteres.');
+                    if (password.length < 4 || new TextEncoder().encode(password).length > 72) throw new Error('La contraseña debe tener al menos 4 caracteres.');
                     if (registering && (!name || /\d/.test(name))) throw new Error('Escribe tu nombre completo sin números.');
                     let userRow = db.users.find(u => String(u.email || '').toLowerCase() === email);
                     if (registering) {
@@ -5862,7 +5864,7 @@
                 'Tabla de Quesos y Madurados': '120g Queso Paipa + 80g Prosciutto + Aceitunas + Pan masa madre'
             };
 
-            let activePlan = 'pro';
+            let activePlan = safeGet(localStorage, PLAN_STORAGE_KEY) || 'pro';
             if (!PLAN_CATALOG[activePlan]) activePlan = 'pro';
             let activeBranch = MULTI_BRANCHES[0].id;
 
@@ -5910,7 +5912,20 @@
             const setActivePlan = (planId, silent = false) => {
                 if (!PLAN_CATALOG[planId]) return;
                 activePlan = planId;
-                try { localStorage.removeItem(PLAN_STORAGE_KEY); } catch {}
+                safeSet(localStorage, PLAN_STORAGE_KEY, activePlan);
+                try {
+                    const db = readLocalDb();
+                    if (currentUser?.email) {
+                        db.local_subscriptions[String(currentUser.email).toLowerCase()] = {
+                            plan_id: activePlan,
+                            status: 'test_active',
+                            trial: true,
+                            trial_days: 30,
+                            started_at: nowUtcStr()
+                        };
+                        saveLocalDb(db);
+                    }
+                } catch {}
                 if (activePlan === 'basico' && ['locales', 'recetas', 'roles', 'reportes', 'traslados'].includes(activeMesasTool)) {
                     setActiveMesasTool('');
                 } else if (activePlan === 'pro' && ['locales', 'traslados'].includes(activeMesasTool)) {
@@ -5919,7 +5934,7 @@
                 renderAll();
                 if (!silent) {
                     const p = PLAN_CATALOG[activePlan];
-                    showBanner(`Suscripción ${p.name} ($${p.usd} USD / ${cop(p.cop)} mes) aplicada en Mesas.`);
+                    showBanner(`🎁 Prueba gratuita de 30 días / Suscripción ${p.name} ($${p.usd} USD / ${cop(p.cop)} mes) activada con todas sus opciones.`);
                 }
             };
 

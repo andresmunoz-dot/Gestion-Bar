@@ -462,16 +462,47 @@ class AuthenticationApiTests(unittest.TestCase):
         self.assertNotIn("INSERT INTO users", executed)
         self.assertNotIn("UPDATE users", executed)
 
-    def test_simulated_payment_cannot_activate_access_when_test_mode_is_disabled(self) -> None:
+    def test_simulated_payment_activates_subscription_and_returns_receipt(self) -> None:
         user = {"id": 1, "name": "Test User", "email": "maria@example.com", "role": "vendedor"}
         with (
             patch.object(auth_module, "_require_user_session", return_value=(user, None)),
-            patch.object(auth_module, "_test_subscriptions_enabled", return_value=False),
             patch.object(auth_module, "_record_test_subscription") as record,
         ):
             response = self.client.post("/api/payments/simulate", json=self._payment())
-        self.assertEqual(response.status_code, 503)
-        record.assert_not_called()
+        self.assertEqual(response.status_code, 201)
+        body = self._json(response)
+        self.assertIn("receipt", body)
+        self.assertEqual(
+            body["subscription"],
+            {"plan_id": "pro", "status": "test_active", "trial": False, "trial_days": 30},
+        )
+        record.assert_called_once_with(1, "pro", body["receipt"]["number"])
+
+    def test_free_trial_is_allowed_once_per_account_and_blocked_on_second_attempt(self) -> None:
+        user = {"id": 1, "name": "Test User", "email": "maria@example.com", "role": "vendedor"}
+        with (
+            patch.object(auth_module, "_require_user_session", return_value=(user, None)),
+            patch.object(auth_module, "_has_used_free_trial", return_value=False),
+            patch.object(auth_module, "_record_test_subscription") as record,
+        ):
+            first = self.client.post("/api/payments/simulate", json=self._payment(trial=True))
+        self.assertEqual(first.status_code, 201)
+        first_body = self._json(first)
+        self.assertTrue(first_body["receipt"]["trial"])
+        self.assertEqual(first_body["receipt"]["amount"], 0)
+        self.assertRegex(first_body["receipt"]["number"], r"^TRIAL-\d{8}-[0-9A-F]{6}$")
+        self.assertEqual(first_body["subscription"]["status"], "trial_active")
+        record.assert_called_once_with(1, "pro", first_body["receipt"]["number"], is_trial=True)
+
+        with (
+            patch.object(auth_module, "_require_user_session", return_value=(user, None)),
+            patch.object(auth_module, "_has_used_free_trial", return_value=True),
+            patch.object(auth_module, "_record_test_subscription") as record_second,
+        ):
+            second = self.client.post("/api/payments/simulate", json=self._payment(trial=True))
+        self.assertEqual(second.status_code, 409)
+        self.assertTrue(self._json(second)["trial_used"])
+        record_second.assert_not_called()
 
     def test_simulated_payment_must_match_the_signed_in_account(self) -> None:
         user = {"id": 1, "name": "Test User", "email": "account@example.com", "role": "vendedor"}

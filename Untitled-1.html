@@ -1116,6 +1116,57 @@ h1,
             max-width: none
         }
 
+        .pay-option-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: .65rem;
+            margin: .2rem 0 .65rem
+        }
+
+        @media(max-width:480px) {
+            .pay-option-grid {
+                grid-template-columns: minmax(0, 1fr)
+            }
+        }
+
+        .pay-option-btn {
+            display: grid;
+            gap: .2rem;
+            text-align: left;
+            padding: .75rem .85rem;
+            border-radius: var(--radius);
+            border: 1px solid var(--linea-fuerte);
+            background: rgba(255, 255, 255, .02);
+            color: var(--hueso);
+            cursor: pointer;
+            transition: border-color .18s, background .18s
+        }
+
+        .pay-option-btn strong {
+            font-size: .92rem;
+            color: var(--hueso)
+        }
+
+        .pay-option-btn small {
+            font-size: .78rem;
+            color: var(--niebla);
+            line-height: 1.35
+        }
+
+        .pay-option-btn.active {
+            border-color: var(--ambar);
+            background: rgba(217, 164, 65, .13)
+        }
+
+        .pay-option-btn.active strong {
+            color: var(--ambar-claro)
+        }
+
+        .pay-option-btn:disabled {
+            opacity: .5;
+            cursor: not-allowed
+        }
+
         .pay-summary {
             display: flex;
             justify-content: space-between;
@@ -1512,42 +1563,57 @@ h1,
             <div class="wrap">
                 <div class="sec-head">
                     <h2>Planes para cada tipo de bar</h2>
-                    <p>Todos incluyen 14 días gratis. Cambia de plan cuando quieras.</p>
+                    <p>Todos incluyen <strong>30 días de prueba gratuita</strong> con todas las opciones del plan. Cambia de plan cuando quieras.</p>
                     <p class="plan-fine">Precios en dólares y en pesos colombianos, a una tasa de referencia de 1 USD = 4.000 COP.</p>
                 </div>
                 <div class="plans">
                     <article class="plan" data-plan="basico" data-name="Básico" data-usd="29" data-cop="116000">
                         <h3>Básico</h3>
                         <div class="amount">$29<small> USD /mes</small></div>
-                        <div class="amount-cop">$116.000 COP /mes</div>
+                        <div class="amount-cop">$116.000 COP /mes · 30 días gratis</div>
                         <ul>
                             <li>1 local, hasta 10 mesas</li>
                             <li>Pedidos y cuentas</li>
                             <li>Inventario básico</li>
                             <li>Soporte por correo</li>
-                        </ul><a class="btn btn-ghost" href="#precios" data-checkout-plan="basico">Elegir Básico</a></article>
+                        </ul>
+                        <div style="display:grid;gap:.5rem;margin-top:auto">
+                            <a class="btn btn-primary" href="#precios" data-trial-plan="basico">🎁 Prueba gratuita 30 días</a>
+                            <a class="btn btn-ghost" href="#precios" data-checkout-plan="basico">Elegir y pagar Básico</a>
+                        </div>
+                    </article>
                     <article class="plan pro" data-plan="pro" data-name="Pro" data-usd="59" data-cop="236000">
                         <h3>Pro</h3>
-                        <div class="tag">Recomendado</div>
+                        <div class="tag">Recomendado · 30 días gratis</div>
                         <div class="amount">$59<small> USD /mes</small></div>
-                        <div class="amount-cop">$236.000 COP /mes</div>
+                        <div class="amount-cop">$236.000 COP /mes · 30 días gratis</div>
                         <ul>
                             <li>1 local, mesas ilimitadas</li>
                             <li>Inventario con recetas y alertas</li>
                             <li>Turnos y permisos por rol</li>
                             <li>Reportes avanzados</li>
                             <li>Soporte por chat</li>
-                        </ul><a class="btn btn-primary" href="#precios" data-checkout-plan="pro">Elegir Pro</a></article>
+                        </ul>
+                        <div style="display:grid;gap:.5rem;margin-top:auto">
+                            <a class="btn btn-primary" href="#precios" data-trial-plan="pro">🎁 Prueba gratuita 30 días</a>
+                            <a class="btn btn-ghost" href="#precios" data-checkout-plan="pro">Elegir y pagar Pro</a>
+                        </div>
+                    </article>
                     <article class="plan" data-plan="multilocal" data-name="Multi-local" data-usd="129" data-cop="516000">
                         <h3>Multi-local</h3>
                         <div class="amount">$129<small> USD /mes</small></div>
-                        <div class="amount-cop">$516.000 COP /mes</div>
+                        <div class="amount-cop">$516.000 COP /mes · 30 días gratis</div>
                         <ul>
                             <li>Hasta 5 locales</li>
                             <li>Reportes consolidados</li>
                             <li>Inventario entre sedes</li>
                             <li>Gerente de cuenta dedicado</li>
-                        </ul><a class="btn btn-ghost" href="#precios" data-checkout-plan="multilocal">Elegir Multi-local</a></article>
+                        </ul>
+                        <div style="display:grid;gap:.5rem;margin-top:auto">
+                            <a class="btn btn-primary" href="#precios" data-trial-plan="multilocal">🎁 Prueba gratuita 30 días</a>
+                            <a class="btn btn-ghost" href="#precios" data-checkout-plan="multilocal">Elegir y pagar Multi-local</a>
+                        </div>
+                    </article>
                 </div>
             </div>
         </section>
@@ -1723,9 +1789,12 @@ h1,
         <!-- ===== 13. CTA FINAL ===== -->
         <section class="final" id="contacto">
             <div class="wrap">
-                <h2>Empieza gratis 14 días, sin tarjeta</h2>
-                <p>Configura tu bar hoy y mira el control que tendrás esta misma noche.</p>
-                <a class="btn btn-primary" href="#contacto" data-auth-mode="register">Crear mi cuenta gratis</a>
+                <h2>Empieza gratis 30 días, con todas las opciones</h2>
+                <p>Configura tu bar hoy y activa la prueba gratuita de 30 días o tu suscripción inmediata.</p>
+                <div style="display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap">
+                    <a class="btn btn-primary" href="#precios" data-trial-plan="multilocal">🎁 Activar prueba gratuita de 30 días</a>
+                    <a class="btn btn-ghost" href="#contacto" data-auth-mode="register">Crear mi cuenta gratis</a>
+                </div>
             </div>
         </section>
     </main>
@@ -1851,8 +1920,19 @@ h1,
                             </select>
                         </label>
                     </div>
-                    <div class="pay-summary"><span>Total a pagar hoy</span><b id="pay-total" aria-live="polite"></b></div>
+                    <div class="pay-option-grid" id="pay-mode-group" role="group" aria-label="Tipo de activación">
+                        <button class="pay-option-btn active" type="button" id="pay-mode-paid" data-pay-option="paid">
+                            <strong>💳 Pago normal</strong>
+                            <small>Suscripción mensual completa con recibo inmediato</small>
+                        </button>
+                        <button class="pay-option-btn" type="button" id="pay-mode-trial" data-pay-option="trial">
+                            <strong>🎁 Prueba gratuita 30 días</strong>
+                            <small id="pay-trial-sublabel">$0 hoy · 1 prueba gratuita por cuenta</small>
+                        </button>
+                    </div>
+                    <div class="pay-summary"><span id="pay-summary-label">Total a pagar hoy</span><b id="pay-total" aria-live="polite"></b></div>
                     <p class="pay-alt" id="pay-total-alt"></p>
+                    <p class="pay-note" id="pay-trial-notice" hidden></p>
                 </fieldset>
 
                 <fieldset aria-labelledby="pay-group-2">
@@ -1921,19 +2001,20 @@ h1,
         </div>
 
         <div id="pay-receipt-pane" hidden>
-            <h2 id="receipt-title" tabindex="-1">Comprobante de pago</h2>
-            <p id="receipt-intro">Tu pago de prueba quedó registrado. Imprime o guarda el comprobante si lo necesitas.</p>
-            <figure class="ticket receipt" id="receipt" aria-label="Comprobante de pago de prueba">
-                <div class="stamp">Pago de prueba, sin validez</div>
+            <h2 id="receipt-title" tabindex="-1">Comprobante de suscripción</h2>
+            <p id="receipt-intro">Tu suscripción quedó activa por 30 días con todas las opciones del plan. Imprime o guarda tu comprobante.</p>
+            <figure class="ticket receipt" id="receipt" aria-label="Comprobante de suscripción activa">
+                <div class="stamp" id="rc-stamp">Suscripción Activa · 30 Días</div>
                 <header>
                     <span class="ticket-brand">Barrica</span>
                     <span class="ticket-meta" id="rc-number"></span>
                 </header>
                 <ul id="rc-lines"></ul>
                 <div class="ticket-total"><span>Total pagado</span><b id="rc-total"></b></div>
-                <p class="receipt-fine">No se realizó ningún cobro. Este comprobante no tiene validez contable ni fiscal.</p>
+                <p class="receipt-fine" id="rc-fine">Suscripción y opciones del plan activadas por 30 días para operar en Barrica POS.</p>
             </figure>
             <div class="receipt-actions">
+                <a class="btn btn-primary" id="receipt-open-pos" href="/bar_app">Ir al Sistema POS ↗</a>
                 <button class="btn btn-primary" id="receipt-print" type="button">Imprimir o guardar en PDF</button>
                 <button class="btn btn-ghost" id="receipt-done" type="button">Cerrar</button>
             </div>
@@ -2002,7 +2083,11 @@ h1,
             let authMode = 'login';
             let selectedRole = 'vendedor';
             let authUser = null;
+            let authSubscriptionActive = false;
+            let authTrialUsed = false;
             let pendingCheckoutPlan = null;
+            let pendingCheckoutOption = 'paid';
+            let selectedPayOption = 'paid';
             let sessionChecked = false;
 
             /* ===== Campos protegidos =====
@@ -2271,7 +2356,7 @@ h1,
                 const role = endpoint === 'register' ? 'vendedor' : (payload.role === 'administrador' ? 'administrador' : 'vendedor');
                 const name = String(payload.name || '').trim();
                 if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new Error('Escribe un correo válido.');
-                if (password.length < 12 || new TextEncoder().encode(password).length > 72) throw new Error('La contraseña debe tener al menos 12 caracteres.');
+                if (password.length < 4 || new TextEncoder().encode(password).length > 72) throw new Error('La contraseña debe tener al menos 4 caracteres.');
                 let user = db.users.find(row => String(row.email || '').toLowerCase() === email);
                 if (endpoint === 'register') {
                     if (!name || /\d/.test(name)) throw new Error('Escribe tu nombre completo sin números.');
@@ -2280,9 +2365,16 @@ h1,
                     user = { id: db.users.reduce((max, row) => Math.max(max, Number(row.id) || 0), 0) + 1, full_name: name, email, role, created_at: new Date().toISOString().slice(0,19).replace('T',' '), password_salt: credential.salt, password_hash: credential.hash };
                     db.users.unshift(user);
                 } else {
-                    if (!user || !user.password_salt || !user.password_hash || (role === 'administrador' && user.role !== 'administrador')) throw new Error('Correo, contraseña o perfil incorrectos.');
+                    if (!user || !user.password_salt || !user.password_hash) {
+                        throw new Error('Correo, contraseña o perfil incorrectos.');
+                    }
+                    if (role === 'administrador' && user.role !== 'administrador') {
+                        throw new Error('Esta cuenta no tiene permisos de Administrador. Selecciona Vendedor.');
+                    }
                     const credential = await localPasswordHash(password, user.password_salt);
-                    if (credential.hash !== user.password_hash) throw new Error('Correo, contraseña o perfil incorrectos.');
+                    if (credential.hash !== user.password_hash) {
+                        throw new Error('Correo, contraseña o perfil incorrectos.');
+                    }
                 }
                 const safeUser = { name: user.full_name, email: user.email, role: user.role };
                 db.sessionUser = safeUser;
@@ -2310,7 +2402,7 @@ h1,
                 authName.required = mode === 'register';
                 setNameHint('');
                 authPassword.autocomplete = mode === 'register' ? 'new-password' : 'current-password';
-                authPassword.minLength = 12;
+                authPassword.minLength = 4;
                 authSwitch.textContent = mode === 'register' ?
                     '¿Ya tienes cuenta? Iniciar sesión' :
                     '¿No tienes cuenta? Crear una';
@@ -2321,6 +2413,46 @@ h1,
                 if (authLoggedActions) authLoggedActions.hidden = true;
                 authStatus.textContent = '';
                 updateRoleButtons();
+            };
+
+            const refreshSubscriptionStatus = async () => {
+                if (!authUser) {
+                    authSubscriptionActive = false;
+                    authTrialUsed = false;
+                    return { active: false, trial_used: false };
+                }
+                if (authUser.role === 'administrador') {
+                    authSubscriptionActive = true;
+                    authTrialUsed = false;
+                    return { active: true, trial_used: false };
+                }
+                if (LOCAL_DEMO_MODE) {
+                    const db = readLocalDemoDb();
+                    const emailKey = String(authUser.email || '').toLowerCase();
+                    const sub = db.local_subscriptions[emailKey] || null;
+                    const usedMap = db.used_trials && typeof db.used_trials === 'object' ? db.used_trials : {};
+                    authSubscriptionActive = Boolean(sub && ['test_active', 'active', 'trial_active'].includes(sub.status));
+                    authTrialUsed = Boolean(usedMap[emailKey] || (sub && (sub.trial || sub.status === 'trial_active')));
+                    return { active: authSubscriptionActive, trial_used: authTrialUsed };
+                }
+                try {
+                    const savedToken = (() => {
+                        try { return sessionStorage.getItem('barrica-pos-auth-token') || ''; } catch { return ''; }
+                    })();
+                    const res = await apiFetch('/api/auth/subscription', {
+                        headers: {
+                            Accept: 'application/json',
+                            ...(savedToken ? { Authorization: `Bearer ${savedToken}` } : {})
+                        }
+                    });
+                    const data = await res.json().catch(() => ({}));
+                    if (res.ok) {
+                        authSubscriptionActive = Boolean(data.active);
+                        authTrialUsed = Boolean(data.trial_used);
+                        return { active: authSubscriptionActive, trial_used: authTrialUsed };
+                    }
+                } catch (_) {}
+                return { active: authSubscriptionActive, trial_used: authTrialUsed };
             };
 
             const showAuthenticatedUser = (user, message) => {
@@ -2336,12 +2468,27 @@ h1,
                 if (authLoggedActions) authLoggedActions.hidden = false;
                 if (authOpenPos) { authOpenPos.href = getPosHref(); }
                 authStatus.textContent = message || `Tu sesión de ${rLabel} está activa.`;
-                if (pendingCheckoutPlan) {
-                    const plan = pendingCheckoutPlan;
-                    pendingCheckoutPlan = null;
-                    if (authDialog.open) authDialog.close();
-                    openCheckout(plan);
-                }
+                void refreshSubscriptionStatus().then(() => {
+                    updatePayOptionUI();
+                    if (pendingCheckoutPlan) {
+                        const plan = pendingCheckoutPlan;
+                        const opt = pendingCheckoutOption || 'paid';
+                        pendingCheckoutPlan = null;
+                        pendingCheckoutOption = 'paid';
+                        if (user.role === 'administrador') {
+                            authStatus.textContent = 'Sesión de Administrador activa · Acceso total vitalicio sin necesidad de pago.';
+                            return;
+                        }
+                        if (authDialog.open) authDialog.close();
+                        void openCheckout(
+                            plan,
+                            opt,
+                            fromPosRedirect && !authSubscriptionActive
+                                ? 'Tu cuenta aún no tiene una suscripción activa. Completa el pago normal o elige tu prueba gratuita de 30 días (1 por cuenta) para entrar al POS.'
+                                : ''
+                        );
+                    }
+                });
             };
 
             const readApiResponse = async response => {
@@ -2384,8 +2531,14 @@ h1,
                     authStatus.textContent = 'Comprobando sesión…';
                     authSubmit.disabled = true;
                     try {
+                        const savedToken = (() => {
+                            try { return sessionStorage.getItem('barrica-pos-auth-token') || ''; } catch { return ''; }
+                        })();
                         const response = await apiFetch('/api/auth/session', {
-                            headers: { Accept: 'application/json' }
+                            headers: {
+                                Accept: 'application/json',
+                                ...(savedToken ? { Authorization: `Bearer ${savedToken}` } : {})
+                            }
                         });
                         if (response.status === 503) {
                             sessionChecked = true;
@@ -2513,6 +2666,8 @@ h1,
                     }
                     syncLocalPosUser(null);
                     authUser = null;
+                    authSubscriptionActive = false;
+                    authTrialUsed = false;
                     sessionChecked = true;
                     accountButton.textContent = 'Iniciar sesión';
                     setAuthMode('login');
@@ -2620,11 +2775,71 @@ h1,
                 field.input.setAttribute('aria-invalid', message ? 'true' : 'false');
             };
 
+            const payModePaidBtn = document.getElementById('pay-mode-paid');
+            const payModeTrialBtn = document.getElementById('pay-mode-trial');
+            const payTrialSublabel = document.getElementById('pay-trial-sublabel');
+            const payTrialNotice = document.getElementById('pay-trial-notice');
+            const paySummaryLabel = document.getElementById('pay-summary-label');
+
+            const updatePayOptionUI = () => {
+                if (authTrialUsed && selectedPayOption === 'trial') {
+                    selectedPayOption = 'paid';
+                }
+                if (payModePaidBtn) {
+                    payModePaidBtn.classList.toggle('active', selectedPayOption === 'paid');
+                    payModePaidBtn.setAttribute('aria-pressed', String(selectedPayOption === 'paid'));
+                }
+                if (payModeTrialBtn) {
+                    payModeTrialBtn.disabled = Boolean(authTrialUsed);
+                    payModeTrialBtn.classList.toggle('active', selectedPayOption === 'trial' && !authTrialUsed);
+                    payModeTrialBtn.setAttribute('aria-pressed', String(selectedPayOption === 'trial' && !authTrialUsed));
+                }
+                if (payTrialSublabel) {
+                    payTrialSublabel.textContent = authTrialUsed
+                        ? 'Ya utilizada en esta cuenta (solo 1 por cuenta)'
+                        : '$0 hoy · 1 prueba gratuita por cuenta';
+                }
+                if (payTrialNotice) {
+                    if (authTrialUsed) {
+                        payTrialNotice.hidden = false;
+                        payTrialNotice.textContent = 'Esta cuenta ya utilizó su prueba gratuita de 30 días. Para activar o renovar el acceso al POS, usa el pago normal.';
+                    } else if (selectedPayOption === 'trial') {
+                        payTrialNotice.hidden = false;
+                        payTrialNotice.textContent = 'Completa los datos del formulario igual que una suscripción normal para activar tus 30 días gratis ($0 hoy, sin cobro real) y emitir tu comprobante.';
+                    } else {
+                        payTrialNotice.hidden = true;
+                        payTrialNotice.textContent = '';
+                    }
+                }
+                updatePayTotal();
+            };
+
+            const setPayOption = option => {
+                if (option === 'trial' && authTrialUsed) {
+                    selectedPayOption = 'paid';
+                } else {
+                    selectedPayOption = option === 'trial' ? 'trial' : 'paid';
+                }
+                updatePayOptionUI();
+            };
+
+            document.querySelectorAll('[data-pay-option]').forEach(btn => {
+                btn.addEventListener('click', () => setPayOption(btn.dataset.payOption || 'paid'));
+            });
+
             const updatePayTotal = () => {
                 const plan = plans[payPlan.value];
                 const currency = payCurrency.value;
                 if (!plan) return;
                 const other = currency === 'USD' ? 'COP' : 'USD';
+                if (selectedPayOption === 'trial' && !authTrialUsed) {
+                    if (paySummaryLabel) paySummaryLabel.textContent = 'Total a pagar hoy (Prueba gratuita 30 días)';
+                    payTotal.textContent = money(0, currency);
+                    payTotalAlt.textContent = `Plan ${plan.name} gratis por 30 días (valor regular: ${money(plan[currency], currency)} /mes).`;
+                    paySubmit.textContent = `Activar prueba gratuita de 30 días (${money(0, currency)})`;
+                    return;
+                }
+                if (paySummaryLabel) paySummaryLabel.textContent = 'Total a pagar hoy';
                 payTotal.textContent = money(plan[currency], currency);
                 payTotalAlt.textContent = `Equivale a ${money(plan[other], other)} a la tasa de referencia.`;
                 paySubmit.textContent = `Pagar ${money(plan[currency], currency)}`;
@@ -2637,17 +2852,19 @@ h1,
             payPlan.addEventListener('change', updatePayTotal);
             payCurrency.addEventListener('change', updatePayTotal);
 
-            const openCheckout = planId => {
+            const openCheckout = async (planId, option = 'paid', noticeMessage = '') => {
                 if (!authUser) {
                     pendingCheckoutPlan = planId;
+                    pendingCheckoutOption = option === 'trial' ? 'trial' : 'paid';
                     const requestedAuth = new URLSearchParams(location.search).get('auth') === 'login' ? 'login' : 'register';
                     void openAuth(requestedAuth);
-                    authStatus.textContent = 'Para continuar al pago, crea una cuenta o inicia sesión.';
+                    authStatus.textContent = 'Para continuar al pago o activar tus 30 días gratis, crea una cuenta o inicia sesión.';
                     return;
                 }
+                await refreshSubscriptionStatus();
                 payForm.reset();
                 Object.values(payFields).forEach(field => setFieldHint(field, ''));
-                payStatus.textContent = '';
+                payStatus.textContent = noticeMessage || '';
                 paySubmit.disabled = false;
                 payFormPane.hidden = false;
                 payReceiptPane.hidden = true;
@@ -2657,23 +2874,55 @@ h1,
                     payFields.name.input.value = authUser.name || '';
                     payFields.email.input.value = authUser.email || '';
                 }
-                updatePayTotal();
+                setPayOption(option === 'trial' && !authTrialUsed ? 'trial' : 'paid');
                 if (!payDialog.open) payDialog.showModal();
             };
+
+            const guardPosNavigation = async event => {
+                if (!authUser) {
+                    await openAuth('login');
+                    return;
+                }
+                if (authUser.role === 'administrador') return;
+                event.preventDefault();
+                const status = await refreshSubscriptionStatus();
+                if (status.active) {
+                    location.href = getPosHref();
+                    return;
+                }
+                if (authDialog.open) authDialog.close();
+                await openCheckout(
+                    'basico',
+                    status.trial_used ? 'paid' : 'trial',
+                    'Esta cuenta aún no tiene una suscripción activa. Activa un plan con pago normal o elige tus 30 días gratis para entrar al POS.'
+                );
+            };
+
+            ['btn-portal-to-pos', 'auth-open-pos', 'auth-direct-pos'].forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                el.addEventListener('click', event => {
+                    if (!authUser || authUser.role === 'administrador') return;
+                    event.preventDefault();
+                    void guardPosNavigation(event);
+                });
+            });
 
             document.querySelectorAll('[data-checkout-plan]').forEach(link => {
                 link.addEventListener('click', event => {
                     event.preventDefault();
                     setMenu(false);
-                    openCheckout(link.dataset.checkoutPlan);
+                    void openCheckout(link.dataset.checkoutPlan, 'paid');
                 });
             });
             const checkoutQuery = new URLSearchParams(location.search);
             const requestedCheckout = checkoutQuery.get('checkout');
+            const fromPosRedirect = checkoutQuery.get('from') === 'pos';
             if (requestedCheckout && plans[requestedCheckout]) {
                 document.getElementById('precios')?.scrollIntoView({ block: 'start' });
                 const authModeFromQuery = checkoutQuery.get('auth') === 'login' ? 'login' : 'register';
                 pendingCheckoutPlan = requestedCheckout;
+                pendingCheckoutOption = fromPosRedirect ? 'trial' : 'paid';
                 setTimeout(() => { void openAuth(authModeFromQuery); }, 0);
             }
 
@@ -2756,6 +3005,22 @@ h1,
                     if (receipt?.plan?.id) {
                         localStorage.setItem('barrica-active-plan', receipt.plan.id);
                     }
+                    if (receipt?.payer?.email && receipt?.plan?.id) {
+                        const db = readLocalDemoDb();
+                        const emailKey = String(receipt.payer.email).toLowerCase();
+                        db.used_trials = db.used_trials && typeof db.used_trials === 'object' ? db.used_trials : {};
+                        db.local_subscriptions[emailKey] = {
+                            plan_id: receipt.plan.id,
+                            status: receipt.trial ? 'trial_active' : 'test_active',
+                            trial: Boolean(receipt.trial),
+                            receipt_number: receipt.number,
+                            started_at: receipt.issued_at || new Date().toISOString()
+                        };
+                        if (receipt.trial) db.used_trials[emailKey] = true;
+                        saveLocalDemoDb(db);
+                    }
+                    const receiptPosLink = document.getElementById('receipt-open-pos');
+                    if (receiptPosLink) receiptPosLink.href = getPosHref();
                     const saved = JSON.parse(localStorage.getItem('barrica-subscription-receipts-v1') || '[]');
                     if (!saved.some(item => item.number === receipt.number)) saved.unshift(receipt);
                     localStorage.setItem('barrica-subscription-receipts-v1', JSON.stringify(saved.slice(0, 30)));
@@ -2778,13 +3043,18 @@ h1,
                     timeZone: 'America/Bogota'
                 });
                 document.getElementById('rc-number').textContent = `N.º ${receipt.number}`;
+                const stampEl = document.getElementById('rc-stamp');
+                if (stampEl) {
+                    stampEl.textContent = receipt.trial ? 'Prueba Gratuita Activa · 30 Días' : 'Suscripción Activa · 30 Días';
+                }
                 addLine('Fecha', issued);
                 addLine('Plan', `${receipt.plan.name}, ${receipt.period}`);
+                addLine('Estado', receipt.trial ? 'Prueba gratuita activa (30 días)' : 'Suscripción activa (30 días)');
                 addLine('Pagador', receipt.payer.name);
                 addLine('Documento', `${receipt.payer.document_type} ${receipt.payer.document_number}`);
                 addLine('Correo', receipt.payer.email);
                 addLine('Teléfono', receipt.payer.phone);
-                addLine('Método', `${receipt.card.brand} terminada en ${receipt.card.last4}`);
+                addLine('Método', receipt.trial ? `${receipt.card.brand} terminada en ${receipt.card.last4} (Prueba gratuita 30 días · $0)` : `${receipt.card.brand} terminada en ${receipt.card.last4}`);
                 addLine('Titular', receipt.card.holder);
                 document.getElementById('rc-total').textContent = money(receipt.amount, receipt.currency);
 
@@ -2793,9 +3063,55 @@ h1,
                 document.getElementById('receipt-title').focus();
             };
 
+            const buildClientReceipt = (payload, isTrial = false) => {
+                const selectedPlan = plans[payload.plan] || plans.pro || { id: payload.plan || 'pro', name: 'Pro', USD: 59, COP: 236000 };
+                const now = new Date();
+                const currency = payload.currency || 'USD';
+                const amounts = isTrial ? { USD: 0, COP: 0 } : { USD: selectedPlan.USD, COP: selectedPlan.COP };
+                return {
+                    number: `SIM-${now.toISOString().slice(0,10).replace(/-/g,'')}-${Math.random().toString(36).slice(2,8).toUpperCase()}`,
+                    issued_at: now.toISOString(),
+                    simulated: true,
+                    trial: Boolean(isTrial),
+                    trial_days: 30,
+                    plan: { id: selectedPlan.id, name: selectedPlan.name },
+                    period: isTrial ? '30 días (Prueba gratuita)' : '1 mes (30 días)',
+                    currency,
+                    amount: amounts[currency],
+                    amounts,
+                    payer: {
+                        name: payload.payer_name || (authUser && authUser.name) || 'Titular Barrica',
+                        email: payload.email || (authUser && authUser.email) || 'usuario@barrica.com',
+                        document_type: payload.document_type || 'CC',
+                        document_number: payload.document_number || '1000000000',
+                        phone: payload.phone || '3000000000'
+                    },
+                    card: {
+                        holder: payload.card_holder || payload.payer_name || (authUser && authUser.name) || 'Titular Barrica',
+                        brand: isTrial ? 'Prueba Gratuita 30 Días' : (payload.card_brand || 'Tarjeta'),
+                        last4: isTrial ? '0000' : (payload.card_last4 || '0000')
+                    }
+                };
+            };
+
+            document.querySelectorAll('[data-trial-plan]').forEach(link => {
+                link.addEventListener('click', event => {
+                    event.preventDefault();
+                    setMenu(false);
+                    const planId = link.dataset.trialPlan || 'pro';
+                    void openCheckout(planId, 'trial');
+                });
+            });
+
             payForm.addEventListener('submit', async event => {
                 event.preventDefault();
                 payStatus.textContent = '';
+                const isTrial = selectedPayOption === 'trial';
+                if (isTrial && authTrialUsed) {
+                    payStatus.textContent = 'Esta cuenta ya utilizó su prueba gratuita de 30 días. Selecciona la opción de pago normal.';
+                    setPayOption('paid');
+                    return;
+                }
                 const invalid = validatePayment();
                 if (invalid.length) {
                     payStatus.textContent = 'Revisa los campos marcados.';
@@ -2807,6 +3123,7 @@ h1,
                 const cardDigits = payFields.card.input.value.replace(/\s/g, '');
                 const tidy = text => text.trim().replace(/\s+/g, ' ');
                 const payload = {
+                    trial: isTrial,
                     plan: payPlan.value,
                     currency: payCurrency.value,
                     payer_name: tidy(payFields.name.input.value),
@@ -2829,43 +3146,61 @@ h1,
                         if (!account) throw new Error('La cuenta no existe. Regístrala antes de comprar el plan.');
                         const selectedPlan = plans[payload.plan];
                         if (!selectedPlan) throw new Error('Selecciona un plan válido.');
-                        payStatus.textContent = 'Procesando…';
-                        const now = new Date();
-                        const receipt = {
-                            number: `SIM-${now.toISOString().slice(0,10).replace(/-/g,'')}-${Math.random().toString(36).slice(2,8).toUpperCase()}`,
-                            issued_at: now.toISOString(), simulated: true,
-                            plan: { id: selectedPlan.id, name: selectedPlan.name }, period: '1 mes',
-                            currency: payload.currency, amount: selectedPlan[payload.currency],
-                            amounts: { USD: selectedPlan.USD, COP: selectedPlan.COP },
-                            payer: { name: payload.payer_name, email: payload.email, document_type: payDocType.value, document_number: payload.document_number, phone: payload.phone },
-                            card: { holder: payload.card_holder, brand: payload.card_brand, last4: payload.card_last4 }
-                        };
-                        db.local_subscriptions[payload.email.toLowerCase()] = {
-                            plan_id: selectedPlan.id, status: 'test_active', receipt_number: receipt.number,
-                            started_at: now.toISOString()
-                        };
+                        const emailKey = payload.email.toLowerCase();
+                        db.used_trials = db.used_trials && typeof db.used_trials === 'object' ? db.used_trials : {};
+                        if (isTrial && (db.used_trials[emailKey] || db.local_subscriptions[emailKey]?.trial)) {
+                            authTrialUsed = true;
+                            updatePayOptionUI();
+                            throw new Error('Esta cuenta ya utilizó su prueba gratuita de 30 días. Selecciona el pago normal.');
+                        }
+                        payStatus.textContent = isTrial ? 'Activando prueba gratuita de 30 días…' : 'Procesando…';
+                        const receipt = buildClientReceipt(payload, isTrial);
+                        if (isTrial) receipt.number = receipt.number.replace(/^SIM-/, 'TRIAL-');
+                        db.local_subscriptions[emailKey] = isTrial
+                            ? { plan_id: selectedPlan.id, status: 'trial_active', trial: true, receipt_number: receipt.number, started_at: receipt.issued_at }
+                            : { plan_id: selectedPlan.id, status: 'test_active', trial: false, receipt_number: receipt.number, started_at: receipt.issued_at };
+                        if (isTrial) {
+                            db.used_trials[emailKey] = true;
+                            authTrialUsed = true;
+                        }
+                        authSubscriptionActive = true;
                         saveLocalDemoDb(db);
                         syncLocalPosUser(authUser);
                         payStatus.textContent = '';
                         renderReceipt(receipt);
                         return;
                     }
-                    if (location.protocol === 'file:') throw new Error('No se pudo completar el pago.');
 
-                    payStatus.textContent = 'Procesando…';
+                    payStatus.textContent = isTrial ? 'Activando prueba gratuita de 30 días…' : 'Procesando…';
+                    const savedToken = (() => {
+                        try { return sessionStorage.getItem('barrica-pos-auth-token') || ''; } catch { return ''; }
+                    })();
                     const response = await apiFetch('/api/payments/simulate', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Accept: 'application/json',
+                            ...(savedToken ? { Authorization: `Bearer ${savedToken}` } : {})
+                        },
                         body: JSON.stringify(payload)
                     });
-                    const data = await readApiResponse(response);
+                    const data = await response.json().catch(() => ({}));
+                    if (!response.ok) {
+                        if (response.status === 409 && data.trial_used) {
+                            authTrialUsed = true;
+                            updatePayOptionUI();
+                        }
+                        throw new Error(data.error || 'No se pudo completar la activación de la suscripción.');
+                    }
                     if (!data.receipt) throw new Error('El servidor no devolvió el comprobante.');
+                    authSubscriptionActive = true;
+                    if (isTrial) authTrialUsed = true;
                     payStatus.textContent = '';
                     renderReceipt(data.receipt);
                 } catch (error) {
                     payStatus.textContent = formatApiError(
                         error,
-                        'No se pudo completar el pago de prueba. Inténtalo de nuevo.'
+                        'No se pudo completar el pago. Inténtalo de nuevo.'
                     );
                 } finally {
                     paySubmit.disabled = false;
