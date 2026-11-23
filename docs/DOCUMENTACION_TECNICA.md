@@ -35,7 +35,9 @@ Este documento reúne todos los entregables formales del trabajo escrito del sis
 
 El modelo de datos de **Barrica POS** está compuesto por **8 entidades relacionales en MySQL 8.0** (y espejo local automático en **SQLite**) que garantizan la trazabilidad de usuarios, sesiones por pestaña, planes de suscripción (con control de 1 prueba gratuita de 30 días por cuenta), intentos de autenticación, catálogo de productos con bodega de reserva, mesas del salón, comandas activas e historial de ventas cerradas.
 
-### 1.1 Mapa Visual del Diagrama Entidad-Relación (DER en Tabla Dinámica)
+![Figura 1 — Diagrama Entidad-Relación (DER) Barrica POS](images/diagrama_1_der.png)
+
+### 1.1 Mapa Dinámico del Diagrama Entidad-Relación (Relaciones y Cardinalidades)
 
 | Entidad Origen (Lado `1`) | Llave Primaria (`PK`) | cardinalidad | Relación Semántica | Entidad Destino (Lado `N`) | Llave Foránea (`FK`) | Regla de Integridad |
 | :--- | :--- | :---: | :---: | :--- | :--- | :--- |
@@ -59,8 +61,8 @@ El modelo de datos de **Barrica POS** está compuesto por **8 entidades relacion
 | **7** | **`TABLE_ORDERS`** | 🔑 `id` (`BIGINT`) | 🔗 `table_id`, 🔗 `product_id` | ⚡ `table_id` | `product_name`, `quantity`, `unit_price_cop`, `created_at` | Líneas de consumo activas por mesa con descuento de stock. |
 | **8** | **`SALES`** | 🔑 `id` (`BIGINT`) | — | ⚡ `created_at` | `table_label`, `items_summary`, `total_cop`, `payment_method`, `created_at` | Registro contable de cuentas cobradas y base del cierre de turno. |
 
-<details open>
-<summary><b>📊 Expandir / Contraer Diagrama Gráfico Mermaid del DER</b></summary>
+<details>
+<summary><b>📊 Expandir / Contraer Código Mermaid Editable del DER</b></summary>
 
 ```mermaid
 erDiagram
@@ -149,6 +151,8 @@ erDiagram
 ---
 
 ## 2. Modelo Relacional (MR)
+
+![Figura 2 — Modelo Relacional (MR) y Claves Foráneas Barrica POS](images/diagrama_2_modelo_relacional.png)
 
 ### 2.1 Esquema Relacional Formal en Tabla Dinámica
 
@@ -339,6 +343,8 @@ erDiagram
 
 ### 4.1 Diagrama de Casos de Uso
 
+![Figura 3 — Diagrama de Casos de Uso (UML) Barrica POS](images/diagrama_4_1_casos_uso.png)
+
 #### Matriz Dinámica del Diagrama de Casos de Uso por Actor
 
 | Código | Caso de Uso del Sistema Barrica POS | Visitante / Cuenta Nueva | Vendedor / Cajero POS | Administrador (`admin@gmail.com`) | Endpoint / Módulo Asociado |
@@ -355,8 +361,8 @@ erDiagram
 | **`CU-10`** | Auditar facturas fantasma (`FAC-FANTASMA`), usuarios, sesiones, KPIs y roles | 🔴 No | 🔴 No (`HTTP 403`) | 🟢 **Exclusivo Admin** | `GET /api/bar/invoices` · `POST /api/bar/users/<id>/role` |
 | **`CU-11`** | Operar en Modo Demo Local JSON con exportación/restauración `.json` | 🟢 **SÍ** | 🟢 **SÍ** | 🟢 **SÍ** | `iniciar_demo_local_json.bat` · `/bar_app?mode=local` |
 
-<details open>
-<summary><b>📊 Expandir / Contraer Gráfico Mermaid de Casos de Uso</b></summary>
+<details>
+<summary><b>📊 Expandir / Contraer Código Mermaid Editable de Casos de Uso</b></summary>
 
 ```mermaid
 flowchart LR
@@ -406,6 +412,8 @@ flowchart LR
 
 ### 4.2 Diagrama de Clases
 
+![Figura 4 — Diagrama de Clases y Componentes (UML) Barrica POS](images/diagrama_4_2_clases.png)
+
 #### Tabla Dinámica de Clases, Atributos, Métodos y Relaciones UML
 
 | Clase / Componente | Capa | Atributos Privados / Públicos (`-` / `+`) | Métodos Principales (`+` / `-`) | Relaciones UML con Otras Clases |
@@ -417,8 +425,8 @@ flowchart LR
 | **`ShiftAndInvoiceStore`** | Turnos y Facturas (`app.py`) | `- _POS_RUNTIME_STORE: dict`<br>`- _POS_RUNTIME_LOCK: Lock` | `+ open_bar_shift()`<br>`+ close_bar_shift()`<br>`+ get_bar_shifts()`<br>`+ list/create_ghost_invoice()`<br>`- _consolidate_shift_receipt()` | Acumula ventas del turno abierto y emite `FAC-FANTASMA-XXXXX` y `CIERRE-TURNO-XXXXX`. |
 | **`SessionContext` / `LoginForm` / `MainForm`** | Cliente Desktop (`BarricaDesktop.cs`) | `+ ServerUrl: string`<br>`+ Token / UserRole: string`<br>`+ IsAdmin: bool` | `+ SubmitAuth()`<br>`+ RefreshDashboardAsync()`<br>`+ AddOrderToTableAsync()`<br>`+ CheckoutTableAsync()` | Consume `BarPosController` y `AuthService` vía HTTP REST JSON con token `Bearer`. |
 
-<details open>
-<summary><b>📊 Expandir / Contraer Gráfico Mermaid del Diagrama de Clases</b></summary>
+<details>
+<summary><b>📊 Expandir / Contraer Código Mermaid Editable del Diagrama de Clases</b></summary>
 
 ```mermaid
 classDiagram
@@ -493,6 +501,8 @@ classDiagram
 
 #### 4.3.1 Flujo de Login Obligatorio, Paywall de Cuentas Nuevas, Prueba Gratuita de 30 Días (`1x Cuenta`) y Admin Vitalicio
 
+![Figura 5 — Diagrama de Actividades: Login, Paywall 402 y Prueba Gratuita 30 Días](images/diagrama_4_3_1_actividad_login.png)
+
 | Paso | Nodo / Tipo UML | Actividad / Decisión en el Sistema | Condición / Transición | Resultado /Siguiente Paso |
 | :---: | :---: | :--- | :--- | :--- |
 | **1** | `● Inicio` | Usuario abre Portal Web (`Untitled-1.html`) o Sistema POS (`/bar_app`) | Ingresa credenciales o crea cuenta nueva | Pasa al Nodo **2** |
@@ -502,8 +512,8 @@ classDiagram
 | **5** | `◇ Decisión Pago` | Usuario completa formulario de pago eligiendo modalidad:<br>• **Opción A (`💳 Pago Normal`)**: `$29 / $59 / $129 USD`<br>• **Opción B (`🎁 Prueba Gratuita 30 Días · $0`)**: Mismo formulario de pago | • Si elige **Prueba 30 Días** y `_has_used_free_trial()` es `False` → Activa `trial_active` y emite recibo `TRIAL-...`<br>• Si ya usó su prueba → Rechaza con `HTTP 409` y exige **Pago Normal** (`SIM-...`) | Suscripción activa por 30 días + Comprobante en pantalla → Pasa al Nodo **6** |
 | **6** | `◉ Fin` | **Ingresa al Sistema POS (`/bar_app`)** con las funciones del plan habilitadas | Sesión aislada por pestaña | Fin del flujo de acceso |
 
-<details open>
-<summary><b>📊 Expandir / Contraer Gráfico Mermaid de Actividades (Login y Paywall)</b></summary>
+<details>
+<summary><b>📊 Expandir / Contraer Código Mermaid Editable (Login y Paywall)</b></summary>
 
 ```mermaid
 flowchart TD
@@ -523,6 +533,8 @@ flowchart TD
 
 #### 4.3.2 Flujo Operativo de Turno de Caja, Pedido en Mesa, Cobro y Cierre Consolidado
 
+![Figura 6 — Diagrama de Actividades: Operación POS, Stock y Cierre de Turno](images/diagrama_4_3_2_actividad_operacion.png)
+
 | Paso | Nodo / Tipo UML | Actividad Operativa en el Salón | Regla de Validación / Transacción | Estado Resultante |
 | :---: | :---: | :--- | :--- | :--- |
 | **1** | `● Inicio Turno` | Encargado abre turno en `#tab-turno` (`POST /api/bar/shifts/open`) | Registra nombre, documento (`CC/CE/NIT`), teléfono, cargo y base inicial COP | Turno `ABIERTO` en memoria operativa |
@@ -532,8 +544,8 @@ flowchart TD
 | **5** | `▭ Liquidación` | Divide cuenta entre *N* personas, calcula vueltas y asocia cliente CRM | Ejecuta `POST /api/bar/tables/<id>/checkout` | Inserta en `sales`, emite `FAC-FANTASMA-XXXXX` y libera mesa (`libre`) |
 | **6** | `◉ Cierre Turno` | Al terminar jornada pulsa **Cerrar Turno** (`POST /api/bar/shifts/close`) | Agrupa ventas por producto y medio de pago + suma base inicial + efectivo | Emite recibo único **`CIERRE-TURNO-00001`** |
 
-<details open>
-<summary><b>📊 Expandir / Contraer Gráfico Mermaid de Actividades (Operación y Turno)</b></summary>
+<details>
+<summary><b>📊 Expandir / Contraer Código Mermaid Editable (Operación y Turno)</b></summary>
 
 ```mermaid
 flowchart TD
@@ -555,6 +567,8 @@ flowchart TD
 
 ### 4.4 Diagramas de Secuencias
 
+![Figura 7 — Diagrama de Secuencias (UML) Barrica POS](images/diagrama_4_4_secuencias.png)
+
 #### Tabla Dinámica de Secuencia Cronológica de Mensajes (Login → Paywall/Trial → Comanda → Cobro → Cierre)
 
 | Orden | Emisor | Receptor | Mensaje HTTP / SQL Ejecutado | Respuesta / Efecto en el Sistema |
@@ -569,8 +583,8 @@ flowchart TD
 | **7** | `Cliente POS` | `Flask API` | `POST /api/bar/tables/1/checkout` `{payment_method: "Efectivo", cash_received: 100000}` | `INSERT INTO sales` + `DELETE FROM table_orders` + `status = 'libre'` + emite **`FAC-FANTASMA-00001`** (**`200 OK`**) |
 | **8** | `Cliente POS` | `Flask API` | `POST /api/bar/shifts/close` `{}` | Ejecuta `_consolidate_shift_receipt()` y devuelve **`200 OK`** con recibo único **`CIERRE-TURNO-00001`** |
 
-<details open>
-<summary><b>📊 Expandir / Contraer Gráficos Mermaid de Secuencias</b></summary>
+<details>
+<summary><b>📊 Expandir / Contraer Código Mermaid Editable de Secuencias</b></summary>
 
 ```mermaid
 sequenceDiagram
