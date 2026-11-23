@@ -930,6 +930,7 @@ Todo el código fuente del proyecto **Barrica POS**, junto con sus scripts de ba
 | **Ejecutor de Esquema y Migraciones (`database/run_schema.py`)** | 🟢 Activo | https://github.com/andresmunoz-dot/Gestion-Bar/blob/master/database/run_schema.py |
 | **CLI de Usuarios, Sesiones y Admin (`conection.py`)** | 🟢 Activo | https://github.com/andresmunoz-dot/Gestion-Bar/blob/master/conection.py |
 | **Suite de 44 Pruebas Unitarias (`tests/`)** | 🟢 44 OK | https://github.com/andresmunoz-dot/Gestion-Bar/tree/master/tests |
+| **Documentación Técnica en Word (`docs/DOCUMENTACION_TECNICA.docx`)** | 🟢 Activo | https://github.com/andresmunoz-dot/Gestion-Bar/blob/master/docs/DOCUMENTACION_TECNICA.docx |
 | **Trabajo Escrito en Word (`docs/Trabajo_Escrito_Barrica_POS.docx`)** | 🟢 Activo | https://github.com/andresmunoz-dot/Gestion-Bar/blob/master/docs/Trabajo_Escrito_Barrica_POS.docx |
 
 ### 9.2 Comandos para Clonar y Ejecutar desde Git
