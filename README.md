@@ -74,6 +74,36 @@ Al abrir cualquiera de las aplicaciones (`http://127.0.0.1:5000`, `http://127.0.
 
 ---
 
+## Patrones de Diseño Utilizados
+
+El proyecto **Barrica POS** implementa patrones de diseño arquitectónicos, creacionales, estructurales y de comportamiento para garantizar modularidad, seguridad y concurrencia:
+
+### 1. Patrones Arquitectónicos
+- **Arquitectura Cliente-Servidor y API RESTful (Separación en Capas / N-Tier):** El backend en `app.py` centraliza las reglas de negocio, autenticación y persistencia en MySQL 8, exponiendo endpoints JSON consumidos de forma desacoplada por las tres capas de presentación (`Untitled-1.html`, `bar_app.html` y el cliente nativo C# `BarricaDesktop.exe`).
+- **MVC (Modelo - Vista - Controlador) orientado a servicios REST:**
+  - **Modelo:** Esquema relacional en `database/schema.sql` y capa de acceso a datos parametrizada en `app.py`.
+  - **Vista:** Interfaces reactivas en HTML5/CSS3/JS (`bar_app.html`, `Untitled-1.html`) y formularios WinForms (`LoginForm`, `MainForm` en `desktop/BarricaDesktop.cs`).
+  - **Controlador:** Endpoints HTTP en `app.py` (`@app.get`, `@app.post`, `@app.delete`) que procesan solicitudes, coordinan transacciones y emiten respuestas JSON.
+
+### 2. Patrones Creacionales
+- **Singleton + Object Pool (Pool de Conexiones MySQL):** Implementado mediante `_DB_POOL` (`MySQLConnectionPool`) protegido por bloqueo de hilo (`_DB_POOL_LOCK = threading.Lock()`) en `app.py`, y en la caché de recursos gráficos (`cachedIcon`) de `BarricaDesktop.cs`. Evita abrir nuevas conexiones TLS/SSL en cada petición y reutiliza conexiones activas.
+- **Factory Method / Simple Factory (Fábrica de Respuestas HTTP y Controles UI):**
+  - En Python (`app.py`): `_json_success()` y `_json_error()` fabrican objetos `Response` estandarizados con cabeceras de seguridad (`Cache-Control: no-store`, `X-Content-Type-Options: nosniff`).
+  - En C# (`desktop/BarricaDesktop.cs`): `Theme.MakeButton()` instancia controles visuales homogéneos con la paleta corporativa y doble búfer.
+
+### 3. Patrones Estructurales
+- **Decorator / Interceptor (Middleware HTTP y Gestión de Contexto):**
+  - Uso de `@contextmanager` en `_database_connection()` para envolver el préstamo de conexiones y asegurar su cierre/retorno automático al pool en bloques `finally`.
+  - Interceptores `@app.before_request` y `@app.after_request` que aplican políticas CORS locales y cabeceras de endurecimiento HTTP (`X-Frame-Options: DENY`, `Referrer-Policy`).
+- **Guard / Proxy de Autorización y Paywall (`_require_bar_user`):** Intercepta el acceso a todas las rutas operativas del POS para verificar: 1) validez del token `Bearer` en `sessions`, 2) permisos del rol (`administrador` vs. `vendedor`), y 3) suscripción activa en `subscriptions` (o acceso Multi-local vitalicio automático para el rol Administrador).
+- **Adapter / Dual-Storage Strategy (Modo Conectado MySQL vs. Modo Demo Local JSON):** En `bar_app.html`, la capa de persistencia adapta de forma transparente las operaciones CRUD para trabajar contra la API REST/MySQL en modo conectado o contra almacenamiento JSON local (`localStorage`) cuando se ejecuta en modo demo (`?mode=local` / `iniciar_demo_local_json.bat`).
+
+### 4. Patrones de Comportamiento
+- **Unit of Work (Transacción Atómica):** Operaciones compuestas como la toma de pedidos (insertar en `table_orders` + descontar `products.stock` + cambiar estado de mesa), el traslado desde bodega de reserva (`reserve_stock` → `stock`) y el cobro de mesa (insertar en `sales` + limpiar `table_orders` + liberar `bar_tables`) se ejecutan bajo un único `connection.commit()` atómico.
+- **Observer / Event-Driven UI (Interfaz Orientada a Eventos y Sincronización Asíncrona):** Los clientes web y de escritorio (`RefreshDashboardAsync` en C# y manejadores asíncronos `fetch` en JS) actualizan reactivamente el mapa de mesas, alertas de stock mínimo, arqueos de turno y totales de caja sin bloquear el hilo principal de la interfaz.
+
+---
+
 ## Instalación y Ejecución Local
 
 ### 1. Requisitos previos
